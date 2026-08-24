@@ -2,7 +2,7 @@
 # Push this skill from local to both GitHub copies. Then resync in Willow.
 set -euo pipefail
 
-SRC="${EYAL_VIZ_V2_SRC:-$HOME/.claude/skills/eyal-visualization-v2}"
+SRC="${EYAL_VIZ_V2_SRC:-$HOME/.cursor/skills/eyal-visualization-v2}"
 if [[ ! -f "$SRC/SKILL.md" ]]; then
   echo "Missing SKILL.md at $SRC" >&2
   exit 1
