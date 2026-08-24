@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/400.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/500.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/600.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/700.css" rel="stylesheet" />
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <style>
     :root {
@@ -258,17 +259,17 @@
       <div class="widget-grid">
         <div class="widget widget-span-4">
           <div class="widget-label">Revenue</div>
-          <div class="widget-value">$45.2K</div>
+          <div class="widget-value" id="kpiRevenue"></div>
           <span class="trend-chip"><i class="ph ph-trend-up"></i> +12.4%</span>
         </div>
         <div class="widget widget-span-4">
           <div class="widget-label">Active users</div>
-          <div class="widget-value">2.4K</div>
+          <div class="widget-value" id="kpiUsers"></div>
           <span class="trend-chip"><i class="ph ph-trend-up"></i> +5.1%</span>
         </div>
         <div class="widget widget-span-4">
           <div class="widget-label">Conversion</div>
-          <div class="widget-value">3.2%</div>
+          <div class="widget-value" id="kpiConv"></div>
           <span class="trend-chip"><i class="ph ph-trend-up"></i> +0.4pp</span>
         </div>
         <div class="widget widget-span-8">
@@ -280,7 +281,7 @@
               <div class="list-row__meta">Today · 14:32</div>
             </div>
             <span class="category-pill">Income</span>
-            <span class="list-row__amount">+$1.2K</span>
+            <span class="list-row__amount" id="amtIn"></span>
           </div>
           <div class="list-row">
             <div class="list-row__icon"><i class="ph ph-arrow-up-right"></i></div>
@@ -296,6 +297,26 @@
     </main>
   </div>
   <script>
+    function fmtNum(val) {
+      if (val == null || isNaN(val)) return "-";
+      const n = Number(val);
+      const sign = n < 0 ? "-" : "";
+      const abs = Math.abs(n);
+      if (Math.round(abs) < 1000) return sign + String(Math.round(abs));
+      const k = abs / 1e3;
+      const two = k.toFixed(2);
+      if (parseFloat(two) < 1000) return sign + (two.endsWith("0") ? k.toFixed(1) : two) + "K";
+      return sign + (abs / 1e6).toFixed(2) + "M";
+    }
+    function fmtPct(val, decimals) {
+      if (val == null || isNaN(val)) return "-";
+      const d = decimals == null ? 1 : decimals;
+      return Number(val).toFixed(d) + "%";
+    }
+    document.getElementById("kpiRevenue").textContent = "$" + fmtNum(45200);
+    document.getElementById("kpiUsers").textContent = fmtNum(2400);
+    document.getElementById("kpiConv").textContent = fmtPct(3.2, 1);
+    document.getElementById("amtIn").textContent = "+$" + fmtNum(1200);
     document.getElementById("themeBtn").addEventListener("click", () => {
       const dark = !document.body.classList.contains("dark");
       document.body.classList.toggle("dark", dark);

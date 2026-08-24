@@ -144,7 +144,7 @@ Histogram bucket percentages are **not** a time series. Mini area charts at the 
 
 3-stage conversion (eligible → view → submit): not Chart.js. Conversion chip is the hero number. Population pills + `% from` sit on the **right** of the card header. Nearly-solid bars (4-8% sheen). **Rule:** one hue family per population, 400 / 500 / 600, 4-8% sheen, no neon orange. Cara All / sky / violet / apricot in [funnel-graph.md](funnel-graph.md) is a **worked example**, not a global palette. Do not paint Chatbot apricot onto an unrelated dashboard.
 
-Full layout, tokens, copy, CSS, and JS: [funnel-graph.md](funnel-graph.md). Self-contained graph: [examples/funnel-graph.html](../examples/funnel-graph.html).
+Full layout, tokens, copy, CSS, and JS: [funnel-graph.md](funnel-graph.md). Self-contained graph: [assets/funnel-graph.html](../assets/funnel-graph.html).
 
 ---
 

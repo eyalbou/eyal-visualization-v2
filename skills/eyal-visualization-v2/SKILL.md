@@ -1,7 +1,7 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.5.0
+version: 0.5.1
 ---
 
 # Eyal Visualization v2 (Soft UI)
@@ -10,7 +10,7 @@ Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, o
 
 If they already asked for v2 / Soft UI, do **not** re-ask which visual system.
 
-This file plus `references/` and `examples/` is the full pack.
+This file plus `references/` and `assets/` is the full pack.
 
 ---
 
@@ -48,11 +48,11 @@ Maps only if the question is geo.
 
 **Must (every call):** this file (constraints + checklist) + [color-valence.md](references/color-valence.md) + [soft-ui-tokens.md](references/soft-ui-tokens.md).
 
-**Scaffold:** copy `examples/analytics-starter.html` or `examples/app-shell-starter.html` **from disk**. Do **not** Read the full HTML into context.
+**Scaffold:** copy `assets/analytics-starter.html` or `assets/app-shell-starter.html` **from disk**. Do **not** Read the full HTML into context.
 
 **If-needed:** [analytics-storytelling.md](references/analytics-storytelling.md) (analytics), [funnel-graph.md](references/funnel-graph.md) (3-stage conversion), [app-shell-patterns.md](references/app-shell-patterns.md) (shell), [chartjs-configs.md](references/chartjs-configs.md) (drawing Chart.js), [overflow-rules.md](references/overflow-rules.md) (a chart exists), [hero-geometric.md](references/hero-geometric.md) (not copying the starter), [component-recipes.md](references/component-recipes.md) (KPI / action cards).
 
-Recipes stay in references. Copy CSS from examples on disk.
+Recipes stay in references. Copy CSS from assets on disk.
 
 ---
 
@@ -83,7 +83,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 
 ### 1. Scaffold
 
-- [ ] Copy `examples/analytics-starter.html` or `examples/app-shell-starter.html` (not a blank file)
+- [ ] Copy `assets/analytics-starter.html` or `assets/app-shell-starter.html` (not a blank file)
 - [ ] Full-page `.page-canvas` + `.shell` z-index 1; theme toggle in `.page-chrome`
 - [ ] Four DM Sans weights; no Axiforma `<link>`; `html, body` use `--font`; `code, pre` use `--font-mono`; form controls `font-family: inherit`; `Chart.defaults.font.family` matches `--font`
 
@@ -377,7 +377,7 @@ const DATA = {
 
 Pre-aggregate before embedding. `data-pop="segment_a"`; visible text uses `.label`. `renderAll()` updates KPIs, chart, snaps, insight together. Footer: `SQL: ... · Generated {fmtDate(DATA.generated_at)}`.
 
-Optional live dashboard (may not exist in this workspace): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`. In-skill proofs: `examples/analytics-starter.html`, `examples/funnel-graph.html`.
+Optional live dashboard (may not exist in this workspace): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`. In-skill proofs: `assets/analytics-starter.html`, `assets/funnel-graph.html`.
 
 ---
 
@@ -457,9 +457,9 @@ Fix before showing. Note what was fixed.
 | [state-patterns.md](references/state-patterns.md) | Pills, hover info, linked charts |
 | [chartjs-configs.md](references/chartjs-configs.md) | Chart.js extensions; 14px ticks |
 | [overflow-rules.md](references/overflow-rules.md) | Clip / collision rules |
-| [examples/analytics-starter.html](examples/analytics-starter.html) | Analytics scaffold (copy from disk) |
-| [examples/app-shell-starter.html](examples/app-shell-starter.html) | Shell scaffold |
-| [examples/funnel-graph.html](examples/funnel-graph.html) | Funnel graph dummy bake |
+| [assets/analytics-starter.html](assets/analytics-starter.html) | Analytics scaffold (copy from disk) |
+| [assets/app-shell-starter.html](assets/app-shell-starter.html) | Shell scaffold |
+| [assets/funnel-graph.html](assets/funnel-graph.html) | Funnel graph dummy bake |
 
 This skill is **standalone**. Do not Read `../eyal-visualization/` or any v1 path.
 
@@ -467,7 +467,7 @@ This skill is **standalone**. Do not Read `../eyal-visualization/` or any v1 pat
 
 ## Shipping an update (required)
 
-Willow's "14 references" are the real `references/*.md` files in the repo, bundled with the skill. Agents Read them when this file links them. The 3 `examples/*.html` files are separate scaffolds (copy from disk), not part of that 14.
+Willow counts `references/*.md` as references and `assets/*` as assets. HTML starters **must** live in `assets/` (not `examples/`) or Willow shows 0 assets. Agents Read markdown when this file links it. Copy HTML starters from disk; do not Read them into context.
 
 After **any** edit to this skill:
 

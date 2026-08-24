@@ -108,4 +108,4 @@ The approved analytics artifact combines:
 
 This is the **default analytics archetype** for v2.
 
-In-skill proofs: `examples/analytics-starter.html`, `examples/funnel-graph.html`. Optional live: `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`.
+In-skill proofs: `assets/analytics-starter.html`, `assets/funnel-graph.html`. Optional live: `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`.

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Analytics starter · Eyal Visualization v2</title>
-  <!-- Eyal Visualization v2 — analytics archetype starter (derived from multi-site-accounts-v2.html) -->
+  <!-- Eyal Visualization v2 analytics archetype starter (derived from multi-site-accounts-v2.html) -->
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/400.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/500.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/600.css" rel="stylesheet" />
@@ -19,7 +19,7 @@
       --font: "Axiforma", "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-      /* Dashboard type scale — design-system.md §3 + dashboard-review §2.2 */
+      /* Dashboard type scale: design-system.md section 3 + dashboard-review 2.2 */
       --text-xs: 12px;       /* smallest / footer / captions */
       --text-sm: 13px;       /* labels / badges */
       --text-base: 14px;     /* secondary copy */
@@ -959,7 +959,7 @@
     <div class="snap-grid" id="snapGrid"></div>
 
     <p class="footer">
-      SQL: Q14 · Q14b · Q14d · Q14g–Q14k
+      SQL: Q14 · Q14b · Q14d · Q14g-Q14k
       · Generated <span id="generatedAt"></span>
     </p>
   </div>
@@ -967,7 +967,8 @@
   <script>
     const FONT_FAMILY = "'Axiforma', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     Chart.defaults.font.family = FONT_FAMILY;
-    Chart.defaults.font.size = 13;
+    Chart.defaults.font.size = 14;
+    Chart.defaults.font.weight = "600";
     Chart.register(ChartDataLabels);
 
     const POP_ORDER = ["active_groups_v3", "chatbot_all", "active_groups_chatbot", "exposed"];
@@ -1069,7 +1070,7 @@
       return sign + (abs / 1e6).toFixed(2) + "M";
     }
 
-    /* Exact grouped digits for tables and tooltips. toLocaleString is locale-dependent. */
+    /* Exact grouped digits for tables and tooltips. Never use locale digit grouping. */
     function fmtInt(val) {
       if (val == null || isNaN(val)) return "-";
       const s = String(Math.round(Math.abs(val)));
@@ -1235,8 +1236,11 @@
               anchor: "end",
               align: "end",
               offset: 2,
+              clamp: true,
+              clip: false,
+              display: (ctx) => ctx.dataset.data[ctx.dataIndex] >= 1,
               formatter: (v) => fmtPct(v, 1),
-              font: { family: FONT_FAMILY, size: 12, weight: 600 },
+              font: { family: FONT_FAMILY, size: 14, weight: 600 },
               color: fg,
             },
             tooltip: {
@@ -1268,11 +1272,11 @@
                 display: true,
                 text: "Sites per account (bucket)",
                 color: muted,
-                font: { family: FONT_FAMILY, size: 12, weight: "500" },
+                font: { family: FONT_FAMILY, size: 14, weight: "600" },
               },
               ticks: {
                 color: muted,
-                font: { family: FONT_FAMILY, size: 12 },
+                font: { family: FONT_FAMILY, size: 14, weight: "600" },
               },
               grid: { display: false },
             },
@@ -1281,11 +1285,11 @@
                 display: true,
                 text: "% of population",
                 color: muted,
-                font: { family: FONT_FAMILY, size: 12, weight: "500" },
+                font: { family: FONT_FAMILY, size: 14, weight: "600" },
               },
               ticks: {
                 color: muted,
-                font: { family: FONT_FAMILY, size: 12 },
+                font: { family: FONT_FAMILY, size: 14, weight: "600" },
                 callback: (v) => fmtPct(v, 0),
               },
               grid: { color: isDark ? "rgba(237,232,223,0.05)" : "rgba(26,23,20,0.05)" },

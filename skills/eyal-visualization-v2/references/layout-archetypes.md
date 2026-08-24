@@ -41,9 +41,9 @@ What are you building?
 
 **References:** [hero-geometric.md](hero-geometric.md), [component-recipes.md](component-recipes.md), [soft-ui-tokens.md](soft-ui-tokens.md)
 
-**Example (copy from disk):** `examples/analytics-starter.html`
+**Example (copy from disk):** `assets/analytics-starter.html`
 
-**In-skill proof:** `examples/analytics-starter.html`. Optional live (may not exist here): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`
+**In-skill proof:** `assets/analytics-starter.html`. Optional live (may not exist here): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`
 
 ---
 
@@ -60,7 +60,7 @@ What are you building?
 
 **References:** [app-shell-patterns.md](app-shell-patterns.md), [component-recipes.md](component-recipes.md)
 
-**Example:** `examples/app-shell-starter.html`
+**Example:** `assets/app-shell-starter.html`
 
 **No images:** profile = icon circle only, never photos.
 

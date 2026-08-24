@@ -47,11 +47,11 @@ shell
   footer
 ```
 
-Volume / survey conversion uses the CSS funnel in [funnel-graph.md](funnel-graph.md), not a Chart.js card. Standalone: `examples/funnel-graph.html`.
+Volume / survey conversion uses the CSS funnel in [funnel-graph.md](funnel-graph.md), not a Chart.js card. Standalone: `assets/funnel-graph.html`.
 
-In-skill proofs: `examples/analytics-starter.html`, `examples/funnel-graph.html`. Optional live (may not exist here): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`.
+In-skill proofs: `assets/analytics-starter.html`, `assets/funnel-graph.html`. Optional live (may not exist here): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`.
 
-Starter template: `examples/analytics-starter.html`. Copy from disk; do not Read the full HTML into context.
+Starter template: `assets/analytics-starter.html`. Copy from disk; do not Read the full HTML into context.
 
 ---
 

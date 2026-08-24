@@ -120,4 +120,4 @@ Base gradient lives on `.page-canvas::before` so dark-mode `background` crossfad
 
 ## Validation artifact
 
-In-skill: `examples/analytics-starter.html`. Optional live (may not exist here): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`.
+In-skill: `assets/analytics-starter.html`. Optional live (may not exist here): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`.

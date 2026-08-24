@@ -104,4 +104,4 @@ Centered two-line gradient title + badge pill. Theme toggle in `.page-chrome` fi
 
 Start from user `--accent`. Do not default every dashboard to `#2563EB` unless requested.
 
-In-skill proofs: `examples/analytics-starter.html`, `examples/funnel-graph.html`. Optional live (may not exist here): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`.
+In-skill proofs: `assets/analytics-starter.html`, `assets/funnel-graph.html`. Optional live (may not exist here): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`.

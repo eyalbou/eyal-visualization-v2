@@ -7,7 +7,7 @@ CSS column funnel for 3 (or 4) sequential stages. **Not Chart.js.** Conversion b
 | File | Role |
 |------|------|
 | This recipe | Layout, copy, tokens, color families, JS skeleton |
-| [examples/funnel-graph.html](../examples/funnel-graph.html) | Self-contained graph with dummy bake numbers + 4 color families |
+| [assets/funnel-graph.html](../assets/funnel-graph.html) | Self-contained graph with dummy bake numbers + 4 color families |
 | `investigations/cara-dissatisfaction/dashboard/cara-survey-channel-v2.html` | Live product (optional; may move) |
 
 Stash (`https://bo.wix.com/stash/cara-satisfaction/`) is a preview only. If it is deleted, copy from this file + the example.
