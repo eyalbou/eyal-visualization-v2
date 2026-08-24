@@ -104,7 +104,7 @@ The approved analytics artifact combines:
 - Kokonut full-page geometric hero ([hero-geometric.md](hero-geometric.md))
 - SocialSync-style soft cards + trend chips
 - Financial-style pill population toggles
-- v1 DATA patterns (internal keys, `label`, `generated_at`)
+- Soft UI DATA keys (`label`, `generated_at`)
 
 This is the **default analytics archetype** for v2.
 

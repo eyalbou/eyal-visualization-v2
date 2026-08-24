@@ -91,10 +91,9 @@ What are you building?
 
 ---
 
-## Archetype vs v1
+## Archetypes
 
 | Need | Use |
 |------|-----|
-| Editorial grain, warm terracotta, internal briefing | v1 `eyal-visualization` |
-| Soft product UI, geometric hero, pill controls | v2 (this skill) |
+| Soft product UI, geometric hero, pill controls | this skill |
 | Wix branding | `studio-data-visualization` |

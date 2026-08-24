@@ -1,8 +1,6 @@
-# Chart.js Configuration (v2 Extensions)
+# Chart.js Configuration (v2)
 
-**Base config:** [eyal-visualization/references/chartjs-configs.md](../../eyal-visualization/references/chartjs-configs.md) -- bar datalabels, combo, threshold colors.
-
-**v2 defaults:** `tension: 0.4`, `borderRadius: 12` on bars, minimal grid `rgba(0,0,0,0.06)`, read colors from `--accent` CSS vars.
+Bar datalabels, combo, threshold colors, plus v2 defaults: `tension: 0.4`, `borderRadius: 12` on bars, grid `rgba(0,0,0,0.06)`, colors from `--accent`.
 
 **Survey / conversion funnel:** do not use Chart.js. CSS column recipe: [funnel-graph.md](funnel-graph.md).
 
@@ -213,4 +211,4 @@ Populate levels from data in JS. Prefer table alongside for accessibility.
 
 ## Overflow
 
-See [overflow-rules.md](overflow-rules.md) -- identical to v1; apply on every chart.
+See [overflow-rules.md](overflow-rules.md) -- apply on every chart.

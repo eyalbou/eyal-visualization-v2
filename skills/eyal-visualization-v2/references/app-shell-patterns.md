@@ -2,7 +2,7 @@
 
 Sidebar and top-nav layouts for product dashboards. **No photos or avatars.** Icons: **Phosphor** default; Lucide only if the user asks.
 
-Tokens: [soft-ui-tokens.md](soft-ui-tokens.md). Typography: v1 design-system section 4.
+Tokens: [soft-ui-tokens.md](soft-ui-tokens.md). Type: same file, font-loading block.
 
 ---
 

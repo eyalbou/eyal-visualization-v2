@@ -1,6 +1,6 @@
 # v2 Component Recipes
 
-Typography tokens: copy from [design-system.md](../../eyal-visualization/references/design-system.md) dashboard CSS variables block.
+Typography tokens: [soft-ui-tokens.md](soft-ui-tokens.md) type scale.
 
 ## Hero KPI (3-up grid, third column wider)
 

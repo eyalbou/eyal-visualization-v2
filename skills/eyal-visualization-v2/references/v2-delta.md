@@ -1,12 +1,8 @@
-# v2 Delta (Soft UI Layer)
+# Soft UI notes
 
-Rules that differ from v1 `eyal-visualization`. Everything else inherits from v1 unchanged.
+Surface, motion, and chrome for this skill. Tokens: [soft-ui-tokens.md](soft-ui-tokens.md). Icons: **Phosphor** default. Lucide only if the user asks.
 
-When v1 Phase 2 visual laws fight this file, **v2 wins**. Inherit table: [SKILL.md](../SKILL.md#when-v1-fights-v2-v2-wins).
-
-Icons: **Phosphor** default. Lucide only if the user asks.
-
-**Typography:** Link only -- do not copy. [v1 design-system section 4](../../eyal-visualization/references/design-system.md) + dashboard CSS variables block.
+**Typography:** [soft-ui-tokens.md](soft-ui-tokens.md) type scale and font-loading block. Do not read any v1 path.
 
 ---
 
@@ -22,7 +18,7 @@ Icons: **Phosphor** default. Lucide only if the user asks.
 | `--radius-pill` | 9999px toggles, badges, chips |
 | `--shadow-md` | `0 4px 24px rgba(0,0,0,0.06)` |
 
-Cards: white, no border (or hairline), soft shadow -- not v1 editorial borders + grain.
+Cards: white, no border (or hairline), soft shadow -- not grainy editorial frames.
 
 ---
 
@@ -75,7 +71,7 @@ Centered two-line gradient title + badge pill. Theme toggle in `.page-chrome` fi
 
 ## Insight & chart chrome
 
-- Insight: borderless card + `--shadow-md` (not v1 left-accent border)
+- Insight: borderless card + `--shadow-md` (not a left-accent border)
 - Chart hover strip: `--canvas-deep` well, no left border (v2)
 - Bar `borderRadius: 12` for soft look
 

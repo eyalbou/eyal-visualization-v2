@@ -1,15 +1,13 @@
 # Dashboard Patterns (v2)
 
-**Inherit v1:** [eyal-visualization/references/dashboard-patterns.md](../../eyal-visualization/references/dashboard-patterns.md) for DATA shape, population toggles, chart hover strip logic, threshold bar colors, snap cards, insight narrative, footer provenance.
-
-**Apply v2 overrides:** [v2-delta.md](v2-delta.md)
+DATA shape, population toggles, hover strip, snaps, insight, footer: this file + [SKILL.md](../SKILL.md). Chrome overrides: [v2-delta.md](v2-delta.md). Do not read v1 paths.
 
 ---
 
 ## v2-specific overrides
 
-| v1 pattern | v2 change |
-|------------|-----------|
+| Avoid | Use instead |
+|-------|-------------|
 | Grain + radial mesh on `body` | Full-page `.page-canvas` geometric layer |
 | Masthead eyebrow line | Kokonut badge pill with dot |
 | Left-aligned `--text-h1` title | Centered `--text-hero-display` two-line gradient |
@@ -77,7 +75,7 @@ Footer: `generated_at` on every tab. SQL details stay in Methodology.
 
 ## Checklist (v2 dashboard-specific)
 
-Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Do **not** fail a v2 file on v1 Phase 2 font / funnel / `--` / tab-arc laws. Inherit table: [SKILL.md](../SKILL.md#when-v1-fights-v2-v2-wins).
+Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Visual laws: [SKILL.md](../SKILL.md#visual-system-this-skill).
 
 - [ ] Hero title is the research name; subtitle is why / get / aim (2-3 sentences), on every tab
 - [ ] Tabs: Overview → drill-down(s) → Sampling → Methodology (Sampling may be a filter recap)

@@ -1,8 +1,6 @@
 # State Patterns (v2)
 
-**Inherit v1:** [eyal-visualization/references/state-patterns.md](../../eyal-visualization/references/state-patterns.md) -- toasts, empty states, loading, validation, success.
-
-**v2 additions below:** pill toggles, filter chips, toggle switches, notification badges.
+Toasts, empty, loading, validation, success, plus pill toggles, filter chips, switches, badges.
 
 Tokens: [soft-ui-tokens.md](soft-ui-tokens.md)
 
@@ -211,7 +209,7 @@ Place in `.page-chrome` for analytics archetype.
 
 ## Collapsible drill-down sections (default closed)
 
-**Rule:** Keep headline metrics and primary charts visible. Collapse long secondary content -- breakdown tables, example lists, heatmaps, explorer results, appendices -- **closed by default**. Aligns with v1 progressive disclosure; critical on multi-tab analytics dashboards.
+**Rule:** Keep headline metrics and primary charts visible. Collapse long secondary content -- breakdown tables, example lists, heatmaps, explorer results, appendices -- **closed by default**. Critical on multi-tab analytics dashboards.
 
 ### When to collapse
 

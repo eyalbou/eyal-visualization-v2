@@ -11,7 +11,7 @@ Full validated set from `multi-site-accounts-v2.html`:
   --font: "Axiforma", "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Dashboard scale -- link v1 design-system; hero exception below */
+  /* Dashboard type scale; hero exception below */
   --text-xs: 12px;
   --text-sm: 13px;
   --text-base: 14px;
@@ -156,3 +156,29 @@ Pill toggles: track `--canvas-deep`; active = solid `--accent` + white text.
 **Valence:** `--accent` is volume / trust / selected, not "how hot." Bad-when-up KPIs and mild → rage scales use `--warning` / `--sev-*` / `--danger`. 3-stop heat is `--sev-lo` `#f1dc32` → `--sev-mid` `#ff9323` → `--sev-hi` `#da0808`. Add `--sev-ok` `#69c440` only when the scale includes a healthy band, `--sev-max` `#950404` when it includes critical. Ink: dark `#1D1D1F` on ok / lo / mid; white on hi / max. See [color-valence.md](color-valence.md).
 
 See [hero-geometric.md](hero-geometric.md) for canvas structure and first-load animations.
+
+## Optional brand palette
+
+When the user picks this palette (see SKILL.md). Dropped `#FF9100` (dup orange) and `#00B7CD` (dup teal).
+
+```css
+:root.palette-ocean-sun {
+  --palette-cream: #FFF1D1;
+  --palette-ice: #8ECAE6;
+  --palette-teal: #219EBC;
+  --palette-navy: #023047;
+  --palette-gold: #FFB703;
+  --palette-orange: #FB8500;
+  --palette-red: #DF301C;
+  --accent: var(--palette-teal);
+  --accent-2: var(--palette-ice);
+  --accent-glow: rgba(33, 158, 188, 0.12);
+  --ink: var(--palette-navy);
+  --canvas: var(--palette-cream);
+  --highlight: var(--palette-gold);
+  --warm: var(--palette-orange);
+}
+```
+
+`--palette-gold` / `--palette-orange` are highlights, not TOR/DSAT fills. `--palette-red` may alias `--danger` if they want brand-aligned errors.
+

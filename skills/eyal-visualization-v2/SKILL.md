@@ -1,33 +1,46 @@
 ---
 name: eyal-visualization-v2
-description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips) instead of v1. Typography sizes from v1. No decorative images. Defer to studio-data-visualization for Wix branding; defer to eyal-visualization v1 for editorial grain.
-version: 0.4.0
+description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
+version: 0.5.0
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-Opt-in fork. **v1 stays default** for editorial / grain / terracotta. v2 is geometric hero, ice canvas, white cards, pills, trend chips, optional app shell.
+Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
-If the user already asked for v2, do **not** re-ask v1 vs v2.
+If they already asked for v2 / Soft UI, do **not** re-ask which visual system.
+
+This file plus `references/` and `examples/` is the full pack.
 
 ---
 
-## When v1 fights v2, v2 wins
+## Visual system (this skill)
 
-Workflow still inherits v1 Phase 0-2 **data and function checks**. Do **not** apply v1 visual laws that contradict this table. A correct v2 file that "fails" v1 Phase 2 on these rows is still correct.
+| Topic | Rule |
+|-------|------|
+| Fonts | `--font` everywhere; `--font-mono` only on `code` / `pre` |
+| Images | No decorative images; Phosphor icons |
+| Funnel | CSS columns ([funnel-graph.md](references/funnel-graph.md)), not Chart.js funnel |
+| Hero KPI color | Valence token; bad-when-up is never trust-blue |
+| Null sentinel | `-` |
+| Tab arc | Overview → drill-down(s) → Sampling → Methodology |
+| Type | Two families; four DM Sans weights; no Axiforma `<link>` |
+| Doughnut | **2-4** slices; 5+ or one slice >80% → horizontal bar |
 
-| Topic | v1 | v2 |
-|-------|----|----|
-| Fonts | One family; never mix display + mono | `--font` everywhere; `--font-mono` only on `code` / `pre` |
-| Images | Add whenever possible | No decorative images; Phosphor icons |
-| Funnel | Chart.js funnel | CSS columns ([funnel-graph.md](references/funnel-graph.md)) |
-| Hero KPI color | `--accent` | Valence token; bad-when-up is never trust-blue |
-| Null sentinel | `--` | `-` |
-| Tab arc | overview → deep-dive → who/where → growth → explore | Overview → drill-down(s) → Sampling → Methodology |
-| Phase 2 type | one font, header hack | Two families; four DM Sans weights; no Axiforma `<link>` |
-| Doughnut | 2-4 slices | **2-4** slices; 5+ or one slice >80% → horizontal bar |
+Maps only if the question is geo.
 
-v1 "Funnel = Funnel Chart" and v1 maps: ignore unless the question is geo. Do not paste v1 SKILL.md into v2 files.
+---
+
+## Craft (built in -- no other skill)
+
+- 4-point spacing; 16px tight groups; 32px section gaps; 12-col desktop
+- Hierarchy from size/position/color, not a spreadsheet
+- One aesthetic, executed tightly. Atmosphere supports data
+- Grasp the core idea in 5 seconds
+- Every control has default / hover / active / disabled / loading
+- Progressive disclosure: hide complexity until asked
+- Motion ~300ms enter, ~100ms hover; honor `prefers-reduced-motion`
+- Numbers via `fmtNum` / `fmtInt` / `fmtPct` only
 
 ---
 
@@ -48,7 +61,7 @@ Recipes stay in references. Copy CSS from examples on disk.
 1. **No decorative images.** Icons: **Phosphor** default. Lucide only if the user asks.
 2. **Two font families, never more** -- `--font` + `--font-mono` on `<code>` / `<pre>` only. [Fonts](#fonts).
 3. **Light mode default** -- `body.dark` toggle (sibling of `:root`, not nested in it). Re-render Chart.js on theme change.
-4. **Anti-Vibe-Code** -- `--accent` from the user. If none, **ask once**. Do not silently use `#2563EB` unless they said CC-family / keep last dashboard.
+4. **Anti-Vibe-Code** -- `--accent` from the user. If none, **ask once**. Offer the [optional brand palette](#optional-brand-palette) as one choice. Do not silently use `#2563EB` unless they said CC-family / keep last dashboard / use the optional palette.
 5. **Self-contained HTML** -- CDN only.
 6. **No fake sparklines** on histogram / cross-section snaps. Sparklines only for dated series.
 7. **Every displayed count goes through `fmtNum`**. Tables/tooltips: `fmtInt`. Rates: `fmtPct`. Never `toLocaleString()`.
@@ -65,12 +78,12 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 ### 0. Confirm
 
 - [ ] Archetype: analytics report vs sidebar/top-nav shell (ask only if unclear)
-- [ ] v2 already requested → do not re-ask v1 vs v2
-- [ ] `--accent` from the user; if none, ask once
+- [ ] Soft UI / v2 already requested → do not re-ask visual system
+- [ ] `--accent` from the user; if none, ask once (optional brand palette is a valid answer)
 
 ### 1. Scaffold
 
-- [ ] Copy `examples/analytics-starter.html` or `examples/app-shell-starter.html` (not a blank file, not v1)
+- [ ] Copy `examples/analytics-starter.html` or `examples/app-shell-starter.html` (not a blank file)
 - [ ] Full-page `.page-canvas` + `.shell` z-index 1; theme toggle in `.page-chrome`
 - [ ] Four DM Sans weights; no Axiforma `<link>`; `html, body` use `--font`; `code, pre` use `--font-mono`; form controls `font-family: inherit`; `Chart.defaults.font.family` matches `--font`
 
@@ -279,6 +292,38 @@ Hero / active snap: top bar + wash in the **valence** color. `.kpi.hero` accent 
 
 ---
 
+## Optional brand palette
+
+Use **only when the user asks** for this palette (or picks it after the accent question). It does **not** replace valence: TOR / DSAT / rage stay `--sev-*`. Do not mix this with a separate user `--accent` unless they say to.
+
+Merged from the two source swatches. Dropped near-duplicates: `#FF9100` (same orange family as `#FB8500`) and `#00B7CD` (same teal family as `#219EBC`).
+
+| Token | Hex | Role |
+|-------|-----|------|
+| `--palette-cream` | `#FFF1D1` | Warm paper / canvas wash |
+| `--palette-ice` | `#8ECAE6` | Light sky, secondary cool |
+| `--palette-teal` | `#219EBC` | **Accent** (primary) |
+| `--palette-navy` | `#023047` | Ink / dark chrome |
+| `--palette-gold` | `#FFB703` | Highlight / magnitude callout -- not bad-when-up |
+| `--palette-orange` | `#FB8500` | Warm secondary -- not TOR hero |
+| `--palette-red` | `#DF301C` | Brand fail (may alias `--danger` if they want brand-aligned errors) |
+
+```css
+:root {
+  --accent: #219EBC;
+  --accent-2: #8ECAE6;
+  --accent-glow: rgba(33, 158, 188, 0.12);
+  --ink: #023047;
+  --canvas: #FFF1D1;
+  --highlight: #FFB703;
+  --warm: #FB8500;
+}
+```
+
+Wire `--page-bg` / hero mesh off `--accent` + `--palette-ice`. Gold and orange are **not** severity fills.
+
+---
+
 ## Chart chooser
 
 Pick by the **question**. Implementations live in [chartjs-configs.md](references/chartjs-configs.md), [overflow-rules.md](references/overflow-rules.md), [funnel-graph.md](references/funnel-graph.md).
@@ -316,7 +361,7 @@ CSS funnel rule: one hue family per population, 400/500/600, 4-8% sheen, no neon
 - Trend chips: `+X.XXpp vs {baseline.label}`
 - Long secondary content: `<details class="collapse-card">` **closed**. Headline + primary chart stay visible
 - Linked charts: clicking a bar filters the sibling that shares the grain. TOR vs resolution = metric **toggle**, never one dual-axis. [state-patterns.md](references/state-patterns.md)
-- Insight: borderless + shadow (not v1 left border)
+- Insight: borderless + shadow (not a left-accent border)
 
 ### DATA pattern (analytics)
 
@@ -369,7 +414,7 @@ Call `renderAll()` inside `setTheme()`.
 - White type on `--sev-ok` / `--sev-lo` / `--sev-mid`; black type on `--sev-hi` / `--sev-max`
 - Shrinking chart labels to 11px; reminting series colors per population toggle
 - Dual-axis for TOR vs resolution; action-item strip duplicated as a second list
-- Duplicating full v1 SKILL.md into v2 files
+- Reading or depending on `eyal-visualization` v1 files
 
 ---
 
@@ -377,7 +422,7 @@ Call `renderAll()` inside `setTheme()`.
 
 1. Phase 0 -- numbers match source; labels match `DATA.*.label`
 2. Phase 1 -- charts render; toggles sync; no console errors; overflow rules
-3. Phase 2 -- **this file's inherit table + gated checklist**, not v1 "one font / Chart.js funnel / `--` sentinel"
+3. Phase 2 -- **this file's visual-system table + gated checklist** (two fonts, CSS funnel, `-` sentinel, valence colors)
 4. Grep and fix:
 
 | Grep | Expect |
@@ -403,7 +448,7 @@ Fix before showing. Note what was fixed.
 
 | File | When |
 |------|------|
-| [v2-delta.md](references/v2-delta.md) | What differs from v1 |
+| [v2-delta.md](references/v2-delta.md) | Soft UI surface, motion, chrome |
 | [layout-archetypes.md](references/layout-archetypes.md) | Analytics vs shell |
 | [component-recipes.md](references/component-recipes.md) | KPI, snaps, action cards |
 | [funnel-graph.md](references/funnel-graph.md) | CSS survey funnel |
@@ -416,7 +461,7 @@ Fix before showing. Note what was fixed.
 | [examples/app-shell-starter.html](examples/app-shell-starter.html) | Shell scaffold |
 | [examples/funnel-graph.html](examples/funnel-graph.html) | Funnel graph dummy bake |
 
-**v1 inherited (do not duplicate):** [eyal-visualization/SKILL.md](../eyal-visualization/SKILL.md) -- 16 principles, Phase 0-1, delivery standards. Phase 2 visual laws: use the inherit table above.
+This skill is **standalone**. Do not Read `../eyal-visualization/` or any v1 path.
 
 ---
 
