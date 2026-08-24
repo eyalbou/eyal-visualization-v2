@@ -54,6 +54,7 @@ Recipes stay in references. Copy CSS from examples on disk.
 7. **Every displayed count goes through `fmtNum`**. Tables/tooltips: `fmtInt`. Rates: `fmtPct`. Never `toLocaleString()`.
 8. **Artifact UI punctuation** -- in the HTML, `-` only (no em/en/`--`). This rule is **artifact UI only**. Chat / Slack drafts still use `--`. Keep `--` in CSS vars, JS, and SQL in `<pre>`.
 9. **Color valence** -- up-is-bad is never trust-blue. [color-valence.md](references/color-valence.md).
+10. **Skill self-update** -- if you change this skill, write **local and git in the same turn**. Local: `~/.claude/skills/eyal-visualization-v2`. Git: `eyalbou/eyal-visualization-v2` and `eyalbou/eyal-personal-skills` at `skills/eyal-visualization-v2/`. Run `scripts/ship.sh`, then tell Eyal to resync From GitHub in Willow. See [Shipping an update](#shipping-an-update-required).
 
 ---
 
@@ -416,3 +417,16 @@ Fix before showing. Note what was fixed.
 | [examples/funnel-graph.html](examples/funnel-graph.html) | Funnel graph dummy bake |
 
 **v1 inherited (do not duplicate):** [eyal-visualization/SKILL.md](../eyal-visualization/SKILL.md) -- 16 principles, Phase 0-1, delivery standards. Phase 2 visual laws: use the inherit table above.
+
+---
+
+## Shipping an update (required)
+
+Willow's "14 references" are the real `references/*.md` files in the repo, bundled with the skill. Agents Read them when this file links them. The 3 `examples/*.html` files are separate scaffolds (copy from disk), not part of that 14.
+
+After **any** edit to this skill:
+
+1. Keep `~/.claude/skills/eyal-visualization-v2` as the working copy.
+2. Push the same tree to git: `eyalbou/eyal-visualization-v2` (public, Willow import) and `eyalbou/eyal-personal-skills` (private kit).
+3. Run [`scripts/ship.sh`](scripts/ship.sh) so local and both remotes match.
+4. In Willow: Add Skill / the skill card → **resync From GitHub**. Push does not auto-update Willow.
