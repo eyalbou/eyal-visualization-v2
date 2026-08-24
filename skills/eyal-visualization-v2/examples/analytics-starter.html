@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics starter · Eyal Visualization v2</title>
+  <!-- Eyal Visualization v2 — analytics archetype starter (derived from multi-site-accounts-v2.html) -->
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/400.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/500.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/600.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/700.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    :root {
+      /* Axiforma has no public CDN -- it is picked up only if locally installed,
+         DM Sans is what actually ships. Never <link> Axiforma. */
+      --font: "Axiforma", "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+      /* Dashboard type scale — design-system.md §3 + dashboard-review §2.2 */
+      --text-xs: 12px;       /* smallest / footer / captions */
+      --text-sm: 13px;       /* labels / badges */
+      --text-base: 14px;     /* secondary copy */
+      --text-body: 16px;     /* body / subtitles */
+      --text-h3: 18px;       /* emphasized inline values */
+      --text-h2: 20px;       /* section titles */
+      --text-h1: 24px;       /* page title */
+      --text-kpi: 28px;      /* standard KPI */
+      --text-kpi-hero: 32px; /* hero KPI */
+      --text-hero-display: clamp(2.5rem, 6vw + 1rem, 4.75rem); /* Kokonut-style page hero only */
+
+      /* v2 Soft UI tokens */
+      --canvas: #F5F5F7;
+      --canvas-deep: #EBEBEF;
+      --ink: #1D1D1F;
+      --ink-soft: #6E6E73;
+      --paper: var(--canvas);
+      --paper-deep: var(--canvas-deep);
+      --surface: #FFFFFF;
+      --surface-raised: #FFFFFF;
+
+      --accent: #2563EB;
+      --accent-glow: rgba(37, 99, 235, 0.1);
+      --accent-2: #6366F1;
+      --accent-2-soft: rgba(99, 102, 241, 0.1);
+
+      --success: #69c440;
+      --success-soft: rgba(105, 196, 64, 0.16);
+      --warning: #ff9323;
+      --warning-soft: rgba(255, 147, 35, 0.16);
+      --danger: #da0808;
+      --danger-soft: rgba(218, 8, 8, 0.14);
+
+      --sev-ok: #69c440;
+      --sev-lo: #f1dc32;
+      --sev-mid: #ff9323;
+      --sev-hi: #da0808;
+      --sev-max: #950404;
+      --sev-flag: var(--sev-hi);
+      --sev-none: var(--paper-deep);
+      --sev-ok-ink: #1D1D1F;
+      --sev-lo-ink: #1D1D1F;
+      --sev-mid-ink: #1D1D1F;
+      --sev-hi-ink: #FFFFFF;
+      --sev-max-ink: #FFFFFF;
+      --sev-flag-ink: #FFFFFF;
+      --sev-ok-soft: rgba(105, 196, 64, 0.16);
+      --sev-lo-soft: rgba(241, 220, 50, 0.16);
+      --sev-mid-soft: rgba(255, 147, 35, 0.16);
+      --sev-hi-soft: rgba(218, 8, 8, 0.14);
+      --sev-max-soft: rgba(149, 4, 4, 0.16);
+
+      --border: rgba(0, 0, 0, 0.06);
+      --border-strong: rgba(0, 0, 0, 0.1);
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.08);
+
+      --radius-sm: 12px;
+      --radius: 20px;
+      --radius-lg: 24px;
+      --radius-pill: 9999px;
+
+      /* Page + hero geometric (full document canvas) */
+      --page-bg: linear-gradient(160deg, #F8FAFF 0%, #F0F4FF 35%, #F5F5F7 70%, #FAF8FF 100%);
+      --hero-mesh: radial-gradient(ellipse 80% 60% at 20% 20%, rgba(37, 99, 235, 0.08), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 85% 75%, rgba(99, 102, 241, 0.07), transparent 50%);
+      --shape-border: rgba(37, 99, 235, 0.12);
+      --shape-shadow: 0 8px 32px rgba(37, 99, 235, 0.08);
+      --shape-1: linear-gradient(90deg, rgba(37, 99, 235, 0.16), transparent);
+      --shape-2: linear-gradient(90deg, rgba(99, 102, 241, 0.14), transparent);
+      --shape-3: linear-gradient(90deg, rgba(79, 70, 229, 0.12), transparent);
+      --shape-4: linear-gradient(90deg, rgba(37, 99, 235, 0.1), transparent);
+      --shape-5: linear-gradient(90deg, rgba(99, 102, 241, 0.1), transparent);
+      --hero-badge-bg: rgba(255, 255, 255, 0.65);
+      --hero-badge-border: rgba(0, 0, 0, 0.06);
+      --hero-title-grad-1: linear-gradient(180deg, var(--ink) 0%, color-mix(in srgb, var(--ink) 75%, transparent) 100%);
+      --hero-title-grad-2: linear-gradient(90deg, var(--accent) 0%, color-mix(in srgb, var(--accent-2) 80%, var(--accent)) 55%, color-mix(in srgb, var(--accent) 70%, #fda4af) 100%);
+      --hero-subtitle: var(--ink-soft);
+    }
+
+    body.dark {
+      --canvas: #0F1117;
+      --canvas-deep: #161922;
+      --ink: #F5F5F7;
+      --ink-soft: #98989D;
+      --paper: var(--canvas);
+      --paper-deep: var(--canvas-deep);
+      --surface: #1C1F28;
+      --surface-raised: #252932;
+
+      --accent: #3B82F6;
+      --accent-glow: rgba(59, 130, 246, 0.15);
+      --accent-2: #818CF8;
+      --accent-2-soft: rgba(129, 140, 248, 0.12);
+
+      --warning: #ff9323;
+      --danger: #F87171;
+      --sev-ok: #69c440;
+      --sev-lo: #f1dc32;
+      --sev-mid: #ff9323;
+      --sev-hi: #f04444;
+      --sev-max: #da0808;
+      --sev-flag: var(--sev-hi);
+
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.12);
+
+      --shadow-sm: none;
+      --shadow-md: 0 4px 32px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.5);
+
+      --page-bg: #030303;
+      --hero-surface-base: #030303;
+      --hero-mesh: radial-gradient(ellipse 80% 60% at 15% 25%, rgba(99, 102, 241, 0.12), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 88% 72%, rgba(244, 63, 94, 0.08), transparent 50%);
+      --shape-border: rgba(255, 255, 255, 0.12);
+      --shape-shadow: 0 8px 32px rgba(255, 255, 255, 0.06);
+      --shape-1: linear-gradient(90deg, rgba(99, 102, 241, 0.22), transparent);
+      --shape-2: linear-gradient(90deg, rgba(244, 63, 94, 0.18), transparent);
+      --shape-3: linear-gradient(90deg, rgba(139, 92, 246, 0.16), transparent);
+      --shape-4: linear-gradient(90deg, rgba(245, 158, 11, 0.12), transparent);
+      --shape-5: linear-gradient(90deg, rgba(34, 211, 238, 0.12), transparent);
+      --hero-badge-bg: rgba(255, 255, 255, 0.04);
+      --hero-badge-border: rgba(255, 255, 255, 0.08);
+      --hero-title-grad-1: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.78) 100%);
+      --hero-title-grad-2: linear-gradient(90deg, #A5B4FC 0%, rgba(255, 255, 255, 0.92) 50%, #FDA4AF 100%);
+      --hero-subtitle: rgba(255, 255, 255, 0.45);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { font-family: var(--font); }
+
+    body {
+      font-size: var(--text-body);
+      background: var(--page-bg);
+      color: var(--ink);
+      line-height: 1.55;
+      min-height: 100vh;
+      transition: background 200ms ease, color 200ms ease;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Two families only. Form controls do not inherit font by default; an unstyled
+       <code> falls back to UA Courier and reads as a stray third typeface. */
+    button, input, select, textarea { font-family: inherit; }
+    code, pre { font-family: var(--font-mono); }
+    code {
+      font-size: 0.92em;
+      padding: 1px 6px;
+      border-radius: 5px;
+      background: var(--canvas-deep);
+      color: var(--ink);
+    }
+
+    /* Full-page geometric canvas (fixed behind all content) */
+    .page-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+      animation: canvasEaseIn 1.8s cubic-bezier(0.23, 0.86, 0.39, 0.96) forwards;
+    }
+
+    .page-canvas::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: var(--page-bg);
+      transition: background 200ms ease;
+    }
+
+    .page-canvas__mesh {
+      position: absolute;
+      inset: -25%;
+      z-index: 1;
+      background: var(--hero-mesh);
+      filter: blur(48px);
+      opacity: 0;
+      animation: meshEaseIn 2.2s cubic-bezier(0.23, 0.86, 0.39, 0.96) 0.2s forwards;
+    }
+
+    .page-canvas__vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background: linear-gradient(
+        to top,
+        var(--hero-surface-base) 0%,
+        transparent 22%,
+        transparent 78%,
+        color-mix(in srgb, var(--hero-surface-base) 90%, transparent) 100%
+      );
+      opacity: 0;
+      animation: vignetteEaseIn 2s cubic-bezier(0.25, 0.4, 0.25, 1) 0.35s forwards;
+    }
+
+    @keyframes canvasEaseIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes meshEaseIn {
+      from {
+        opacity: 0;
+        transform: scale(1.06);
+        filter: blur(64px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(48px);
+      }
+    }
+
+    @keyframes vignetteEaseIn {
+      from { opacity: 0; }
+      to { opacity: 0.75; }
+    }
+
+    .page-chrome {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 20;
+    }
+
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 28px 64px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* -- Hero geometric masthead (Kokonut-style, centered) -- */
+    .hero-geometric {
+      position: relative;
+      margin-bottom: 48px;
+      padding: 24px 0 8px;
+      background: transparent;
+      box-shadow: none;
+      animation: rise 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .hero-geometric__content {
+      text-align: center;
+      max-width: 52rem;
+      margin: 0 auto;
+      padding: 0 8px;
+    }
+
+    .hero-shape {
+      position: absolute;
+      z-index: 2;
+      border-radius: 9999px;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      border: 2px solid var(--shape-border);
+      box-shadow: var(--shape-shadow);
+      opacity: 0;
+      animation:
+        shapeEnter 2.4s cubic-bezier(0.23, 0.86, 0.39, 0.96) forwards,
+        shapeFloat 12s ease-in-out infinite;
+    }
+    .hero-shape::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.2), transparent 70%);
+    }
+
+    .hero-shape--1 {
+      width: min(52vw, 600px);
+      height: 140px;
+      left: -10%;
+      top: 12%;
+      --shape-rot: 12deg;
+      background: var(--shape-1);
+      animation-delay: 0.3s, 0.3s;
+    }
+    .hero-shape--2 {
+      width: min(44vw, 500px);
+      height: 120px;
+      right: -5%;
+      top: 62%;
+      --shape-rot: -15deg;
+      background: var(--shape-2);
+      animation-delay: 0.5s, 0.8s;
+    }
+    .hero-shape--3 {
+      width: min(32vw, 300px);
+      height: 80px;
+      left: 5%;
+      bottom: 8%;
+      --shape-rot: -8deg;
+      background: var(--shape-3);
+      animation-delay: 0.4s, 1.2s;
+    }
+    .hero-shape--4 {
+      width: min(24vw, 200px);
+      height: 60px;
+      right: 12%;
+      top: 8%;
+      --shape-rot: 20deg;
+      background: var(--shape-4);
+      animation-delay: 0.6s, 0.5s;
+    }
+    .hero-shape--5 {
+      width: min(18vw, 150px);
+      height: 40px;
+      left: 18%;
+      top: 6%;
+      --shape-rot: -25deg;
+      background: var(--shape-5);
+      animation-delay: 0.7s, 1.6s;
+    }
+
+    @keyframes shapeEnter {
+      from {
+        opacity: 0;
+        transform: translateY(-80px) rotate(calc(var(--shape-rot) - 15deg));
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) rotate(var(--shape-rot));
+      }
+    }
+
+    @keyframes shapeFloat {
+      0%, 100% { transform: translateY(0) rotate(var(--shape-rot)); }
+      50% { transform: translateY(15px) rotate(var(--shape-rot)); }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      background: var(--hero-badge-bg);
+      border: 1px solid var(--hero-badge-border);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--hero-subtitle);
+      letter-spacing: 0.04em;
+      margin-bottom: 32px;
+      animation: rise 300ms 120ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-badge__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 55%, transparent);
+    }
+
+    .hero-geometric h1 {
+      font-size: var(--text-hero-display);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin: 0 0 24px;
+      animation: rise 300ms 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .hero-title-line,
+    .hero-title-accent {
+      display: block;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-title-line {
+      background-image: var(--hero-title-grad-1);
+    }
+
+    .hero-title-accent {
+      margin-top: 0.08em;
+      background-image: var(--hero-title-grad-2);
+    }
+
+    .hero-geometric .subtitle {
+      font-size: clamp(0.9375rem, 1.2vw + 0.5rem, 1.25rem);
+      color: var(--hero-subtitle);
+      margin: 0 auto;
+      max-width: 36rem;
+      line-height: 1.65;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      animation: rise 300ms 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .hero-geometric .badge-row {
+      justify-content: center;
+      margin-top: 24px;
+      animation: rise 300ms 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @media (max-width: 640px) {
+      .hero-shape--4,
+      .hero-shape--5 {
+        opacity: 0.55;
+      }
+      .page-chrome {
+        top: 12px;
+        right: 12px;
+      }
+    }
+
+    body.dark .page-chrome .btn-icon {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--ink);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--text-xs);
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: var(--accent-2);
+      background: var(--accent-2-soft);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: var(--radius-pill);
+      padding: 5px 12px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      padding: 10px 16px;
+      font-family: inherit;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 100ms ease, box-shadow 100ms ease, transform 75ms ease;
+      border-radius: var(--radius-pill);
+      border: none;
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+    .badge--exp {
+      color: var(--accent);
+      background: var(--accent-glow);
+      border-color: rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-icon:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+    .btn-icon:active { transform: translateY(1px); }
+    .btn-icon:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* -- Population card -- */
+    .pop-card {
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 32px;
+      animation: rise 300ms 40ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .pop-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .section-label {
+      font-size: var(--text-h2);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .pop-subtitle {
+      font-size: var(--text-base);
+      color: var(--ink-soft);
+      margin-top: 6px;
+      max-width: 56ch;
+      line-height: 1.55;
+    }
+
+    .pop-toggle {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      background: var(--canvas-deep);
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      position: relative;
+    }
+
+    .pop-btn {
+      border: none;
+      background: transparent;
+      color: var(--ink-soft);
+      font-family: inherit;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 100ms ease, background 100ms ease;
+      white-space: nowrap;
+      position: relative;
+      z-index: 1;
+      border-radius: var(--radius-pill);
+      padding: 10px 16px;
+    }
+    .pop-btn:hover:not(.active) { background: rgba(0, 0, 0, 0.04); }
+    body.dark .pop-btn:hover:not(.active) { background: rgba(255, 255, 255, 0.06); }
+    .pop-btn.active {
+      background: var(--accent);
+      color: #FFFFFF;
+      font-weight: 600;
+      box-shadow: none;
+    }
+    body.dark .pop-btn.active {
+      background: var(--accent);
+      color: #FFFFFF;
+    }
+    .pop-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .pop-btn:active:not(.active) { transform: scale(0.98); }
+
+    /* -- KPI grid: asymmetric hero -- */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.35fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 800px) { .kpi-grid { grid-template-columns: 1fr; } }
+
+    .kpi {
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+      transition: transform 125ms ease, box-shadow 125ms ease;
+      animation: rise 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .kpi:nth-child(1) { animation-delay: 60ms; }
+    .kpi:nth-child(2) { animation-delay: 90ms; }
+    .kpi:nth-child(3) { animation-delay: 120ms; }
+    .kpi:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .kpi::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--border);
+      transition: background 125ms ease;
+    }
+    .kpi.hero::after {
+      height: 4px;
+      background: var(--accent);
+    }
+
+    .kpi.hero {
+      background:
+        linear-gradient(135deg, var(--accent-glow) 0%, transparent 58%),
+        var(--surface);
+      border: none;
+      box-shadow: var(--shadow-md);
+    }
+    .kpi.hero .kpi-value { color: var(--accent); }
+
+    .trend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      margin-top: 12px;
+    }
+    .trend-chip.up {
+      color: var(--success);
+      background: var(--success-soft);
+    }
+    .trend-chip.neutral {
+      color: var(--ink-soft);
+      background: var(--canvas-deep);
+    }
+
+    .kpi-label {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+
+    .kpi-value {
+      font-size: var(--text-kpi);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi.hero .kpi-value {
+      font-size: var(--text-kpi-hero);
+      color: var(--accent);
+    }
+
+    .kpi-detail {
+      font-size: var(--text-sm);
+      color: var(--ink-soft);
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    /* -- Chart card -- */
+    .card {
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 32px;
+      animation: rise 300ms 150ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: var(--text-h2);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .chart-hover-detail {
+      min-height: 28px;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: var(--ink);
+      padding: 10px 14px;
+      background: var(--canvas-deep);
+      border-radius: var(--radius-sm);
+      border-left: none;
+      transition: opacity 100ms ease;
+    }
+
+    .chart-hover-detail.muted {
+      color: var(--ink-soft);
+      font-weight: 400;
+    }
+
+    .chart-wrap { height: 340px; position: relative; }
+
+    .chart-caption {
+      font-size: var(--text-xs);
+      color: var(--ink-soft);
+      margin-top: 16px;
+    }
+
+    /* -- Insight -- */
+    .insight {
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      font-size: var(--text-body);
+      line-height: 1.65;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-md);
+      animation: rise 300ms 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .insight-label {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    /* -- Snap grid -- */
+    .snap-section-label {
+      font-size: var(--text-h2);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0 0 16px;
+      animation: rise 300ms 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .snap-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 1000px) { .snap-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .snap-grid { grid-template-columns: 1fr; } }
+
+    .snap-card {
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+      transition: transform 100ms ease, box-shadow 100ms ease;
+      animation: rise 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      cursor: pointer;
+    }
+
+    .snap-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: transparent;
+      transition: background 100ms ease;
+    }
+    .snap-grid .snap-card:nth-child(1) { animation-delay: 220ms; }
+    .snap-grid .snap-card:nth-child(2) { animation-delay: 240ms; }
+    .snap-grid .snap-card:nth-child(3) { animation-delay: 260ms; }
+    .snap-grid .snap-card:nth-child(4) { animation-delay: 280ms; }
+
+    .snap-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .snap-card.active-pop {
+      background:
+        linear-gradient(135deg, var(--accent-glow) 0%, transparent 55%),
+        var(--surface);
+      box-shadow: var(--shadow-md);
+    }
+    .snap-card.active-pop::after {
+      background: var(--accent);
+    }
+
+    .snap-label {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+
+    .snap-value {
+      font-size: var(--text-base);
+      font-weight: 500;
+      line-height: 1.55;
+    }
+
+    .snap-value strong {
+      font-weight: 600;
+      font-size: var(--text-h3);
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+    }
+
+    .snap-pct {
+      font-size: var(--text-kpi);
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 8px;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .footer {
+      font-size: var(--text-xs);
+      color: var(--ink-soft);
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      animation: rise 300ms 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page-canvas {
+        opacity: 1;
+        animation: none;
+      }
+      .page-canvas__mesh {
+        opacity: 1;
+        animation: none;
+        filter: blur(48px);
+        transform: none;
+      }
+      .page-canvas__vignette {
+        opacity: 0.75;
+        animation: none;
+      }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-canvas" aria-hidden="true">
+    <div class="page-canvas__mesh"></div>
+    <div class="hero-shape hero-shape--1"></div>
+    <div class="hero-shape hero-shape--2"></div>
+    <div class="hero-shape hero-shape--3"></div>
+    <div class="hero-shape hero-shape--4"></div>
+    <div class="hero-shape hero-shape--5"></div>
+    <div class="page-canvas__vignette"></div>
+  </div>
+
+  <div class="page-chrome">
+    <button class="btn-icon" id="themeBtn" type="button" aria-label="Toggle theme">
+      <i class="ph ph-moon" id="themeIcon" aria-hidden="true"></i>
+      <span id="themeLabel">Dark mode</span>
+    </button>
+  </div>
+
+  <div class="shell">
+    <header class="hero-geometric">
+      <div class="hero-geometric__content">
+        <div class="hero-badge">
+          <span class="hero-badge__dot" aria-hidden="true"></span>
+          Population sizing · AB test
+        </div>
+        <h1>
+          <span class="hero-title-line">Multi-site accounts</span>
+          <span class="hero-title-accent">100+ sites</span>
+        </h1>
+        <p class="subtitle">How many accounts carry 100+ sites, and does that concentration change who we should treat as the unit of analysis?</p>
+        <div class="badge-row">
+          <span class="badge badge--exp">
+            <i class="ph ph-flask" aria-hidden="true"></i>
+            Experiment 5073656
+          </span>
+          <span class="badge">
+            <i class="ph ph-clock" aria-hidden="true"></i>
+            Exposed since 2026-06-11 08:00 UTC
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <div class="pop-card">
+      <div class="pop-card-header">
+        <div>
+          <h2 class="section-label">Population</h2>
+          <p class="pop-subtitle" id="popSubtitle"></p>
+        </div>
+        <div class="pop-toggle" id="popToggleTop" role="tablist" aria-label="Population selector"></div>
+      </div>
+    </div>
+
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="card">
+      <div class="card-header-row">
+        <h2 class="card-title" style="margin:0">Sites per account</h2>
+        <div class="pop-toggle" id="popToggleHist" role="tablist" aria-label="Histogram population"></div>
+      </div>
+      <div id="chartHoverDetail" class="chart-hover-detail muted">Hover a bar to see account count and share of population</div>
+      <div class="chart-wrap">
+        <canvas id="histChart"></canvas>
+      </div>
+      <p class="chart-caption" id="chartCaption"></p>
+    </div>
+
+    <div class="insight">
+      <div class="insight-label">Key finding</div>
+      <div id="insightBox"></div>
+    </div>
+
+    <h2 class="snap-section-label">All populations at a glance</h2>
+    <div class="snap-grid" id="snapGrid"></div>
+
+    <p class="footer">
+      SQL: Q14 · Q14b · Q14d · Q14g–Q14k
+      · Generated <span id="generatedAt"></span>
+    </p>
+  </div>
+
+  <script>
+    const FONT_FAMILY = "'Axiforma', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    Chart.defaults.font.family = FONT_FAMILY;
+    Chart.defaults.font.size = 13;
+    Chart.register(ChartDataLabels);
+
+    const POP_ORDER = ["active_groups_v3", "chatbot_all", "active_groups_chatbot", "exposed"];
+
+    const DATA = {
+      generated_at: "2026-06-08T20:00:00Z",
+      populations: {
+        active_groups_v3: {
+          label: "Priority + Studio",
+          subtitle:
+            "Petri Active Groups union (studio + enterprise + target partners) -- priority + studio population, no chatbot filter",
+          total: { accounts: 6448159, plus100: 17248, pct: 0.27 },
+          histogram: [
+            { bucket: "0", accounts: 2055295 },
+            { bucket: "1-9", accounts: 3687770 },
+            { bucket: "10-49", accounts: 637509 },
+            { bucket: "50-99", accounts: 50337 },
+            { bucket: "100-199", accounts: 13028 },
+            { bucket: "200-499", accounts: 3487 },
+            { bucket: "500+", accounts: 733 },
+          ],
+        },
+        chatbot_all: {
+          label: "Entered chatbot",
+          subtitle:
+            "All accounts with any started AI chatbot conversation (all-time) -- not filtered to active groups",
+          total: { accounts: 1949516, plus100: 8981, pct: 0.46 },
+          histogram: [
+            { bucket: "0", accounts: 218444 },
+            { bucket: "1-9", accounts: 1439197 },
+            { bucket: "10-49", accounts: 262259 },
+            { bucket: "50-99", accounts: 20635 },
+            { bucket: "100-199", accounts: 6408 },
+            { bucket: "200-499", accounts: 2092 },
+            { bucket: "500+", accounts: 481 },
+          ],
+        },
+        active_groups_chatbot: {
+          label: "Active v3 + chatbot",
+          subtitle:
+            "Petri Active Groups INNER JOIN chatbot_conversations_acc (all-time started AI chat)",
+          total: { accounts: 347336, plus100: 8321, pct: 2.4 },
+          histogram: [
+            { bucket: "0", accounts: 21156 },
+            { bucket: "1-9", accounts: 170257 },
+            { bucket: "10-49", accounts: 129996 },
+            { bucket: "50-99", accounts: 17606 },
+            { bucket: "100-199", accounts: 5929 },
+            { bucket: "200-499", accounts: 1952 },
+            { bucket: "500+", accounts: 440 },
+          ],
+        },
+        exposed: {
+          label: "Exposed",
+          subtitle:
+            "Quix exposed_users -- v3 flags, experiment 5073656 since 2026-06-11 08:00 UTC",
+          total: { accounts: 3400, plus100: 262, pct: 7.71 },
+          histogram: [
+            { bucket: "0", accounts: 221 },
+            { bucket: "1-9", accounts: 1361 },
+            { bucket: "10-49", accounts: 1284 },
+            { bucket: "50-99", accounts: 272 },
+            { bucket: "100-199", accounts: 152 },
+            { bucket: "200-499", accounts: 82 },
+            { bucket: "500+", accounts: 28 },
+          ],
+        },
+      },
+    };
+
+    const BASELINE_KEY = "active_groups_v3";
+    let currentPop = "exposed";
+    let histChart = null;
+
+    function trendVsBaseline(popKey) {
+      const base = DATA.populations[BASELINE_KEY].total.pct;
+      const cur = DATA.populations[popKey].total.pct;
+      const diff = cur - base;
+      if (popKey === BASELINE_KEY) {
+        return { label: "Baseline population", cls: "neutral", icon: "ph-minus" };
+      }
+      return {
+        label: "+" + diff.toFixed(2) + "pp vs " + DATA.populations[BASELINE_KEY].label,
+        cls: "up",
+        icon: "ph-trend-up",
+      };
+    }
+
+    /* Compact scale: all digits under 1K, K at 1-2 decimals, M at two decimals. */
+    function fmtNum(val) {
+      if (val == null || isNaN(val)) return "-";
+      const n = Number(val);
+      const sign = n < 0 ? "-" : "";
+      const abs = Math.abs(n);
+      if (Math.round(abs) < 1000) return sign + String(Math.round(abs));
+      const k = abs / 1e3;
+      const two = k.toFixed(2);
+      if (parseFloat(two) < 1000) return sign + (two.endsWith("0") ? k.toFixed(1) : two) + "K";
+      return sign + (abs / 1e6).toFixed(2) + "M";
+    }
+
+    /* Exact grouped digits for tables and tooltips. toLocaleString is locale-dependent. */
+    function fmtInt(val) {
+      if (val == null || isNaN(val)) return "-";
+      const s = String(Math.round(Math.abs(val)));
+      let out = "";
+      for (let i = 0; i < s.length; i++) {
+        if (i > 0 && (s.length - i) % 3 === 0) out += ",";
+        out += s[i];
+      }
+      return (val < 0 ? "-" : "") + out;
+    }
+
+    function fmtPct(val, decimals) {
+      if (val == null || isNaN(val)) return "-";
+      return val.toFixed(decimals == null ? 1 : decimals) + "%";
+    }
+
+    function fmtDate(iso) {
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return String(iso);
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const hh = String(d.getUTCHours()).padStart(2, "0");
+      const mm = String(d.getUTCMinutes()).padStart(2, "0");
+      return months[d.getUTCMonth()] + " " + d.getUTCDate() + ", " + d.getUTCFullYear() + " " + hh + ":" + mm + " UTC";
+    }
+
+    function bucketPct(accounts, total) {
+      return (accounts / total) * 100;
+    }
+
+    function isHighlightBucket(bucket) {
+      return bucket === "100-199" || bucket === "200-499" || bucket === "500+";
+    }
+
+    function renderPopToggles() {
+      function buttons(extraClass) {
+        return POP_ORDER.map((key) => {
+          const active = key === currentPop;
+          const label = DATA.populations[key].label;
+          const cls = extraClass ? "pop-btn " + extraClass : "pop-btn";
+          return (
+            '<button class="' + cls + (active ? " active" : "") + '" data-pop="' + key +
+            '" role="tab" type="button" aria-selected="' + active + '">' + label + "</button>"
+          );
+        }).join("");
+      }
+      document.getElementById("popToggleTop").innerHTML = buttons("");
+      document.getElementById("popToggleHist").innerHTML = buttons("hist-pop-btn");
+      document.querySelectorAll(".pop-btn, .hist-pop-btn").forEach((btn) => {
+        btn.addEventListener("click", () => setPopulation(btn.dataset.pop));
+      });
+    }
+
+    function getPop() {
+      return DATA.populations[currentPop];
+    }
+
+    function setPopulation(key) {
+      currentPop = key;
+      document.querySelectorAll(".pop-btn, .hist-pop-btn").forEach((btn) => {
+        const active = btn.dataset.pop === key;
+        btn.classList.toggle("active", active);
+        btn.setAttribute("aria-selected", String(active));
+      });
+      renderAll();
+    }
+
+    function setChartHoverDetail(bucket, accountCount, pct, populationTotal, popLabel) {
+      const el = document.getElementById("chartHoverDetail");
+      if (!bucket) {
+        el.className = "chart-hover-detail muted";
+        el.textContent = "Hover a bar to see account count and share of population";
+        return;
+      }
+      el.className = "chart-hover-detail";
+      el.textContent =
+        bucket + " sites: " + fmtNum(accountCount) + " accounts" +
+        " (" + fmtPct(pct, 1) + " of " + fmtNum(populationTotal) + " " + popLabel.toLowerCase() + ")";
+    }
+
+    function renderKpis() {
+      const pop = getPop();
+      const trend = trendVsBaseline(currentPop);
+      document.getElementById("kpiGrid").innerHTML = `
+        <div class="kpi">
+          <div class="kpi-label">Accounts</div>
+          <div class="kpi-value">${fmtNum(pop.total.accounts)}</div>
+          <div class="kpi-detail">${pop.label}</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">100+ sites</div>
+          <div class="kpi-value">${fmtNum(pop.total.plus100)}</div>
+          <div class="kpi-detail">UGC sites per account</div>
+        </div>
+        <div class="kpi hero">
+          <div class="kpi-label">% with 100+</div>
+          <div class="kpi-value">${fmtPct(pop.total.pct, 2)}</div>
+          <div class="kpi-detail">of ${pop.label.toLowerCase()}</div>
+          <span class="trend-chip ${trend.cls}">
+            <i class="ph ${trend.icon}" aria-hidden="true"></i>
+            ${trend.label}
+          </span>
+        </div>
+      `;
+    }
+
+    function barColors(labels) {
+      const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#c45c26";
+      const accent2 = getComputedStyle(document.documentElement).getPropertyValue("--accent-2").trim() || "#2a6b5a";
+      return labels.map((b) => (isHighlightBucket(b) ? accent + "e6" : accent2 + "99"));
+    }
+
+    function renderChart() {
+      const pop = getPop();
+      const total = pop.total.accounts;
+      const buckets = pop.histogram;
+      const pcts = buckets.map((b) => bucketPct(b.accounts, total));
+      const accounts = buckets.map((b) => b.accounts);
+      const labels = buckets.map((b) => b.bucket);
+
+      const fg = getComputedStyle(document.body).getPropertyValue("--ink").trim() || "#ede8df";
+      const muted = getComputedStyle(document.body).getPropertyValue("--ink-soft").trim() || "#9a9488";
+      const isDark = document.body.classList.contains("dark");
+      const bgColors = barColors(labels);
+      const hoverColors = labels.map((b) =>
+        isHighlightBucket(b)
+          ? getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()
+          : getComputedStyle(document.documentElement).getPropertyValue("--accent-2").trim()
+      );
+
+      if (histChart) histChart.destroy();
+
+      const ctx = document.getElementById("histChart").getContext("2d");
+      setChartHoverDetail(null);
+
+      histChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{
+            label: "% of population",
+            data: pcts,
+            backgroundColor: bgColors,
+            hoverBackgroundColor: hoverColors,
+            borderRadius: { topLeft: 12, topRight: 12, bottomLeft: 4, bottomRight: 4 },
+            borderSkipped: false,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          onHover(_event, elements) {
+            if (!elements.length) {
+              setChartHoverDetail(null);
+              return;
+            }
+            const i = elements[0].index;
+            setChartHoverDetail(labels[i], accounts[i], pcts[i], total, pop.label);
+          },
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              anchor: "end",
+              align: "end",
+              offset: 2,
+              formatter: (v) => fmtPct(v, 1),
+              font: { family: FONT_FAMILY, size: 12, weight: 600 },
+              color: fg,
+            },
+            tooltip: {
+              enabled: true,
+              backgroundColor: isDark ? "#1c212b" : "#faf7f2",
+              titleColor: fg,
+              bodyColor: fg,
+              titleFont: { family: FONT_FAMILY, size: 14, weight: "600" },
+              bodyFont: { family: FONT_FAMILY, size: 13 },
+              borderColor: isDark ? "rgba(237,232,223,0.1)" : "rgba(26,23,20,0.1)",
+              borderWidth: 1,
+              padding: 14,
+              displayColors: false,
+              callbacks: {
+                title(items) { return items[0].label + " sites"; },
+                label(ctx) {
+                  const i = ctx.dataIndex;
+                  return [
+                    fmtNum(accounts[i]) + " accounts",
+                    fmtPct(pcts[i], 1) + " of population (" + fmtNum(total) + " total)",
+                  ];
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Sites per account (bucket)",
+                color: muted,
+                font: { family: FONT_FAMILY, size: 12, weight: "500" },
+              },
+              ticks: {
+                color: muted,
+                font: { family: FONT_FAMILY, size: 12 },
+              },
+              grid: { display: false },
+            },
+            y: {
+              title: {
+                display: true,
+                text: "% of population",
+                color: muted,
+                font: { family: FONT_FAMILY, size: 12, weight: "500" },
+              },
+              ticks: {
+                color: muted,
+                font: { family: FONT_FAMILY, size: 12 },
+                callback: (v) => fmtPct(v, 0),
+              },
+              grid: { color: isDark ? "rgba(237,232,223,0.05)" : "rgba(26,23,20,0.05)" },
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+
+      document.getElementById("histChart").onmouseleave = () => setChartHoverDetail(null);
+      document.getElementById("chartCaption").textContent =
+        "Accent = 100+ site buckets · bars = % of population · total: " +
+        fmtNum(total) + " " + pop.label.toLowerCase() + " accounts";
+    }
+
+    function renderMeta() {
+      const pop = getPop();
+      document.getElementById("popSubtitle").textContent = pop.subtitle;
+
+      const p = DATA.populations;
+      document.getElementById("insightBox").textContent =
+        "Four nested populations. " + p.active_groups_v3.label + ": " + fmtPct(p.active_groups_v3.total.pct, 2) +
+        " with 100+ sites (" + fmtNum(p.active_groups_v3.total.accounts) + "). " + p.chatbot_all.label + ": " + fmtPct(p.chatbot_all.total.pct, 2) +
+        " (" + fmtNum(p.chatbot_all.total.accounts) + "). " + p.active_groups_chatbot.label + ": " + fmtPct(p.active_groups_chatbot.total.pct, 2) +
+        " (" + fmtNum(p.active_groups_chatbot.total.accounts) + "). " + p.exposed.label + " in experiment: " + fmtPct(p.exposed.total.pct, 2) +
+        " (" + fmtNum(p.exposed.total.accounts) + "). Multi-site rate rises as populations narrow toward the test cohort.";
+
+      document.getElementById("snapGrid").innerHTML = POP_ORDER.map((key) => {
+        const snap = DATA.populations[key];
+        const isActive = key === currentPop;
+        const t = trendVsBaseline(key);
+        return `
+          <div class="snap-card${isActive ? " active-pop" : ""}" data-snap="${key}" role="button" tabindex="0" aria-label="Switch to ${snap.label}">
+            <div class="snap-label">${snap.label}</div>
+            <div class="snap-value">
+              <strong>${fmtNum(snap.total.accounts)}</strong>
+              accounts · ${fmtNum(snap.total.plus100)} with 100+
+            </div>
+            <div class="snap-pct">${fmtPct(snap.total.pct, 2)}</div>
+            <span class="trend-chip ${t.cls}" style="margin-top:8px">
+              <i class="ph ${t.icon}" aria-hidden="true"></i>
+              ${t.label}
+            </span>
+          </div>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".snap-card").forEach((card) => {
+        card.addEventListener("click", () => setPopulation(card.dataset.snap));
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setPopulation(card.dataset.snap);
+          }
+        });
+      });
+
+      document.getElementById("generatedAt").textContent = fmtDate(DATA.generated_at);
+    }
+
+    function renderAll() {
+      renderKpis();
+      renderChart();
+      renderMeta();
+    }
+
+    function setTheme(dark) {
+      document.body.classList.toggle("dark", dark);
+      document.getElementById("themeLabel").textContent = dark ? "Light mode" : "Dark mode";
+      document.getElementById("themeIcon").className = dark ? "ph ph-sun" : "ph ph-moon";
+      renderAll();
+    }
+
+    document.getElementById("themeBtn").addEventListener("click", () => {
+      setTheme(!document.body.classList.contains("dark"));
+    });
+
+    renderPopToggles();
+    renderAll();
+  </script>
+</body>
+</html>

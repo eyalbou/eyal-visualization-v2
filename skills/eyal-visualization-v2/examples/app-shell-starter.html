@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App shell starter · Eyal Visualization v2</title>
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/400.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/500.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/600.css" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    :root {
+      /* Axiforma has no public CDN -- it is picked up only if locally installed,
+         DM Sans is what actually ships. Never <link> Axiforma. */
+      --font: "Axiforma", "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --text-xs: 12px;
+      --text-sm: 13px;
+      --text-base: 14px;
+      --text-body: 16px;
+      --text-h2: 20px;
+      --text-h3: 18px;
+      --text-kpi: 28px;
+      --canvas: #F5F5F7;
+      --canvas-deep: #EBEBEF;
+      --ink: #1D1D1F;
+      --ink-soft: #6E6E73;
+      --surface: #FFFFFF;
+      --surface-raised: #FFFFFF;
+      --accent: #2563EB;
+      --accent-glow: rgba(37, 99, 235, 0.1);
+      --accent-2: #6366F1;
+      --accent-2-soft: rgba(99, 102, 241, 0.1);
+      --success: #69c440;
+      --success-soft: rgba(105, 196, 64, 0.16);
+      --warning: #ff9323;
+      --warning-soft: rgba(255, 147, 35, 0.16);
+      --danger: #da0808;
+      --danger-soft: rgba(218, 8, 8, 0.14);
+      --border: rgba(0, 0, 0, 0.06);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.06);
+      --radius: 20px;
+      --radius-lg: 24px;
+      --radius-pill: 9999px;
+    }
+    body.dark {
+      --canvas: #0F1117;
+      --canvas-deep: #161922;
+      --ink: #F5F5F7;
+      --ink-soft: #98989D;
+      --surface: #1C1F28;
+      --surface-raised: #252932;
+      --accent: #3B82F6;
+      --accent-glow: rgba(59, 130, 246, 0.15);
+      --border: rgba(255, 255, 255, 0.08);
+      --shadow-md: 0 4px 32px rgba(0, 0, 0, 0.4);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: var(--font); }
+    body {
+      font-size: var(--text-body);
+      background: var(--canvas);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+    /* Two families only. Form controls do not inherit font by default; an unstyled
+       <code> falls back to UA Courier and reads as a stray third typeface. */
+    button, input, select, textarea { font-family: inherit; }
+    code, pre { font-family: var(--font-mono); }
+    code {
+      font-size: 0.92em;
+      padding: 1px 6px;
+      border-radius: 5px;
+      background: var(--canvas-deep);
+      color: var(--ink);
+    }
+    .app-layout { display: grid; grid-template-columns: 228px 1fr; min-height: 100vh; }
+    .app-sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 228px;
+      padding: 24px 16px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+    }
+    .app-brand {
+      font-size: var(--text-h3);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 32px;
+      padding: 0 8px;
+    }
+    .side-nav { display: flex; flex-direction: column; gap: 4px; }
+    .side-nav__item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: var(--radius-pill);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: background 100ms ease, color 100ms ease;
+    }
+    .side-nav__item:hover { background: var(--canvas-deep); color: var(--ink); }
+    .side-nav__item.active { background: var(--accent); color: #fff; }
+    .nav-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: rgba(255,255,255,0.2);
+    }
+    .side-nav__item:not(.active) .nav-badge {
+      background: var(--accent-2-soft);
+      color: var(--accent);
+    }
+    .app-main { margin-left: 228px; padding: 24px 32px 48px; }
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .app-header h1 { font-size: var(--text-h2); font-weight: 600; letter-spacing: -0.02em; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .search-input {
+      width: 240px;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-family: inherit;
+      font-size: var(--text-sm);
+      color: var(--ink);
+    }
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+      font-family: inherit;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--ink);
+      cursor: pointer;
+      position: relative;
+    }
+    .btn-icon .nav-badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; }
+    .widget-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+    }
+    .widget {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+    }
+    .widget-span-4 { grid-column: span 4; }
+    .widget-span-8 { grid-column: span 8; }
+    .widget-label {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+    }
+    .widget-value {
+      font-size: var(--text-kpi);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--accent);
+    }
+    .trend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      margin-top: 12px;
+      color: var(--success);
+      background: var(--success-soft);
+    }
+    .list-row {
+      display: grid;
+      grid-template-columns: 40px 1fr auto auto;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .list-row__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--canvas-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+    .list-row__title { font-size: var(--text-sm); font-weight: 600; }
+    .list-row__meta { font-size: var(--text-xs); color: var(--ink-soft); }
+    .category-pill {
+      font-size: var(--text-xs);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-2-soft);
+      color: var(--accent-2);
+    }
+    .list-row__amount { font-size: var(--text-sm); font-weight: 600; color: var(--success); }
+    @media (max-width: 900px) {
+      .app-sidebar { display: none; }
+      .app-main { margin-left: 0; }
+      .widget-span-4, .widget-span-8 { grid-column: span 12; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="app-sidebar">
+      <div class="app-brand">Studio</div>
+      <nav class="side-nav">
+        <a class="side-nav__item active" href="#">Overview</a>
+        <a class="side-nav__item" href="#">Analytics</a>
+        <a class="side-nav__item" href="#">Reports</a>
+        <a class="side-nav__item" href="#">Alerts <span class="nav-badge">3</span></a>
+      </nav>
+    </aside>
+    <main class="app-main">
+      <header class="app-header">
+        <h1>Overview</h1>
+        <div class="header-actions">
+          <input class="search-input" type="search" placeholder="Search..." aria-label="Search" />
+          <button class="btn-icon" type="button" aria-label="Notifications">
+            <i class="ph ph-bell"></i>
+            <span class="nav-badge">5</span>
+          </button>
+          <button class="btn-icon" id="themeBtn" type="button">
+            <i class="ph ph-moon" id="themeIcon"></i>
+            <span id="themeLabel">Dark</span>
+          </button>
+        </div>
+      </header>
+      <div class="widget-grid">
+        <div class="widget widget-span-4">
+          <div class="widget-label">Revenue</div>
+          <div class="widget-value">$45.2K</div>
+          <span class="trend-chip"><i class="ph ph-trend-up"></i> +12.4%</span>
+        </div>
+        <div class="widget widget-span-4">
+          <div class="widget-label">Active users</div>
+          <div class="widget-value">2.4K</div>
+          <span class="trend-chip"><i class="ph ph-trend-up"></i> +5.1%</span>
+        </div>
+        <div class="widget widget-span-4">
+          <div class="widget-label">Conversion</div>
+          <div class="widget-value">3.2%</div>
+          <span class="trend-chip"><i class="ph ph-trend-up"></i> +0.4pp</span>
+        </div>
+        <div class="widget widget-span-8">
+          <div class="widget-label">Recent activity</div>
+          <div class="list-row">
+            <div class="list-row__icon"><i class="ph ph-arrow-down-left"></i></div>
+            <div>
+              <div class="list-row__title">Payment received</div>
+              <div class="list-row__meta">Today · 14:32</div>
+            </div>
+            <span class="category-pill">Income</span>
+            <span class="list-row__amount">+$1.2K</span>
+          </div>
+          <div class="list-row">
+            <div class="list-row__icon"><i class="ph ph-arrow-up-right"></i></div>
+            <div>
+              <div class="list-row__title">Subscription renewal</div>
+              <div class="list-row__meta">Yesterday · 09:15</div>
+            </div>
+            <span class="category-pill">Billing</span>
+            <span class="list-row__amount" style="color:var(--ink-soft)">-$89</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    document.getElementById("themeBtn").addEventListener("click", () => {
+      const dark = !document.body.classList.contains("dark");
+      document.body.classList.toggle("dark", dark);
+      document.getElementById("themeLabel").textContent = dark ? "Light" : "Dark";
+      document.getElementById("themeIcon").className = dark ? "ph ph-sun" : "ph ph-moon";
+    });
+  </script>
+</body>
+</html>
