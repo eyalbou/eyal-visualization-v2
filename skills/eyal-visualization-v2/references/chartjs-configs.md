@@ -77,6 +77,33 @@ For intent loop charts: `${loops} (${fmtPct(loop_rate, 0)})`.
 
 **Sort:** default highest volume / share on top. Optional **Volume** | **Survey order** toggle. Ties keep catalog order. Filter pills may stay in survey/form order.
 
+**Exception -- ordered scales.** Severity (mild → frustrated → rage), TOR bands, and any ordinal heat sort **by rank**, left-to-right or top-to-bottom, not by volume. Volume stays in the labels. Legend matches the bar. See [color-valence.md](color-valence.md).
+
+---
+
+## Horizontal bar category labels (name + n)
+
+Ranked, mix, and gap horizontal bars put **volume on the y-axis**, not only in the tooltip.
+
+Pattern: `PREMIUM (1.4K)`
+
+| Part | Color | Formatter |
+|------|--------|-----------|
+| Category name | `--ink-soft` (the label color) | truncated if long; full name in tooltip |
+| `(` `)` | same as the name | |
+| Count | the **bar's indicative color** (series / Cara / Chatbot / valence fill for that row) | `fmtNum` (`117`, `1.4K`, `26.0K`, `1.25M`) |
+
+Do **not** dump `Name (n)` as one Chart.js tick string. That paints name and count the same color. Draw with an `afterDraw` plugin:
+
+1. Mask the y-gutter with `--surface`.
+2. Right-align: name, then `(`, `fmtNum(n)`, `)`.
+3. Hide native ticks (`ticks.color = "transparent"`).
+4. Reserve width with `y.afterFit` (~236px for short product codes, ~300px for truncated intent titles).
+
+n is the **subject population** (Cara sessions on a Cara-vs-Chatbot page). Share % and the comparison n stay in the tooltip. Tooltips still use `fmtInt` for the audit count.
+
+Mix / diverging bars: the count color follows the **bar fill**, not a single accent. Teal vs indigo vs gray must match that row.
+
 ---
 
 ## Smooth line chart (minimal axes)
