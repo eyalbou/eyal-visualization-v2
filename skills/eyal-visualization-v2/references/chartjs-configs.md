@@ -91,7 +91,7 @@ Pattern: `PREMIUM (1.4K)`
 |------|--------|-----------|
 | Category name | `--ink-soft` (the label color) | truncated if long; full name in tooltip |
 | `(` `)` | same as the name | |
-| Count | the **bar's indicative color** (series / Cara / Chatbot / valence fill for that row) | `fmtNum` (`117`, `1.4K`, `26.0K`, `1.25M`) |
+| Count | the **subject volume color** -- Cara n is `--cara` ( `--cara-label` on `body.dark` ). Never the bar / winner / Chatbot fill | `fmtNum` (`117`, `1.4K`, `26.0K`, `1.25M`) |
 
 Do **not** dump `Name (n)` as one Chart.js tick string. That paints name and count the same color. Draw with an `afterDraw` plugin:
 
@@ -100,9 +100,9 @@ Do **not** dump `Name (n)` as one Chart.js tick string. That paints name and cou
 3. Hide native ticks (`ticks.color = "transparent"`).
 4. Reserve width with `y.afterFit` (~236px for short product codes, ~300px for truncated intent titles).
 
-n is the **subject population** (Cara sessions on a Cara-vs-Chatbot page). Share % and the comparison n stay in the tooltip. Tooltips still use `fmtInt` for the audit count.
+n is the **subject population** (Cara sessions on a Cara-vs-Chatbot page). Paint it in the subject color. Share % and the comparison n stay in the tooltip. Tooltips still use `fmtInt` for the audit count.
 
-Mix / diverging bars: the count color follows the **bar fill**, not a single accent. Teal vs indigo vs gray must match that row.
+Diverging / mix / gap bars: the **bar** encodes who won (teal vs indigo vs gray). The **n** does not. n is how many subject sessions sit on that row -- same Cara teal on every row. Do not recolor n to match the bar fill.
 
 ---
 

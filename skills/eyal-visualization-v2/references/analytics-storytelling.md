@@ -100,7 +100,7 @@ Do not rely on intent-only samplers when the story is about **drivers** -- inver
 Use `chartjs-plugin-datalabels` on horizontal bar charts:
 
 - Count + rate on the **bar end**: `{count} ({pct})`
-- Y-axis category is **`Name (n)` two-tone**: name + parens in `--ink-soft`, n in the bar color via `fmtNum`. Plugin-drawn, not a single tick string. [chartjs-configs.md](chartjs-configs.md#horizontal-bar-category-labels-name--n)
+- Y-axis category is **`Name (n)` two-tone**: name + parens in `--ink-soft`, n in the **subject color** (Cara n = Cara teal, never winner fill) via `fmtNum`. Plugin-drawn, not a single tick string. [chartjs-configs.md](chartjs-configs.md#horizontal-bar-category-labels-name--n)
 - `anchor: 'end'`, `align: 'end'`, `clip: false`
 - Font must match `Chart.defaults.font.family`
 

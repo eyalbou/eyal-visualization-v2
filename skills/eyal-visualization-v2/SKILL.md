@@ -1,7 +1,7 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.5.2
+version: 0.5.3
 ---
 
 # Eyal Visualization v2 (Soft UI)
@@ -113,7 +113,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] Chart ticks and datalabels **14px / 600**. Hide collisions; do not shrink to 11px. Funnel conversion chip stays the loudest number
 - [ ] Series colors **locked** across population toggles (same hex for SSA / SR / NS, or Cara vs Chatbot)
 - [ ] Click a bar → filter the sibling chart that shares the grain. Two metrics with different baselines (TOR vs resolution) = **toggle**, never dual-axis
-- [ ] Horizontal driver / mix / gap bars: y-axis is `Name (n)` two-tone -- name + `()` in `--ink-soft`, count in the bar's indicative color via `fmtNum`. Not a single-color Chart.js tick string.
+- [ ] Horizontal driver / mix / gap bars: y-axis is `Name (n)` two-tone -- name + `()` in `--ink-soft`, count in the **subject color** (Cara `--cara` / `--cara-label` on dark) via `fmtNum`. Never the bar / winner fill. Not a single-color Chart.js tick string.
 - [ ] No histogram sparklines; Chart.js re-renders on theme toggle. Keep `rise` ~300ms, canvas enter on first load, hover ~100ms, `prefers-reduced-motion`. Do **not** default Chart.js animation off
 
 ### 5. Chrome and motion
@@ -331,7 +331,7 @@ Pick by the **question**. Implementations live in [chartjs-configs.md](reference
 
 | Question | Chart |
 |----------|--------|
-| Rank / compare categories / drivers | Horizontal bar, volume sort, end labels. Y-axis is `Name (n)` two-tone (name + parens in `--ink-soft`, count in the bar color via `fmtNum`). Long names → horizontal, not vertical. [chartjs-configs.md](references/chartjs-configs.md#horizontal-bar-category-labels-name--n) |
+| Rank / compare categories / drivers | Horizontal bar, volume sort, end labels. Y-axis is `Name (n)` two-tone (name + parens in `--ink-soft`, count in the **subject color** via `fmtNum` -- Cara n is always Cara teal, never winner fill). Long names → horizontal, not vertical. [chartjs-configs.md](references/chartjs-configs.md#horizontal-bar-category-labels-name--n) |
 | Few discrete periods (quarters, 4-8 weeks) | Vertical bar |
 | Trend over continuous time | Smooth line `tension: 0.4`. Two series → dual-line + crosshair. 5+ series → small multiples |
 | Widget footer trend | Sparkline **only if dated**. Never under a histogram bucket |

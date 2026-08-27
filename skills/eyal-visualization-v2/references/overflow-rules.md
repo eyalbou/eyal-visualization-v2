@@ -11,7 +11,7 @@
 ## Horizontal bar charts
 - [ ] **Right datalabels clipped**: Every chart with `anchor: 'end', align: 'end'` MUST have `layout: { padding: { right: 60-80 } }` -- the value depends on label length (percentages ~60px, counts with K format ~80px)
 - [ ] **Y-axis labels truncated (long category names)**: Chart.js does NOT word-wrap axis labels. If categories exceed ~25 chars (e.g. `ui_triggered_action/suggest_section`), truncate the **name** only: `callback` / `shortLabel` to ~26-34 chars -- and show the full label in the tooltip. Do not truncate the `fmtNum` count.
-- [ ] **Y-axis `Name (n)` two-tone**: Native ticks cannot split colors. Use an `afterDraw` plugin (see [chartjs-configs.md](chartjs-configs.md#horizontal-bar-category-labels-name--n)). Hide ticks (`color: "transparent"`). `afterFit` width ~236px (product codes) / ~300px (intent titles) so `PREMIUM (1.4K)` is not clipped on the left.
+- [ ] **Y-axis `Name (n)` two-tone**: Native ticks cannot split colors. Use an `afterDraw` plugin (see [chartjs-configs.md](chartjs-configs.md#horizontal-bar-category-labels-name--n)). Hide ticks (`color: "transparent"`). `afterFit` width ~236px (product codes) / ~300px (intent titles) so `PREMIUM (1.4K)` is not clipped on the left. n (subject volume) is always the subject color -- Cara n is Cara teal, never the bar / winner fill.
 - [ ] **Y-axis labels cut at left**: If labels are long, add `layout: { padding: { left: 10 } }` or increase the chart container width
 
 ## Line / area charts
