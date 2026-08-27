@@ -14,9 +14,12 @@ Chart.js does **not** inherit font from CSS. Declare the stack once and reuse th
 const FONT_FAMILY = "'Axiforma', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 Chart.defaults.font.family = FONT_FAMILY;
 Chart.defaults.font.size = 14;
+Chart.defaults.animation = false;
 ```
 
 The string must match `--font` in CSS exactly. Never introduce a mono stack into a chart.
+
+**Toggles:** Chart.js animation stays **off**. Population / theme / tab / filter must not tween bars. If the chart is kept alive, call `chart.update('none')`. Destroy + recreate is fine under `Chart.defaults.animation = false`. CSS page `rise` and canvas enter on first load are separate -- do not turn those off.
 
 Axis ticks and bar end labels use the canonical `fmtNum` from [SKILL.md](../SKILL.md#number-formatting) -- all digits below 1K, trimmed `K` up to 1M, `M` at two decimals:
 

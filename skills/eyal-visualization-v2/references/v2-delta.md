@@ -57,6 +57,7 @@ Centered two-line gradient title + badge pill. Theme toggle in `.page-chrome` fi
 - **Survey funnel:** CSS columns, not Chart.js. One hue family per population, 400/500/600, 4-8% sheen. The Cara All / sky / violet / apricot ramps in [funnel-graph.md](funnel-graph.md) are a **worked example**, not global law.
 - **Action-item cards** on Overview after the stake chart. Glow default on. See [component-recipes.md](component-recipes.md#action-item-cards).
 - Chart ticks and datalabels **14px / 600**. Hide collisions; do not shrink to 11px.
+- Chart.js **animation off** on population / theme / tab / filter (`Chart.defaults.animation = false`, `update('none')`). CSS page enter stays.
 
 ---
 

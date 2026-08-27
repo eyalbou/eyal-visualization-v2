@@ -1,7 +1,7 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.5.3
+version: 0.5.4
 ---
 
 # Eyal Visualization v2 (Soft UI)
@@ -60,7 +60,7 @@ Recipes stay in references. Copy CSS from assets on disk.
 
 1. **No decorative images.** Icons: **Phosphor** default. Lucide only if the user asks.
 2. **Two font families, never more** -- `--font` + `--font-mono` on `<code>` / `<pre>` only. [Fonts](#fonts).
-3. **Light mode default** -- `body.dark` toggle (sibling of `:root`, not nested in it). Re-render Chart.js on theme change.
+3. **Light mode default** -- `body.dark` toggle (sibling of `:root`, not nested in it). Re-render Chart.js on theme change with animation off (checklist section 7).
 4. **Anti-Vibe-Code** -- `--accent` from the user. If none, **ask once**. Offer the [optional brand palette](#optional-brand-palette) as one choice. Do not silently use `#2563EB` unless they said CC-family / keep last dashboard / use the optional palette.
 5. **Self-contained HTML** -- CDN only.
 6. **No fake sparklines** on histogram / cross-section snaps. Sparklines only for dated series.
@@ -114,7 +114,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] Series colors **locked** across population toggles (same hex for SSA / SR / NS, or Cara vs Chatbot)
 - [ ] Click a bar → filter the sibling chart that shares the grain. Two metrics with different baselines (TOR vs resolution) = **toggle**, never dual-axis
 - [ ] Horizontal driver / mix / gap bars: y-axis is `Name (n)` two-tone -- name + `()` in `--ink-soft`, count in the **subject color** (Cara `--cara` / `--cara-label` on dark) via `fmtNum`. Never the bar / winner fill. Not a single-color Chart.js tick string.
-- [ ] No histogram sparklines; Chart.js re-renders on theme toggle. Keep `rise` ~300ms, canvas enter on first load, hover ~100ms, `prefers-reduced-motion`. Do **not** default Chart.js animation off
+- [ ] No histogram sparklines; Chart.js re-renders on theme toggle. Keep CSS `rise` ~300ms, canvas enter on first load, hover ~100ms, `prefers-reduced-motion`
 
 ### 5. Chrome and motion
 
@@ -130,6 +130,16 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] Hero: bad-when-up in `--accent` blue → valence miss
 - [ ] **Copy scan** (required): [Copy-scan pass](#copy-scan-pass)
 - [ ] Note fixes in the delivery message
+
+### 7. Chart.js toggles
+
+- [ ] `Chart.defaults.animation = false` (set next to the font defaults). Population / theme / tab / filter updates must not tween: `chart.update('none')` or destroy + recreate under that default. Do **not** leave Chart.js duration on for toggles
+- [ ] CSS page enter stays (`rise` ~300ms, canvas on first load, hover ~100ms). Do not kill page-enter motion to satisfy this rule
+
+### 8. Stash (unless already covered)
+
+- [ ] If the user did **not** already forbid sharing, say local-only, or give a Stash URL: publish the HTML with Stash MCP `stash__publish_artifact` (`slug` kebab-case, `files` with `index.html` UTF-8). Return `https://bo.wix.com/stash/<slug>/`. Do not set `anonymous`. Do not set `overwrite` unless they confirmed replace
+- [ ] Skip this step if they already said not to upload / keep it local / already published
 
 **Shell-only skip:** section 2 except hyphen/fonts; no forced Sampling tab; no forced funnel; no action-item strip.
 
@@ -217,6 +227,7 @@ Axiforma has **no public CDN**. Never `<link>` / `@import` it. Load all four DM 
 
 - Set family on `html, body`. `button, input, select, textarea { font-family: inherit; }`
 - `Chart.defaults.font.family` = the same string as `--font`
+- `Chart.defaults.animation = false` -- no tween on population / theme / tab / filter. Use `chart.update('none')` when not destroying
 - Phosphor is an icon font; it does not count toward the two
 
 `--text-hero-display` only on the page hero h1. Sections stay `--text-h2`.
@@ -414,6 +425,7 @@ Call `renderAll()` inside `setTheme()`.
 - Bad-when-up hero in `--accent` blue; two blues for mild vs frustrated; green for mild-bad
 - White type on `--sev-ok` / `--sev-lo` / `--sev-mid`; black type on `--sev-hi` / `--sev-max`
 - Shrinking chart labels to 11px; reminting series colors per population toggle
+- Chart.js grow / tween on population, theme, tab, or filter toggle (`animation` left on; `update()` without `'none'`)
 - Dual-axis for TOR vs resolution; action-item strip duplicated as a second list
 - Reading or depending on `eyal-visualization` v1 files
 
@@ -434,6 +446,7 @@ Call `renderAll()` inside `setTheme()`.
 | `axiforma` in a `<link>` / `@import` | zero hits |
 | `text-h1` on hero | zero hits -- hero uses `--text-hero-display` |
 | `Chart.defaults.font.family` | present, equal to `--font` |
+| `Chart.defaults.animation` | present, `false` |
 | `toFixed(1) + "K"` | zero hits |
 | `fmtNum` / `fmtInt` / `fmtPct` bodies | present; null sentinel `"-"` not `"--"` |
 | `—` `–` | zero hits |
