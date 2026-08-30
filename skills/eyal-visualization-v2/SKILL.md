@@ -50,7 +50,7 @@ Maps only if the question is geo.
 
 **Scaffold:** copy `assets/analytics-starter.html` or `assets/app-shell-starter.html` **from disk**. Do **not** Read the full HTML into context.
 
-**If-needed:** [analytics-storytelling.md](references/analytics-storytelling.md) (analytics), [funnel-graph.md](references/funnel-graph.md) (3-stage conversion), [app-shell-patterns.md](references/app-shell-patterns.md) (shell), [chartjs-configs.md](references/chartjs-configs.md) (drawing Chart.js), [overflow-rules.md](references/overflow-rules.md) (a chart exists), [hero-geometric.md](references/hero-geometric.md) (not copying the starter), [component-recipes.md](references/component-recipes.md) (KPI / action cards).
+**If-needed:** [analytics-storytelling.md](references/analytics-storytelling.md) (analytics), [funnel-graph.md](references/funnel-graph.md) (3-stage conversion), [app-shell-patterns.md](references/app-shell-patterns.md) (shell), [chartjs-configs.md](references/chartjs-configs.md) (drawing Chart.js -- **read Chart hover** when any Chart.js tooltip exists), [overflow-rules.md](references/overflow-rules.md) (a chart exists), [hero-geometric.md](references/hero-geometric.md) (not copying the starter), [component-recipes.md](references/component-recipes.md) (KPI / action cards).
 
 Recipes stay in references. Copy CSS from assets on disk.
 
@@ -112,8 +112,9 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] 3-stage conversion: CSS funnel (hue family **per population**; Cara table is an **example**)
 - [ ] Chart ticks and datalabels **14px / 600**. Hide collisions; do not shrink to 11px. Funnel conversion chip stays the loudest number
 - [ ] Series colors **locked** across population toggles (same hex for SSA / SR / NS, or Cara vs Chatbot)
-- [ ] Click a bar → filter the sibling chart that shares the grain. Two metrics with different baselines (TOR vs resolution) = **toggle**, never dual-axis
-- [ ] Horizontal driver / mix / gap bars: y-axis is `Name (n)` two-tone -- name + `()` in `--ink-soft`, count in the **subject color** (Cara `--cara` / `--cara-label` on dark) via `fmtNum`. Never the bar / winner fill. Not a single-color Chart.js tick string.
+- [ ] Click a bar → filter the sibling chart that shares the grain. Two metrics with different baselines (TOR vs resolution) = **toggle**, never dual-axis. Hover follows the **active pill** (TOR hover = TOR; Res hover = Res; Score / mixed = both, each with its own gap). `label` returns a string array -- never one `TOR · Res · gap` line.
+- [ ] Chart hover sits **on top**: HTML `external` `#chart-tip` on `body` (`z-index: 9999`). Overlay plugins use `afterDatasetsDraw` with HTML tooltips, or `beforeTooltipDraw` if the tooltip stays on canvas. Never `afterDraw` + `fillRect` over a canvas tooltip. [chartjs-configs.md](references/chartjs-configs.md#chart-hover--tooltip-must-sit-on-top)
+- [ ] Horizontal driver / mix / gap bars: y-axis is `Name (n)` two-tone -- name in `--ink`, `()` in `--ink-soft`, count in the **subject color** (Cara `--cara` / `--cara-label` on dark) via `fmtNum`. Never the bar / winner fill. Not a single-color Chart.js tick string. Gutter plugin = `beforeTooltipDraw`.
 - [ ] No histogram sparklines; Chart.js re-renders on theme toggle. Keep CSS `rise` ~300ms, canvas enter on first load, hover ~100ms, `prefers-reduced-motion`
 
 ### 5. Chrome and motion
@@ -128,6 +129,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] Grep list below
 - [ ] KPI row: any count ≥ 1000 still raw digits → missed `fmtNum`
 - [ ] Hero: bad-when-up in `--accent` blue → valence miss
+- [ ] Chart hover: overlay `afterDraw` + `fillRect` with no tooltip `external:` → fail. Metric-toggle hover ignores the pill, or Score omits one metric → fail
 - [ ] **Copy scan** (required): [Copy-scan pass](#copy-scan-pass)
 - [ ] Note fixes in the delivery message
 
@@ -342,7 +344,7 @@ Pick by the **question**. Implementations live in [chartjs-configs.md](reference
 
 | Question | Chart |
 |----------|--------|
-| Rank / compare categories / drivers | Horizontal bar, volume sort, end labels. Y-axis is `Name (n)` two-tone (name + parens in `--ink-soft`, count in the **subject color** via `fmtNum` -- Cara n is always Cara teal, never winner fill). Long names → horizontal, not vertical. [chartjs-configs.md](references/chartjs-configs.md#horizontal-bar-category-labels-name--n) |
+| Rank / compare categories / drivers | Horizontal bar, volume sort, end labels. Y-axis is `Name (n)` two-tone (name in `--ink`, parens in `--ink-soft`, count in the **subject color** via `fmtNum` -- Cara n is always Cara teal, never winner fill). Long names → horizontal, not vertical. [chartjs-configs.md](references/chartjs-configs.md#horizontal-bar-category-labels-name--n) |
 | Few discrete periods (quarters, 4-8 weeks) | Vertical bar |
 | Trend over continuous time | Smooth line `tension: 0.4`. Two series → dual-line + crosshair. 5+ series → small multiples |
 | Widget footer trend | Sparkline **only if dated**. Never under a histogram bucket |
@@ -427,6 +429,7 @@ Call `renderAll()` inside `setTheme()`.
 - Shrinking chart labels to 11px; reminting series colors per population toggle
 - Chart.js grow / tween on population, theme, tab, or filter toggle (`animation` left on; `update()` without `'none'`)
 - Dual-axis for TOR vs resolution; action-item strip duplicated as a second list
+- Canvas Chart.js tooltip under `afterDraw` overlays (hover "behind" y-labels); one-string tooltip mixing TOR + Res + gap; metric-toggle hover that ignores the active pill
 - Reading or depending on `eyal-visualization` v1 files
 
 ---
@@ -451,6 +454,9 @@ Call `renderAll()` inside `setTheme()`.
 | `fmtNum` / `fmtInt` / `fmtPct` bodies | present; null sentinel `"-"` not `"--"` |
 | `—` `–` | zero hits |
 | ` -- ` in visible copy | zero hits (ignore `var(--token)` and SQL `--` in `<pre>`) |
+| `afterDraw` + `fillRect` | fail if tooltip has no `external:` -- overlays use `afterDatasetsDraw` (HTML tip) or `beforeTooltipDraw` (canvas tip). [chartjs-configs.md](references/chartjs-configs.md#chart-hover--tooltip-must-sit-on-top) |
+| `TOR Cara` and `Res Cara` in one `label` return string | fail unless Score / mixed and `label` returns an **array** of lines |
+| metric-toggle chart (`data-metric` / TOR \| Resolution pills) | hover body follows the active pill; Score shows both metrics |
 
 5. Read the KPI row, hero color, mild → rage order, then run the [copy-scan](#copy-scan-pass).
 
@@ -469,7 +475,7 @@ Fix before showing. Note what was fixed.
 | [analytics-storytelling.md](references/analytics-storytelling.md) | Tab arc, overlap, copy-scan |
 | [dashboard-patterns.md](references/dashboard-patterns.md) | Analytics layout |
 | [state-patterns.md](references/state-patterns.md) | Pills, hover info, linked charts |
-| [chartjs-configs.md](references/chartjs-configs.md) | Chart.js extensions; 14px ticks |
+| [chartjs-configs.md](references/chartjs-configs.md) | Chart.js extensions; 14px ticks; **Chart hover** (z-order + metric-toggle body) |
 | [overflow-rules.md](references/overflow-rules.md) | Clip / collision rules |
 | [assets/analytics-starter.html](assets/analytics-starter.html) | Analytics scaffold (copy from disk) |
 | [assets/app-shell-starter.html](assets/app-shell-starter.html) | Shell scaffold |

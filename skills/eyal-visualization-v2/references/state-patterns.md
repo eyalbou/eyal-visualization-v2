@@ -357,6 +357,8 @@ Clicking a bar filters the sibling chart that shares the grain (reason → comme
 
 Two metrics with different baselines (TOR vs resolution) are a **pill toggle**, never one dual-axis.
 
+The **hover follows the active pill**. TOR hover = TOR rates + TOR gap. Resolution hover = Res rates + Res gap. Score / mixed hover = both metrics, each with its own gap. `label` returns a string array. Never one concatenated line. Tooltip must sit **on top** of axis overlays -- HTML `external` or overlay plugins on `beforeTooltipDraw`. Full rules: [chartjs-configs.md](chartjs-configs.md#chart-hover--tooltip-must-sit-on-top).
+
 ```javascript
 function onBarClick(key) {
   selectedKey = selectedKey === key ? null : key;
