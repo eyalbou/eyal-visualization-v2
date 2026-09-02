@@ -18,6 +18,10 @@ Budgets (SKILL.md "Copy budget"):
   hero subtitle    .subtitle                    35 words, max 2 sentences
   hero eyebrow     .hero-badge                   4 words
   hero chip        .badge in hero                4 words each, max 3 chips
+
+Chips are also checked on content: a tool or pipeline name, a commit hash, a
+service / table slug, or three `·`-joined segments fails regardless of length.
+That is Methodology content, not hero content.
   card body        .action-reason               20 words, max 1 sentence
   scored row body  .row-reason                  20 words, max 1 sentence
   insight bullet   li inside .insight           18 words
@@ -66,6 +70,36 @@ MAX_HERO_CHIPS = 3
 # Chips and captions are label fragments, not prose.
 LABELS = {"hero-badge", "badge", "kpi-caption"}
 
+# A chip carries scope / window / n / freshness. Method never gets promoted to
+# the hero, so these are rejected on content and not just on length.
+CHIP_KINDS = {"hero-badge", "badge"}
+STACK_WORDS = {
+    "trino", "xmla", "dax", "presto", "airflow", "dbt", "snowflake",
+    "bigquery", "spark", "quix", "petri", "kafka", "athena", "redshift",
+    "tableau", "powerbi", "looker", "sql", "etl", "dag", "ctas", "mdx",
+}
+# Hex letters AND digits, so a plain numeric ID (Experiment 5073656) is fine
+# but a commit sha (a7bbfca8) is not.
+HASH_RE = re.compile(r"^(?=.*[a-f])(?=.*\d)[0-9a-f]{7,40}$", re.I)
+SLUG_RE = re.compile(r"^[a-z]+(?:[-_][a-z]+){1,}$")
+
+
+def chip_content_problem(text):
+    """Return a reason string when a chip carries method instead of scope."""
+    if text.count("\u00b7") >= 2:
+        return "3+ segments in one chip"
+    for raw in re.split(r"[\s\u00b7,]+", text):
+        token = raw.strip(".,:;()[]").lower()
+        if not token:
+            continue
+        if token in STACK_WORDS:
+            return "tool / pipeline name %r" % token
+        if HASH_RE.match(token):
+            return "looks like a hash %r" % token
+        if SLUG_RE.match(token) and token not in ("logged-in", "multi-site", "self-service", "opted-in"):
+            return "looks like a service / table slug %r" % token
+    return None
+
 
 def count_words(text):
     return len([t for t in text.split() if re.search(r"[0-9A-Za-z]", t)])
@@ -95,6 +129,12 @@ def report(kind, label, text):
         if sentences > SENTENCE_BUDGET[kind]:
             ok = False
             note = "%d sentences / %d" % (sentences, SENTENCE_BUDGET[kind])
+
+    if kind in CHIP_KINDS:
+        problem = chip_content_problem(text)
+        if problem:
+            ok = False
+            note = problem
 
     print("%-4s %-22s %3dw / %-4s %-20s %s" % (
         "PASS" if ok else "FAIL", label, words, budget, note, shorten(text)))

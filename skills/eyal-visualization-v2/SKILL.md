@@ -1,12 +1,12 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.6.0
+version: 0.6.1
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-**Skill version 0.6.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
+**Skill version 0.6.1** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
 
 Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
@@ -163,7 +163,7 @@ The reader is a stakeholder, not a domain owner. Visible copy is the **short ver
 |---------|-------|-----|
 | Hero subtitle | `.subtitle` | **35 words**, max 2 sentences |
 | Hero eyebrow | `.hero-badge` | **4 words** |
-| Hero chip | `.badge` in the hero | **4 words** each, **max 3 chips** |
+| Hero chip | `.badge` in the hero | **4 words** each, **max 3 chips**, content-checked |
 | Action card body | `.action-reason` | **20 words**, 1 sentence |
 | Scored / comparison row body | `.row-reason` | **20 words**, 1 sentence |
 | Insight bullet | `li` inside `.insight` | **18 words** |
@@ -174,6 +174,8 @@ Run it before delivery:
 ```bash
 python3 scripts/copy-check.py dashboard.html
 ```
+
+Chips are checked on **content**, not only length -- a tool or pipeline name, a commit hash, a `snake_case` / `kebab-case` service or table slug, or three `·`-joined segments fails even at 4 words. A plain numeric ID (`Experiment 5073656`) is fine.
 
 **What moves to hover.** Anything that is evidence rather than the point: commit counts, connector and tool names, table names, why this threshold, sample mechanics, "held to 4 because…". Also every domain term, internal name, and metric definition -- if a stakeholder outside the domain would need to look it up, it needs an info hover, `*`, collapse, or a Methodology row. Hover has no word cap; the visible layer does.
 
@@ -516,7 +518,7 @@ Call `renderAll()` inside `setTheme()`.
 | `TOR Cara` and `Res Cara` in one `label` return string | fail unless Score / mixed and `label` returns an **array** of lines |
 | metric-toggle chart (`data-metric` / TOR \| Resolution pills) | hover body follows the active pill; Score shows both metrics |
 | `.subtitle` word count | ≤35 words, ≤2 sentences |
-| `.badge` in hero | ≤3 chips, ≤4 words each, no pipeline / tool / hash / table / run ID |
+| `.badge` in hero | ≤3 chips, ≤4 words each, no pipeline / tool / hash / table slug / `·` stack |
 | `.action-reason` / `.row-reason` | ≤20 words, 1 sentence each |
 | `li` inside `.insight` | ≤18 words each |
 | `.kpi-caption` | ≤8 words |
