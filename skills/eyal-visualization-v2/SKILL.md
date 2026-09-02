@@ -1,12 +1,12 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.6.1
+version: 0.7.0
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-**Skill version 0.6.1** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
+**Skill version 0.7.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
 
 Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
@@ -26,6 +26,7 @@ This file plus `references/` and `assets/` is the full pack.
 | Hero KPI color | Valence token; bad-when-up is never trust-blue |
 | Null sentinel | `-` |
 | Tab arc | Overview → drill-down(s) → Sampling → Methodology |
+| Sampling IDs | Session sampler: uuid cell = UM link; conversation id cell = conversation URL. Never a second URL column. [Sampling table](#sampling-table-ids-are-the-links) |
 | Type | Two families; four DM Sans weights; no Axiforma `<link>` |
 | Doughnut | **2-4** slices; 5+ or one slice >80% → horizontal bar |
 | Copy length | Hard word caps, checked by script. [Copy budget](#copy-budget-hard-caps) |
@@ -98,7 +99,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] **Every capped surface is inside [Copy budget](#copy-budget-hard-caps).** Subtitle ≤35 words / ≤2 sentences; hero chips ≤3 × ≤4 words; card + row body ≤20 words / 1 sentence; insight bullet ≤18 words; KPI caption ≤8 words
 - [ ] Hero chips carry **population / window / n / freshness in plain words**. No pipeline, tool, connector, table, commit hash, run ID, or second-level timestamp
 - [ ] After the stake chart: ranked **action-item cards** (operative title + research reason with 1-2 numbers). Skip only if there is no recommended move
-- [ ] Tabs: Overview → drill-down(s) → Sampling → Methodology. Sampling may be a **filter recap** (inclusion / exclusion / n remaining) -- still its own tab. Not a required session sampler
+- [ ] Tabs: Overview → drill-down(s) → Sampling → Methodology. Sampling may be a **filter recap** (inclusion / exclusion / n remaining) -- still its own tab. Not a required session sampler. If a **session sampler table** exists: uuid is the User Manager link; conversation id is the conversation URL; no extra URL columns. [Sampling table](#sampling-table-ids-are-the-links)
 - [ ] One primary visual per question; chart type from the [chooser](#chart-chooser); title = finding in stakeholder English
 - [ ] At most 3 insight bullets under the chart (outcome, not method). One short under-chart caveat only if skipping it would misread the number
 - [ ] Extra method / definitions / grain live in **hover info**, `*`, collapse, or Methodology. Every domain term, internal name, or metric definition on screen has an info hover
@@ -236,6 +237,23 @@ actions: [
 ```
 
 Bake counts as numbers; format in render. Recipe: [component-recipes.md](references/component-recipes.md#action-item-cards).
+
+---
+
+## Sampling table: IDs are the links
+
+Applies when Sampling is a **session sampler table**, not a filter-recap-only tab. The id **is** the link. A second URL column is a fail.
+
+| Column | Cell text | `href` | Ban |
+|--------|-----------|--------|-----|
+| uuid | the uuid | User Manager. Wix default: `https://bo.wix.com/um/users/{uuid}/accounts/{uuid}` | A `user_manager_url` column; uuid as plain text next to a UM button |
+| Conversation id | the conversation / session id | the conversation URL. Wix Cara: `https://bo.wix.com/_serverless/cara-conversation-page/sessions/{cid}`. Wix Chatbot: `https://bo.wix.com/chatbot-builder/conversations/{cid}` | A `conversation_url` column; `Listen` / `Open` replacing the id |
+
+Details / Listen chrome may sit **beside** the id. It does not replace it. Truncate long ids with ellipsis + `title` of the full id; do not hide the id behind an icon-only control.
+
+CSV export keeps `uuid` and `conversation_id` as those values. Do not add URL columns. CSV cannot carry a live hyperlink.
+
+Missing id → `-`. `target="_blank"` + `rel="noopener"`. Row-click that opens a modal must not steal the id click (`data-stop-row` or equivalent).
 
 ---
 
@@ -481,6 +499,7 @@ Call `renderAll()` inside `setTheme()`.
 - Three charts of the same mix; insight after secondary charts; hardcoded fractions
 - Horizontal bars without end labels; ordered scale sorted by volume
 - Sampler buried in Methodology; Methodology not last; Sampling skipped on analytics
+- Session sampler: uuid or conversation id as plain text with a separate URL column; Listen/Open replacing the cid
 - Em/en/`--` punctuation in **artifact UI**
 - Chart.js / Sankey for 3-stage survey funnel; one `--accent` for every funnel population
 - Neon chatbot orange next to Cara blues; ice-300 funnel fills; two-tone funnel bars
@@ -523,6 +542,7 @@ Call `renderAll()` inside `setTheme()`.
 | `li` inside `.insight` | ≤18 words each |
 | `.kpi-caption` | ≤8 words |
 | domain term / internal name in visible copy | has an info hover, `*`, collapse, or Methodology row |
+| session sampler `uuid` / conversation id | cell text is the id; `href` is UM / conversation URL; zero extra URL columns |
 
 5. **Run the copy budget script.** `python3 scripts/copy-check.py <file>` must exit 0:
 

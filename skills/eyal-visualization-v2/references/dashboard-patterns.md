@@ -63,7 +63,9 @@ Default investigation arc -- see [analytics-storytelling.md](analytics-storytell
 hero + tab-bar (persistent -- same title + subtitle on every tab)
   Tab 1 Overview     -- stake: often volume / funnel; 3 KPIs + one chart + read
   Tabs 2-n Drill-down -- one question each, chained toward the finding
-  Sampling           -- last-but-one; filter recap (session tool optional)
+  Sampling           -- last-but-one; filter recap (session tool optional).
+                       Session table: uuid = UM link; conversation id = conversation URL;
+                       never a second URL column (see SKILL.md Sampling table)
   Methodology        -- last; scope, grain, SQL, project documentation
 ```
 
@@ -79,6 +81,7 @@ Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Visual laws: [S
 
 - [ ] Hero title is the research name; subtitle is why / get in **≤35 words / ≤2 sentences**, on every tab
 - [ ] Tabs: Overview → drill-down(s) → Sampling → Methodology (Sampling may be a filter recap)
+- [ ] Session sampler (if present): uuid and conversation id are the hyperlinks, not extra URL columns
 - [ ] Overview action-item cards after the stake chart (or skipped because there is no move)
 - [ ] Full-page `.page-canvas` -- not hero-card background
 - [ ] `--text-hero-display` for page hero only; sections use `--text-h2`

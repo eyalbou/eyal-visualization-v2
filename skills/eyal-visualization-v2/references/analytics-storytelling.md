@@ -51,7 +51,7 @@ Tabs are a **story sequence**, not a gallery of leftover charts. Walk the reader
 |-------|------------|--------------|------------------|
 | **1 Overview** | Introduce the story. How big is this, or what are we trying to find? Often **volume / funnel**. Pick graphs that set the stake. After the stake chart: ranked **action-item cards** (skip only if there is no recommended move). | 3 KPIs, one primary chart, 3-bullet read, action strip | Driver taxonomy, SQL, sampler, a second briefing card |
 | **2-n Drill-down** | Each tab answers one question the previous tab set up. Build toward the interesting finding -- do not dump it first. | One primary visual + insight; collapse tables | Repeating Tab 1 KPIs; three views of the same mix |
-| **Sampling** | Always last-but-one. Full filter recap (inclusion / exclusion / n remaining). A session sampler is optional -- the recap is enough. | Filter recap and/or working tool + conversation links | Analysis charts |
+| **Sampling** | Always last-but-one. Full filter recap (inclusion / exclusion / n remaining). A session sampler is optional -- the recap is enough. If a sampler **table** exists: uuid cell = User Manager link; conversation id cell = conversation URL. Never a second URL column. [SKILL.md Sampling table](../SKILL.md#sampling-table-ids-are-the-links) | Filter recap and/or working tool + id hyperlinks | Analysis charts; extra `user_manager_url` / `conversation_url` columns |
 | **Methodology** | Always last. How we know + **project documentation** (scope, grain, joins, caveats, SQL, definitions). | Collapsed SQL, scope vs stage-2 split | Repeated driver charts |
 
 Hero + tab chrome persist. Title and subtitle stay the same on every tab. Optional deep link: `?tab=`.
@@ -187,6 +187,7 @@ Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Analytics extra
 - [ ] Action-item cards after the stake chart (or skipped with a reason)
 - [ ] Each later analysis tab is a drill-down of the previous, not a parallel dump
 - [ ] Sampling is last-but-one (filter recap is enough); Methodology is last
+- [ ] Session sampler (if present): uuid and conversation id are the hyperlinks, not extra URL columns
 - [ ] Hero subtitle ≤35 words / ≤2 sentences: why / get; identical on every tab
 - [ ] Hero chips: ≤3, ≤4 words, scope / window / n / freshness -- no pipeline or tool names
 - [ ] `copy-check.py` exits 0
