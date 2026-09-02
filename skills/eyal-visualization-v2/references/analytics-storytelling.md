@@ -2,7 +2,7 @@
 
 Patterns for investigation and presentation dashboards: RCA, prevalence studies, taxonomy, funnel + score + reasons.
 
-Hero copy (title = research name; subtitle = why / get / aim in 2-3 sentences) lives in [hero-geometric.md](hero-geometric.md). This file is the tab arc, overlap rules, driver charts, action cards, and copy-scan.
+Hero copy (title = research name; subtitle = why / get in ≤35 words, ≤2 sentences) lives in [hero-geometric.md](hero-geometric.md). Caps: [SKILL.md Copy budget](../SKILL.md#copy-budget-hard-caps). This file is the tab arc, overlap rules, driver charts, action cards, and copy-scan.
 
 ---
 
@@ -20,7 +20,7 @@ Before building, list the 3-5 questions the viewer must answer without opening a
 
 Every **section and chart** must map to one question. Delete sections that do not.
 
-Put **why read / what you get / what we aim to achieve** in the **hero subtitle** (2-3 sentences). "How we will answer it" is one clause, not SQL. If the line is ambiguous, draft 3 options and wait. The Overview tab **is** the hero -- no extra briefing card.
+Put **why read / what you get** in the **hero subtitle**: **≤35 words, max 2 sentences** ([Copy budget](../SKILL.md#copy-budget-hard-caps)). The aim can stay implied. "How we will answer it" is one clause, not SQL or scoring mechanics. If the line is ambiguous, draft 3 options and wait. The Overview tab **is** the hero -- no extra briefing card.
 
 ---
 
@@ -39,7 +39,7 @@ Put **why read / what you get / what we aim to achieve** in the **hero subtitle*
 1. Primary metric (prevalence / rate / count)
 2-3. Supporting rate or n (not a second view of the same mix)
 
-Each KPI subtitle: count + share. Definitions go in **click elaboration panel** (info icon), not inline jargon.
+Each KPI subtitle: count + share, **≤8 words** (`.kpi-caption`). Definitions go in **click elaboration panel** (info icon), not inline jargon. Any domain term on screen needs that hover.
 
 ---
 
@@ -152,7 +152,9 @@ Prose reads as speech, so it takes the compact form: "25.16K events, 67.96% of t
 - Intent coverage / backfill counts in hero KPIs
 - Rules/classifier layer in main story (appendix only)
 - Hardcoded fractions in insights (`47/118`) -- always derive from `DATA`
-- Funnel copy, caveats, or SQL as the hero subtitle
+- Funnel copy, caveats, or SQL as the hero subtitle; a subtitle over 35 words
+- Hero chips carrying pipeline, tool, connector, table, or hash (`XMLA · vizion-platform a7bbfca8 · Trino`)
+- Scored comparison rows that print the evidence chain on screen instead of in hover
 - Driver bars frozen in survey order with no volume default
 - Severity / TOR-band stacked bars sorted by volume (frustrated left of mild)
 - Subset chart stacked under a parent split with no drill-down arrow
@@ -165,13 +167,13 @@ Prose reads as speech, so it takes the compact form: "25.16K events, 67.96% of t
 
 ## Action-item cards (Overview)
 
-After the stake chart. Verb-first title + research reason with 1-2 formatted numbers. Glow default on. Recipe: [component-recipes.md](component-recipes.md#action-item-cards). Skip only if there is no recommended move. Show once.
+After the stake chart. Verb-first title + research reason, **≤20 words, 1 sentence**, with 1-2 formatted numbers. Glow default on. Recipe: [component-recipes.md](component-recipes.md#action-item-cards). Skip only if there is no recommended move. Show once.
 
 ---
 
 ## Copy-scan pass
 
-Required before showing the file. Visible text is load-bearing only. Extra explanation in hover. Full scan: [SKILL.md](../SKILL.md#copy-scan-pass).
+Required before showing the file. Visible text is load-bearing only. Extra explanation in hover. Run `python3 scripts/copy-check.py <file>` and clear every `FAIL`. Full scan: [SKILL.md](../SKILL.md#copy-scan-pass).
 
 Fail if the page is a report dump, the insight retells the chart, or a caveat that changes the read lives only in the info-i.
 
@@ -185,7 +187,9 @@ Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Analytics extra
 - [ ] Action-item cards after the stake chart (or skipped with a reason)
 - [ ] Each later analysis tab is a drill-down of the previous, not a parallel dump
 - [ ] Sampling is last-but-one (filter recap is enough); Methodology is last
-- [ ] Hero subtitle is 2-3 sentences: why / get / aim; identical on every tab
+- [ ] Hero subtitle ≤35 words / ≤2 sentences: why / get; identical on every tab
+- [ ] Hero chips: ≤3, ≤4 words, scope / window / n / freshness -- no pipeline or tool names
+- [ ] `copy-check.py` exits 0
 - [ ] One visual per question; at most 3 insight bullets; one under-chart caveat max
 - [ ] Copy-scan passed -- insights follow the chart; no bar restatement; extra in hover
 - [ ] Every horizontal bar has end labels; default sort is volume **except ordered scales (severity, TOR bands) which sort by rank**

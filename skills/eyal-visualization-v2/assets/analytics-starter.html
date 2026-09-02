@@ -902,6 +902,10 @@
   </div>
 
   <div class="shell">
+    <!-- Copy budget (SKILL.md): .hero-badge <=4 words · .subtitle <=35 words / 2 sentences
+         · .badge chips max 3, <=4 words each, scope / window / n / freshness only.
+         No pipeline, tool, table, hash or run ID in a chip. Verify with:
+         python3 scripts/copy-check.py <file> -->
     <header class="hero-geometric">
       <div class="hero-geometric__content">
         <div class="hero-badge">
@@ -920,7 +924,7 @@
           </span>
           <span class="badge">
             <i class="ph ph-clock" aria-hidden="true"></i>
-            Exposed since 2026-06-11 08:00 UTC
+            Exposed since Jun 11
           </span>
         </div>
       </div>
@@ -1311,12 +1315,13 @@
       document.getElementById("popSubtitle").textContent = pop.subtitle;
 
       const p = DATA.populations;
+      // Insight block: <=54 words (or <=18 per bullet). State the finding, do not
+      // dump every population row - that is what the snap grid below is for.
       document.getElementById("insightBox").textContent =
-        "Four nested populations. " + p.active_groups_v3.label + ": " + fmtPct(p.active_groups_v3.total.pct, 2) +
-        " with 100+ sites (" + fmtNum(p.active_groups_v3.total.accounts) + "). " + p.chatbot_all.label + ": " + fmtPct(p.chatbot_all.total.pct, 2) +
-        " (" + fmtNum(p.chatbot_all.total.accounts) + "). " + p.active_groups_chatbot.label + ": " + fmtPct(p.active_groups_chatbot.total.pct, 2) +
-        " (" + fmtNum(p.active_groups_chatbot.total.accounts) + "). " + p.exposed.label + " in experiment: " + fmtPct(p.exposed.total.pct, 2) +
-        " (" + fmtNum(p.exposed.total.accounts) + "). Multi-site rate rises as populations narrow toward the test cohort.";
+        "Multi-site accounts concentrate as the population narrows: " +
+        fmtPct(p.active_groups_v3.total.pct, 2) + " of " + p.active_groups_v3.label.toLowerCase() +
+        " against " + fmtPct(p.exposed.total.pct, 2) + " of the exposed cohort. " +
+        "The test group is the most multi-site-heavy of the four.";
 
       document.getElementById("snapGrid").innerHTML = POP_ORDER.map((key) => {
         const snap = DATA.populations[key];

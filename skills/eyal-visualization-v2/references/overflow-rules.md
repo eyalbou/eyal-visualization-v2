@@ -11,10 +11,8 @@
 ## Horizontal bar charts
 - [ ] **Right datalabels clipped**: Every chart with `anchor: 'end', align: 'end'` MUST have `layout: { padding: { right: 60-80 } }` -- the value depends on label length (percentages ~60px, counts with K format ~80px)
 - [ ] **Y-axis labels truncated (long category names)**: Chart.js does NOT word-wrap axis labels. If categories exceed ~25 chars (e.g. `ui_triggered_action/suggest_section`), truncate the **name** only: `callback` / `shortLabel` to ~26-34 chars -- and show the full label in the tooltip. Do not truncate the `fmtNum` count.
-- [ ] **Y-axis `Name (n)` two-tone**: Native ticks cannot split colors. Use an `afterDatasetsDraw` plugin with HTML tooltips, or `beforeTooltipDraw` if the tooltip stays on canvas (see [chartjs-configs.md](chartjs-configs.md#horizontal-bar-category-labels-name--n)). Hide ticks (`color: "transparent"`). `afterFit` width ~272px (product codes) / ~312px (intent titles) so `PREMIUM (1.4K)` is not clipped on the left. Name in `--ink` (not `--ink-soft`). n (subject volume) is always the subject color -- Cara n is Cara teal, never the bar / winner fill. Never `afterDraw` for this mask -- it paints over the canvas tooltip.
-- [ ] **Y-axis labels cut at left**: If labels are long, add `layout: { padding: { left: 10 } }` or increase the chart container width. Left-align names; do not right-align a long `NAME_WITH_UNDERSCORES` into the canvas edge.
-- [ ] **Chart hover behind labels / cards**: Canvas tooltip + overlay plugin `afterDraw` (`fillRect` gutter) = hover buried. Use HTML `external` tooltip (`#chart-tip` on `body`, `z-index: 9999`) or hook overlays on `beforeTooltipDraw`. See [chartjs-configs.md](chartjs-configs.md#chart-hover--tooltip-must-sit-on-top).
-- [ ] **Chart hover one-line wrap**: `label` must return a string **array**. A single `TOR … · Res … · gap …` string wraps; the active gap sits next to the other metric. Metric-toggle charts: hover follows the pill; Score / mixed shows both metrics, each with its own gap.
+- [ ] **Y-axis `Name (n)` two-tone**: Native ticks cannot split colors. Use an `afterDraw` plugin (see [chartjs-configs.md](chartjs-configs.md#horizontal-bar-category-labels-name--n)). Hide ticks (`color: "transparent"`). `afterFit` width ~236px (product codes) / ~300px (intent titles) so `PREMIUM (1.4K)` is not clipped on the left. n (subject volume) is always the subject color -- Cara n is Cara teal, never the bar / winner fill.
+- [ ] **Y-axis labels cut at left**: If labels are long, add `layout: { padding: { left: 10 } }` or increase the chart container width
 
 ## Line / area charts
 - [ ] **Peak data points clipped at top**: Add `layout: { padding: { top: 10-15 } }` OR set `y: { suggestedMax }` with ~5-10% headroom above the max value
@@ -59,6 +57,4 @@
 - [ ] **Grep for `align: 'end'`** on horizontal bars -- confirm every hit has `padding: { right:`
 - [ ] **Grep for `position: 'right'`** on legends -- confirm the chart has `padding: { right:` or container is wide enough
 - [ ] **Grep for `maxRotation`** -- if any axis rotates labels, confirm the container has enough height
-- [ ] **Grep for `afterDraw`** -- if a hit `fillRect`s the y-gutter (name+n mask) and tooltip has no `external:`, fail. Overlay plugins use `afterDatasetsDraw` (HTML tip) or `beforeTooltipDraw` (canvas tip).
-- [ ] **Grep for `TOR Cara` / one-line ` · Res`** -- metric-toggle `label` must return an array; Score shows both; TOR/Res hover is the active pill only.
 - [ ] **Visually check each tab** at both full-width and ~900px to catch responsive overflow

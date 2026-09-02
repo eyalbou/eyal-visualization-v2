@@ -1,6 +1,8 @@
 # Soft UI Tokens (v2)
 
-Start from the user's primary color. Example uses blue (`#2563EB`); swap `--accent` / `--accent-glow` for terracotta, slate, etc. Do not keep the example blue unless the user asked for CC-family / last dashboard.
+`#2563EB` / `#6366F1` is the **default accent pair**. Keep it whenever the user has not named a color -- never ask. If they do name one, swap `--accent`, `--accent-2`, `--accent-glow`, and the derived mesh / shape / shadow rgba values to that hue.
+
+Default chart colors come from this file, not from a new palette: `--accent` and `--accent-2` for magnitude and category series, `--sev-*` for severity and bad-when-up rates, `--success` / `--danger` for trend chips. See [color-valence.md](color-valence.md).
 
 Full validated set from `multi-site-accounts-v2.html`:
 

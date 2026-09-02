@@ -63,17 +63,27 @@ Section titles below hero still use `--text-h2` (20px).
 
 Visual rules above are not enough. The h1 and subtitle carry the story.
 
-**Title -- research name.** Line 1 + line 2 together are the study name a teammate would search for (`Cara Feedback Modal`, `Cara Dissatisfaction`, `Multi-site accounts`). Not a slogan (`What to fix first`) and not method (`session by session`, `4:1148`, `session grain`). Those belong in the badge pill or Methodology.
+Caps are counted, not judged: [SKILL.md Copy budget](../SKILL.md#copy-budget-hard-caps), enforced by `scripts/copy-check.py`.
 
-**Subtitle -- 2-3 sentences covering why read / what you get / what we aim to achieve.** Stakeholder English. "How we will answer it" is **one clause**, not SQL or funnel mechanics. Ban caveats, `COUNT(DISTINCT msid)`, and `engaged → view → submit` as the whole subtitle. If the line is ambiguous, draft 3 options and wait.
+**Title -- research name.** Line 1 + line 2 together are the study name a teammate would search for (`Cara Feedback Modal`, `Cara Dissatisfaction`, `Multi-site accounts`). Not a slogan (`What to fix first`) and not method (`session by session`, `4:1148`, `session grain`). Method goes to **Methodology** -- never to the badge pill or a hero chip.
+
+**Subtitle -- ≤35 words, max 2 sentences, covering why read / what you get.** Stakeholder English. The aim can stay implied; do not spend a sentence on it. "How we will answer it" is at most **one clause**, not SQL, scoring mechanics, or funnel mechanics. Ban caveats, `COUNT(DISTINCT msid)`, and `engaged → view → submit` as the whole subtitle. If the line is ambiguous, draft 3 options and wait.
 
 The page hero **is** the briefing. Do not add a second briefing card. Title + subtitle stay tab-agnostic.
 
-Good shape (adapt, do not paste):
+Good (24 words): `How many accounts carry 100+ sites, and does that concentration change who we should treat as the unit of analysis?`
 
-- Cara never files most complaints as tickets. This page sizes how often that happens, names the top drivers, and points at what to fix first so we can cut repeat contacts.
+Bad (95 words -- three sentences that each add a clause of method): `Customer Care runs 27 dashboards on Vizion and one semantic model on Power BI, and nothing written down says which platform new work should go to. This page scores both across 25 rows, keeping what each product can do apart from what CC actually has working today, and names the three rows where Power BI is the only right answer. The aim is a routing rule for new dashboards plus four ownership decisions, not a winner.`
+
+Same page inside budget (28 words): `CC has no written rule for which platform a new dashboard belongs on. This page scores both and names the three cases where Power BI wins.`
 
 Bad (slogan): `Finding the sub-text of our users.`
+
+### Chips under the subtitle (`.badge` row)
+
+Max **3 chips**, **≤4 words each**. Allowed: population / scope (`Logged-in users`), window (`Jun 11 - Aug 20`), size (`6.4M accounts`), freshness (`Data through Aug 27`), status (`Test running`).
+
+**Never:** pipeline or job names, tool and connector names, table names, commit hashes, run IDs, model names, second-level timestamps, or a `·`-joined stack of them. `XMLA · vizion-platform a7bbfca8 · Trino` and `Verified live 2026-08-26 and 2026-08-27` are failures. The eyebrow `.hero-badge` follows the same 4-word cap.
 
 **Tab-agnostic.** Title and subtitle do not change per tab and must not describe only Tab 1. Sampling and Methodology still sit under the same question.
 

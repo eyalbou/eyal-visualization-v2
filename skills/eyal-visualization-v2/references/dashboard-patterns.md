@@ -77,7 +77,7 @@ Footer: `generated_at` on every tab. SQL details stay in Methodology.
 
 Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Visual laws: [SKILL.md](../SKILL.md#visual-system-this-skill).
 
-- [ ] Hero title is the research name; subtitle is why / get / aim (2-3 sentences), on every tab
+- [ ] Hero title is the research name; subtitle is why / get in **≤35 words / ≤2 sentences**, on every tab
 - [ ] Tabs: Overview → drill-down(s) → Sampling → Methodology (Sampling may be a filter recap)
 - [ ] Overview action-item cards after the stake chart (or skipped because there is no move)
 - [ ] Full-page `.page-canvas` -- not hero-card background
@@ -86,7 +86,8 @@ Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Visual laws: [S
 - [ ] Pill toggles synced across duplicate controls
 - [ ] Hero KPI + active snap: top bar + glow wash in the **valence** color
 - [ ] Trend chips for cross-pop comparison; no histogram sparklines
-- [ ] Copy-scan passed; extra explanation in hover
+- [ ] Copy-scan passed; extra explanation in hover; `copy-check.py` exits 0
+- [ ] Hero chips ≤3 × ≤4 words -- scope / window / n / freshness, no pipeline or tool names
 - [ ] Light default; dark mode token overrides in `body.dark { }` sibling of `:root`
 - [ ] `generated_at` in footer; canonical `fmtNum` / `fmtInt` / `fmtPct`; null → `-`
 - [ ] No em dash, en dash, or `--` in UI copy; use `-`

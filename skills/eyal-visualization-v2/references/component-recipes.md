@@ -154,7 +154,7 @@ Required on Overview **after** the stake chart when there is a recommended move.
 
 **Title:** verb-first action (`Stop repeating a failed step`). Not a theme (`UI grounding`).
 
-**Reason:** why the research points here. 1-2 numbers via `fmtNum` / `fmtInt` / `fmtPct`. Not SQL.
+**Reason:** why the research points here. **≤20 words, 1 sentence** ([Copy budget](../SKILL.md#copy-budget-hard-caps)), 1-2 numbers via `fmtNum` / `fmtInt` / `fmtPct`. Not SQL, not the evidence chain -- that goes in hover. A scored comparison row uses `.row-reason` under the same cap.
 
 Layout: horizontal ranked strip, swipe + arrow buttons, `scroll-snap`. Rank `01`. Title `--text-h3`, reason `--text-sm` / `--ink-soft`. Optional Phosphor icon, owner / effort chips, one highlighted stat. **Pointer-follow glow default ON.** Off under `prefers-reduced-motion`. Static only if the user kills glow. 3-7 cards. Sort = recommended build order.
 

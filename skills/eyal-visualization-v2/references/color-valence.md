@@ -4,7 +4,7 @@ Color encodes **whether the metric going up is better or worse**, not the chart'
 
 Validated against Cara Dissatisfaction: two blues for mild vs frustrated understated heat; volume-sorting the heat bar put frustrated left of mild so the scale read backwards; `--text-xs` on 72px segments was too small to scan.
 
-`--accent` comes from the user. Do not silently use `#2563EB` unless they said CC-family / keep last dashboard. `#2563EB` in this file and in starters is a **CC-family example**, not the v2 default. Accent is not a severity color.
+`--accent` is the user's color when they name one, otherwise the **default** `#2563EB` with `--accent-2` `#6366F1`. Never ask which color -- use the default and build. Accent is not a severity color.
 
 **Locked series colors.** A population key keeps the same hex when a toggle flips (SSA, SR, NS; Cara vs Chatbot). Do not remint the palette per view. Map `DATA.populations[k].color` (or a `SERIES_COLOR` table) once; every chart reads from that map.
 

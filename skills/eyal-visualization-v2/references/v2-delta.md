@@ -44,7 +44,7 @@ Not a hero card. See [hero-geometric.md](hero-geometric.md).
 
 Centered two-line gradient title + badge pill. Theme toggle in `.page-chrome` fixed top-right.
 
-**Copy:** h1 = research name (`Cara Feedback Modal`), not a slogan or method. Subtitle = why read / what you get / what we aim to achieve (2-3 sentences). "How we will answer it" is one clause. Tab-agnostic. Full rules: [hero-geometric.md](hero-geometric.md#hero-copy-required).
+**Copy:** h1 = research name (`Cara Feedback Modal`), not a slogan or method. Subtitle = why read / what you get in **≤35 words, ≤2 sentences**. "How we will answer it" is one clause. Chips: max 3, ≤4 words, scope / window / n / freshness -- never pipeline or tool names. Tab-agnostic. Full rules: [hero-geometric.md](hero-geometric.md#hero-copy-required).
 
 ---
 
@@ -101,8 +101,8 @@ Centered two-line gradient title + badge pill. Theme toggle in `.page-chrome` fi
 
 ---
 
-## Anti-Vibe-Code
+## Accent
 
-Start from user `--accent`. Do not default every dashboard to `#2563EB` unless requested.
+Use the user's `--accent` when they name one. Otherwise default to `#2563EB` / `#6366F1` and build -- never ask about color. Chart series, mesh, shapes, and washes derive from the tokens in [soft-ui-tokens.md](soft-ui-tokens.md). Valence and the severity scale still override accent.
 
 In-skill proofs: `assets/analytics-starter.html`, `assets/funnel-graph.html`. Optional live (may not exist here): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`.
