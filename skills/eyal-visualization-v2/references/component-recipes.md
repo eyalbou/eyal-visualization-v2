@@ -182,6 +182,8 @@ Home of **action items**. Tab label **Recommendations**. After drill-downs, befo
 
 Layout: `.action-grid` -- **3 columns**, 16px gap, **no carousel**. 1-6 cards, recommended build order. 4 = 3+1, 5 = 3+2. **Do not pad** empty cells. Rank `01`. Title `--text-h3`, reason `--text-sm` / `--ink-soft`. Optional Phosphor icon, owner / effort chips, one highlighted stat. **Pointer-follow glow default ON.** Off under `prefers-reduced-motion`. Below ~768px: 1 column, no horizontal scroll.
 
+**Type color.** Max **4** in the whole section. Red `--type-bad` = bad. Yellow `--type-mid` = middle. Green `--type-good` = go. Purple `--type-good-alt` = constructive good. Color the title keyword, footer, rank, and icon. Body stays ink. No card wash. No `--accent` blue, no orange, no brown gold. Green vs purple: go vs add. Bad-when-up footer is never green. Glow uses the card's type color. Full table: [SKILL.md Recommendations](../SKILL.md#recommendations-tab-action-grid).
+
 ```javascript
 actions: [
   { rank: 1, title: "Stop repeating a failed step", n: 193, agree: 0.92,
@@ -192,6 +194,9 @@ actions: [
 ```css
 .action-card {
   --glow-x: 50%; --glow-y: 50%;
+  --c-topic: var(--type-good-alt);
+  --c-topic-soft: var(--type-good-alt-soft);
+  --c-stat: var(--c-topic);
   position: relative; display: flex; flex-direction: column; gap: 12px;
   padding: 20px; border-radius: 16px;
   background: var(--surface);
@@ -201,7 +206,7 @@ actions: [
   content: ""; pointer-events: none; position: absolute; inset: -2px;
   border-radius: inherit; border: 2px solid transparent;
   background: radial-gradient(180px 180px at var(--glow-x) var(--glow-y),
-    color-mix(in srgb, var(--accent) 55%, transparent), transparent 70%) border-box;
+    color-mix(in srgb, var(--c-topic) 55%, transparent), transparent 70%) border-box;
   mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
 }
@@ -209,10 +214,16 @@ actions: [
   width: 36px; height: 36px; border-radius: 50%;
   display: grid; place-items: center;
   font-weight: 700; font-size: var(--text-sm);
-  background: var(--accent-glow); color: var(--accent);
+  background: var(--c-topic-soft); color: var(--c-topic);
 }
 .action-card h3 { margin: 0; font-size: var(--text-h3); letter-spacing: -0.03em; }
+.action-card h3 i, .action-card .topic { color: var(--c-topic); }
 .action-reason { margin: 0; font-size: var(--text-sm); color: var(--ink-soft); line-height: 1.55; flex: 1; }
+.action-stat { font-size: var(--text-h3); font-weight: 700; color: var(--c-stat); }
+.action-card.is-bad { --c-topic: var(--type-bad); --c-topic-soft: var(--type-bad-soft); }
+.action-card.is-mid { --c-topic: var(--type-mid); --c-topic-soft: var(--type-mid-soft); }
+.action-card.is-good { --c-topic: var(--type-good); --c-topic-soft: var(--type-good-soft); }
+.action-card.is-good-alt { --c-topic: var(--type-good-alt); --c-topic-soft: var(--type-good-alt-soft); }
 
 .action-grid {
   display: grid;

@@ -86,7 +86,7 @@ Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Visual laws: [S
 - [ ] Tabs: Overview → drill-down(s) → Recommendations → Sampling → Methodology (Sampling may be a filter recap; skip Recommendations if there is no move)
 - [ ] Session sampler (if present): uuid and conversation id are the hyperlinks, not extra URL columns
 - [ ] Overview finding cards after the stake chart (carousel, not verb-first actions)
-- [ ] Recommendations: 1-6 action cards in a 2×3 `.action-grid`, no carousel (or tab skipped)
+- [ ] Recommendations: 1-6 action cards in a 2×3 `.action-grid`, no carousel (or tab skipped); type color max 4 -- red bad, yellow middle, green go, purple add
 - [ ] Full-page `.page-canvas` -- not hero-card background
 - [ ] `--text-hero-display` for page hero only; sections use `--text-h2`
 - [ ] Theme toggle in `.page-chrome`; charts re-render on `setTheme`

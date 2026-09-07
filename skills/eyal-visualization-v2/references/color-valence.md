@@ -178,3 +178,29 @@ When chart B is how a **segment of chart A** breaks (Dissatisfied → heat; TOR 
 - Two stacked distribution cards with no arrow when the second is a subset of the first
 - `--text-xs` as the only type on in-bar labels
 - Adjacent `--sev-ok` and `--sev-mid` segments with no label (1.01:1)
+- Brown gold, orange, or `--accent` blue as Recommendations type color
+- Color inside Recommendations `.action-reason`; green on a bad-when-up footer
+
+---
+
+## 9. Recommendations type palette (section lock)
+
+Charts keep the 5-stop `--sev-*` scale. **Recommendations type color is a separate 4-token lock** for that tab only.
+
+| Role | Color | Token | Hex (type on paper) |
+|------|-------|-------|---------------------|
+| Bad | red | `--type-bad` | `#da0808` |
+| Middle | yellow | `--type-mid` | `#D4B200` |
+| Good (go) | green | `--type-good` | `#3D8B27` |
+| Good (add) | purple | `--type-good-alt` | `#6366F1` |
+
+Rules:
+
+- Max **4** colors in the whole Recommendations section (ranks, icons, title keywords, footers).
+- Color the title keyword and the footer. `.action-reason` stays `--ink-soft`.
+- `--type-mid` is yellow (hue ~52°). Do **not** use brown gold `#B8860B` or `--warning` orange `#ff9323` here.
+- Do **not** add `--accent` blue as a fifth color.
+- Green = go / offer. Purple = constructive add. A bad-when-up footer is never green.
+- This does not replace `--sev-*` on heat bars or hero KPIs.
+
+See [SKILL.md Recommendations](../SKILL.md#recommendations-tab-action-grid) and [component-recipes.md](component-recipes.md#recommendations-action-grid).

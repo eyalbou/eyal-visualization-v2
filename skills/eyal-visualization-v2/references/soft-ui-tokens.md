@@ -45,6 +45,16 @@ Full validated set from `multi-site-accounts-v2.html`:
   --danger: #da0808;
   --danger-soft: rgba(218, 8, 8, 0.14);
 
+  /* Recommendations type. Max 4 in that section. Not chart fills. */
+  --type-bad: #da0808;
+  --type-bad-soft: rgba(218, 8, 8, 0.14);
+  --type-mid: #D4B200;              /* yellow as type. Not brown gold. Not orange. */
+  --type-mid-soft: rgba(212, 178, 0, 0.18);
+  --type-good: #3D8B27;             /* green as type. Fill stays --success #69c440. */
+  --type-good-soft: rgba(61, 139, 39, 0.14);
+  --type-good-alt: #6366F1;         /* purple. Second good. */
+  --type-good-alt-soft: rgba(99, 102, 241, 0.14);
+
   /* 5-stop severity palette. Not the accent ramp. Rank left-to-right.
      Ink is locked per fill. Full rules: color-valence.md */
   --sev-ok: #69c440;
@@ -108,6 +118,10 @@ body.dark {
   --accent-glow: rgba(59, 130, 246, 0.15);
   --warning: #ff9323;
   --danger: #F87171;
+  --type-bad: #f04444;
+  --type-mid: #F5D000;
+  --type-good: #69c440;
+  --type-good-alt: #818CF8;
   --sev-ok: #69c440;
   --sev-lo: #f1dc32;
   --sev-mid: #ff9323;

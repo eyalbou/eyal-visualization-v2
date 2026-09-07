@@ -1,12 +1,12 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.8.0
+version: 0.9.0
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-**Skill version 0.8.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
+**Skill version 0.9.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
 
 Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
@@ -31,6 +31,7 @@ This file plus `references/` and `assets/` is the full pack.
 | Doughnut | **2-4** slices; 5+ or one slice >80% → horizontal bar |
 | Copy length | Hard word caps, checked by script. [Copy budget](#copy-budget-hard-caps) |
 | Accent | `#2563EB` default; never ask. [Hard constraint 4](#hard-constraints) |
+| Recs type | Max **4** colors in the Recommendations section. Red bad, yellow middle, green good, purple good. [Recommendations](#recommendations-tab-action-grid) |
 
 Maps only if the question is geo.
 
@@ -99,7 +100,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] **Every capped surface is inside [Copy budget](#copy-budget-hard-caps).** Subtitle ≤35 words / ≤2 sentences; hero chips ≤3 × ≤4 words; card + row body ≤20 words / 1 sentence; insight bullet ≤18 words; KPI caption ≤8 words
 - [ ] Hero chips carry **population / window / n / freshness in plain words**. No pipeline, tool, connector, table, commit hash, run ID, or second-level timestamp
 - [ ] After the stake chart: ranked **finding cards** in a carousel (stake / what to look at next). Finding in stakeholder English, **not** a verb-first action. [Overview finding cards](#overview-finding-cards-carousel)
-- [ ] **Recommendations** tab before Sampling: action items only, 1-6 cards, **2×3 CSS grid**, no carousel. Skip the tab if there is no recommended move -- do not show it empty. [Recommendations](#recommendations-tab-action-grid)
+- [ ] **Recommendations** tab before Sampling: action items only, 1-6 cards, **2×3 CSS grid**, no carousel. Skip the tab if there is no recommended move -- do not show it empty. Type color: max 4 (red bad / yellow middle / green good / purple good) on title keyword + footer only. [Recommendations](#recommendations-tab-action-grid)
 - [ ] Tabs: Overview → drill-down(s) → Recommendations → Sampling → Methodology. Do not put actions on Overview. Sampling may be a **filter recap** (inclusion / exclusion / n remaining) -- still its own tab. Not a required session sampler. If a **session sampler table** exists: uuid is the User Manager link; conversation id is the conversation URL; no extra URL columns. [Sampling table](#sampling-table-ids-are-the-links)
 - [ ] One primary visual per question; chart type from the [chooser](#chart-chooser); title = finding in stakeholder English
 - [ ] At most 3 insight bullets under the chart (outcome, not method). One short under-chart caveat only if skipping it would misread the number
@@ -242,6 +243,17 @@ Label: **Recommendations**. Last analysis beat: after drill-downs, **before** Sa
 **Reason:** why the research points here. **≤20 words, 1 sentence** ([Copy budget](#copy-budget-hard-caps)). One number, two only if the pair is the point. Stakeholder English. Not SQL, not classifier names, not the evidence chain -- `held to 4 because 54 fix commits sit against 55 feat commits across 118 merged PRs` is hover content.
 
 Layout: **2 rows × 3 columns**, CSS grid, **no carousel**. 1-6 cards, recommended build order. 4 cards = 3+1, 5 = 3+2. **Do not pad** empty slots. Rank `01`…, title `--text-h3`, reason `--text-sm` / `--ink-soft`. Optional Phosphor icon, owner / effort chips, one highlighted stat. **Pointer-follow glow default ON**; `prefers-reduced-motion` disables it. Below ~768px: 1 column, no horizontal scroll.
+
+**Type color (this section only).** At most **4** colors across the whole Recommendations grid, including ranks, icons, title keywords, and footers. Body copy stays `--ink-soft` -- do not color numbers in `.action-reason`. Color the title keyword and the footer stat. No card washes, no extra accent blue, no orange, no brown gold.
+
+| Role | Color | Type token | Use |
+|------|-------|------------|-----|
+| Bad | red | `--type-bad` `#da0808` | Stop, Hold, TOR / fail |
+| Middle | yellow | `--type-mid` `#D4B200` | Caution, investigate, mixed. Not a stop and not a go |
+| Good | green | `--type-good` `#3D8B27` | Go / offer / do-this |
+| Good | purple | `--type-good-alt` `#6366F1` | Constructive add (Premium, product). Not a traffic-light go |
+
+`--type-mid` is yellow (hue ~52°), not brown gold (`#B8860B`) and not `--warning` orange. Green fill on charts stays `--success` `#69c440`; type uses the darker `--type-good` so it holds on white. Two goods in one grid: green = go, purple = add. Never paint a bad-when-up footer green. Rank / icon inherit the card's role so a fifth `--accent` blue does not appear.
 
 Show **once** -- actions on this tab only. Do not duplicate on Overview.
 
@@ -518,6 +530,7 @@ Call `renderAll()` inside `setTheme()`.
 - Sampler buried in Methodology; Methodology not last; Sampling skipped on analytics; Recommendations after Sampling
 - Verb-first actions on the Overview carousel; finding cards on Recommendations
 - Recommendations as a carousel; empty Recommendations tab; padding dummy cards to fill a 2×3
+- A fifth color in Recommendations (accent blue, orange, brown gold); color inside `.action-reason`; green on a bad-when-up footer
 - `Reccomendations` (misspelling) as the tab label
 - Session sampler: uuid or conversation id as plain text with a separate URL column; Listen/Open replacing the cid
 - Em/en/`--` punctuation in **artifact UI**
@@ -564,6 +577,7 @@ Call `renderAll()` inside `setTheme()`.
 | domain term / internal name in visible copy | has an info hover, `*`, collapse, or Methodology row |
 | session sampler `uuid` / conversation id | cell text is the id; `href` is UM / conversation URL; zero extra URL columns |
 | Recommendations tab | after drill-downs, before Sampling; `.action-grid` not `.action-strip`; 1-6 cards; skip if no move |
+| Recommendations type | only `--type-bad` `--type-mid` `--type-good` `--type-good-alt`; title + footer; body ink; no gold, no orange, no fifth `--accent` blue |
 | Overview carousel titles | findings, not verb-first actions |
 
 5. **Run the copy budget script.** `python3 scripts/copy-check.py <file>` must exit 0:
