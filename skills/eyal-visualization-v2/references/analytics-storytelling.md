@@ -175,7 +175,7 @@ After the stake chart. Finding title (not a verb) + reason, **≤20 words, 1 sen
 
 ## Recommendations (action grid)
 
-After drill-downs, before Sampling. Verb-first title + research reason, **≤20 words, 1 sentence**, 1-2 formatted numbers. 1-6 cards, **2×3 CSS grid**, no carousel. Skip the tab if there is no recommended move. Type color: max 4 in the section -- red bad, yellow middle, green go, purple add -- on title + footer only. Recipe: [component-recipes.md](component-recipes.md#recommendations-action-grid). Show once -- not on Overview.
+After drill-downs, before Sampling. Verb-first title + research reason, **≤20 words, 1 sentence**, 1-2 formatted numbers. 1-6 cards, **2×3 CSS grid**, no carousel. Skip the tab if there is no recommended move. Type color: blue primary, purple add, mint go, yellow `#FFCB56` wait/look (type not fill), red severe-only. 2-3 colors when enough. Labeled footer. Recipe: [component-recipes.md](component-recipes.md#recommendations-action-grid). Show once -- not on Overview.
 
 ---
 
@@ -193,7 +193,7 @@ Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Analytics extra
 
 - [ ] Tab 1 (Overview) readable in <60s -- stake is clear if the reader stopped here
 - [ ] Finding cards after the stake chart (carousel, not actions)
-- [ ] Recommendations tab before Sampling: 1-6 action cards in `.action-grid` (or skipped because there is no move); type color max 4 (red / yellow / green / purple) on title + footer
+- [ ] Recommendations tab before Sampling: 1-6 action cards in `.action-grid` (or skipped because there is no move); type color 2-3 of blue / purple / mint / yellow; red only if severe; labeled footer
 - [ ] Each later analysis tab is a drill-down of the previous, not a parallel dump
 - [ ] Sampling is last-but-one after Recommendations (filter recap is enough); Methodology is last
 - [ ] Session sampler (if present): uuid and conversation id are the hyperlinks, not extra URL columns

@@ -45,15 +45,17 @@ Full validated set from `multi-site-accounts-v2.html`:
   --danger: #da0808;
   --danger-soft: rgba(218, 8, 8, 0.14);
 
-  /* Recommendations type. Max 4 in that section. Not chart fills. */
-  --type-bad: #da0808;
-  --type-bad-soft: rgba(218, 8, 8, 0.14);
-  --type-mid: #D4B200;              /* yellow as type. Not brown gold. Not orange. */
-  --type-mid-soft: rgba(212, 178, 0, 0.18);
-  --type-good: #3D8B27;             /* green as type. Fill stays --success #69c440. */
-  --type-good-soft: rgba(61, 139, 39, 0.14);
-  --type-good-alt: #6366F1;         /* purple. Second good. */
-  --type-good-alt-soft: rgba(99, 102, 241, 0.14);
+  /* Recommendations type. Not chart fills. Use 2-3 when enough. Red only if severe. */
+  --type-blue: #2563EB;
+  --type-blue-soft: rgba(37, 99, 235, 0.12);
+  --type-purple: #7371fc;
+  --type-purple-soft: rgba(115, 113, 252, 0.14);
+  --type-mint: #2F9E90;             /* go. Darkened from #55d6c2 for white. */
+  --type-mint-soft: rgba(47, 158, 144, 0.14);
+  --type-yellow: #FFCB56;           /* wait / look. Type color, never a fill. */
+  --type-yellow-soft: rgba(255, 203, 86, 0.22);
+  --type-red: #ff686b;              /* severe only */
+  --type-red-soft: rgba(255, 104, 107, 0.14);
 
   /* 5-stop severity palette. Not the accent ramp. Rank left-to-right.
      Ink is locked per fill. Full rules: color-valence.md */
@@ -118,10 +120,11 @@ body.dark {
   --accent-glow: rgba(59, 130, 246, 0.15);
   --warning: #ff9323;
   --danger: #F87171;
-  --type-bad: #f04444;
-  --type-mid: #F5D000;
-  --type-good: #69c440;
-  --type-good-alt: #818CF8;
+  --type-blue: #60A5FA;
+  --type-purple: #8B89FF;
+  --type-mint: #55d6c2;
+  --type-yellow: #FFCB56;
+  --type-red: #ff686b;
   --sev-ok: #69c440;
   --sev-lo: #f1dc32;
   --sev-mid: #ff9323;

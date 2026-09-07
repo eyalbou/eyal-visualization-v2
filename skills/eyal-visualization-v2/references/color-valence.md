@@ -178,29 +178,30 @@ When chart B is how a **segment of chart A** breaks (Dissatisfied → heat; TOR 
 - Two stacked distribution cards with no arrow when the second is a subset of the first
 - `--text-xs` as the only type on in-bar labels
 - Adjacent `--sev-ok` and `--sev-mid` segments with no label (1.01:1)
-- Brown gold, orange, or `--accent` blue as Recommendations type color
-- Color inside Recommendations `.action-reason`; green on a bad-when-up footer
+- Color inside Recommendations `.action-reason`; yellow fill / row mark; red on a non-severe Hold or investigate
 
 ---
 
 ## 9. Recommendations type palette (section lock)
 
-Charts keep the 5-stop `--sev-*` scale. **Recommendations type color is a separate 4-token lock** for that tab only.
+Charts keep the 5-stop `--sev-*` scale. **Recommendations type color is a separate palette** for that tab only.
 
-| Role | Color | Token | Hex (type on paper) |
-|------|-------|-------|---------------------|
-| Bad | red | `--type-bad` | `#da0808` |
-| Middle | yellow | `--type-mid` | `#D4B200` |
-| Good (go) | green | `--type-good` | `#3D8B27` |
-| Good (add) | purple | `--type-good-alt` | `#6366F1` |
+| Role | Color | Token | Hex |
+|------|-------|-------|-----|
+| Primary | blue | `--type-blue` | `#2563EB` |
+| Add | purple | `--type-purple` | `#7371fc` |
+| Go | mint | `--type-mint` | `#2F9E90` (from `#55d6c2`) |
+| Wait / look | yellow | `--type-yellow` | `#FFCB56` |
+| Severe | red | `--type-red` | `#ff686b` |
 
 Rules:
 
-- Max **4** colors in the whole Recommendations section (ranks, icons, title keywords, footers).
 - Color the title keyword and the footer. `.action-reason` stays `--ink-soft`.
-- `--type-mid` is yellow (hue ~52°). Do **not** use brown gold `#B8860B` or `--warning` orange `#ff9323` here.
-- Do **not** add `--accent` blue as a fifth color.
-- Green = go / offer. Purple = constructive add. A bad-when-up footer is never green.
+- Yellow is **type**, never a fill or row mark.
+- Use **2 or 3** colors when that covers the grid. Do not force 4 or 5.
+- Red only if the card is actually severe. Hold and routine investigate are not red.
+- Mint is go. Do not use `#60d394` green here.
+- Footer is a labeled line (`Cara 39% vs chatbot 56%`), not a bare number.
 - This does not replace `--sev-*` on heat bars or hero KPIs.
 
 See [SKILL.md Recommendations](../SKILL.md#recommendations-tab-action-grid) and [component-recipes.md](component-recipes.md#recommendations-action-grid).

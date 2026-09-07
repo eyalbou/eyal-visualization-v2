@@ -182,7 +182,7 @@ Home of **action items**. Tab label **Recommendations**. After drill-downs, befo
 
 Layout: `.action-grid` -- **3 columns**, 16px gap, **no carousel**. 1-6 cards, recommended build order. 4 = 3+1, 5 = 3+2. **Do not pad** empty cells. Rank `01`. Title `--text-h3`, reason `--text-sm` / `--ink-soft`. Optional Phosphor icon, owner / effort chips, one highlighted stat. **Pointer-follow glow default ON.** Off under `prefers-reduced-motion`. Below ~768px: 1 column, no horizontal scroll.
 
-**Type color.** Max **4** in the whole section. Red `--type-bad` = bad. Yellow `--type-mid` = middle. Green `--type-good` = go. Purple `--type-good-alt` = constructive good. Color the title keyword, footer, rank, and icon. Body stays ink. No card wash. No `--accent` blue, no orange, no brown gold. Green vs purple: go vs add. Bad-when-up footer is never green. Glow uses the card's type color. Full table: [SKILL.md Recommendations](../SKILL.md#recommendations-tab-action-grid).
+**Type color.** Blue primary, purple add, mint go (`#2F9E90`), yellow wait/look (`#FFCB56` as type, never a fill), red severe-only. Use 2-3 colors when enough. Title keyword + labeled footer. Body ink. Glow uses the card's type color. Full table: [SKILL.md Recommendations](../SKILL.md#recommendations-tab-action-grid).
 
 ```javascript
 actions: [
@@ -194,8 +194,8 @@ actions: [
 ```css
 .action-card {
   --glow-x: 50%; --glow-y: 50%;
-  --c-topic: var(--type-good-alt);
-  --c-topic-soft: var(--type-good-alt-soft);
+  --c-topic: var(--type-blue);
+  --c-topic-soft: var(--type-blue-soft);
   --c-stat: var(--c-topic);
   position: relative; display: flex; flex-direction: column; gap: 12px;
   padding: 20px; border-radius: 16px;
@@ -220,10 +220,11 @@ actions: [
 .action-card h3 i, .action-card .topic { color: var(--c-topic); }
 .action-reason { margin: 0; font-size: var(--text-sm); color: var(--ink-soft); line-height: 1.55; flex: 1; }
 .action-stat { font-size: var(--text-h3); font-weight: 700; color: var(--c-stat); }
-.action-card.is-bad { --c-topic: var(--type-bad); --c-topic-soft: var(--type-bad-soft); }
-.action-card.is-mid { --c-topic: var(--type-mid); --c-topic-soft: var(--type-mid-soft); }
-.action-card.is-good { --c-topic: var(--type-good); --c-topic-soft: var(--type-good-soft); }
-.action-card.is-good-alt { --c-topic: var(--type-good-alt); --c-topic-soft: var(--type-good-alt-soft); }
+.action-card.is-blue { --c-topic: var(--type-blue); --c-topic-soft: var(--type-blue-soft); }
+.action-card.is-purple { --c-topic: var(--type-purple); --c-topic-soft: var(--type-purple-soft); }
+.action-card.is-mint { --c-topic: var(--type-mint); --c-topic-soft: var(--type-mint-soft); }
+.action-card.is-yellow { --c-topic: var(--type-yellow); --c-topic-soft: var(--type-yellow-soft); }
+.action-card.is-red { --c-topic: var(--type-red); --c-topic-soft: var(--type-red-soft); }
 
 .action-grid {
   display: grid;
