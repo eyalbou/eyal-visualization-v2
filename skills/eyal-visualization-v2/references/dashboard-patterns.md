@@ -62,14 +62,17 @@ Default investigation arc -- see [analytics-storytelling.md](analytics-storytell
 ```
 hero + tab-bar (persistent -- same title + subtitle on every tab)
   Tab 1 Overview     -- stake: often volume / funnel; 3 KPIs + one chart + read
+                       + finding-card carousel (not actions)
   Tabs 2-n Drill-down -- one question each, chained toward the finding
-  Sampling           -- last-but-one; filter recap (session tool optional).
+  Recommendations    -- last analysis beat; 1-6 action cards in a 2x3 grid, no carousel
+                       (skip the tab if there is no recommended move)
+  Sampling           -- last-but-one after Recommendations; filter recap (session tool optional).
                        Session table: uuid = UM link; conversation id = conversation URL;
                        never a second URL column (see SKILL.md Sampling table)
   Methodology        -- last; scope, grain, SQL, project documentation
 ```
 
-Analyst tab labels (`Volume`, `Satisfaction`, `What was wrong`) are fine. RCA names (Summary / Why / Where) are optional on the middle tabs only. Never skip Sampling (a filter recap is enough). Never put the sampler inside Methodology.
+Analyst tab labels (`Volume`, `Satisfaction`, `What was wrong`) are fine. RCA names (Summary / Why / Where) are optional on the middle tabs only. Never skip Sampling (a filter recap is enough). Never put the sampler inside Methodology. Recommendations sits before Sampling; skip it only when there is no move.
 
 Footer: `generated_at` on every tab. SQL details stay in Methodology.
 
@@ -80,9 +83,10 @@ Footer: `generated_at` on every tab. SQL details stay in Methodology.
 Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Visual laws: [SKILL.md](../SKILL.md#visual-system-this-skill).
 
 - [ ] Hero title is the research name; subtitle is why / get in **≤35 words / ≤2 sentences**, on every tab
-- [ ] Tabs: Overview → drill-down(s) → Sampling → Methodology (Sampling may be a filter recap)
+- [ ] Tabs: Overview → drill-down(s) → Recommendations → Sampling → Methodology (Sampling may be a filter recap; skip Recommendations if there is no move)
 - [ ] Session sampler (if present): uuid and conversation id are the hyperlinks, not extra URL columns
-- [ ] Overview action-item cards after the stake chart (or skipped because there is no move)
+- [ ] Overview finding cards after the stake chart (carousel, not verb-first actions)
+- [ ] Recommendations: 1-6 action cards in a 2×3 `.action-grid`, no carousel (or tab skipped)
 - [ ] Full-page `.page-canvas` -- not hero-card background
 - [ ] `--text-hero-display` for page hero only; sections use `--text-h2`
 - [ ] Theme toggle in `.page-chrome`; charts re-render on `setTheme`

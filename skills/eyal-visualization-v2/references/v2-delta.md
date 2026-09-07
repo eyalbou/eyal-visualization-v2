@@ -55,7 +55,7 @@ Centered two-line gradient title + badge pill. Theme toggle in `.page-chrome` fi
 - **Trend chips:** cross-section comparison (`+X.XXpp vs baseline`) -- not time series
 - **Collapse drill-downs:** `<details class="collapse-card">` default closed for tables, examples, lists, appendices; KPIs + primary charts stay open. See [state-patterns.md](state-patterns.md)
 - **Survey funnel:** CSS columns, not Chart.js. One hue family per population, 400/500/600, 4-8% sheen. The Cara All / sky / violet / apricot ramps in [funnel-graph.md](funnel-graph.md) are a **worked example**, not global law.
-- **Action-item cards** on Overview after the stake chart. Glow default on. See [component-recipes.md](component-recipes.md#action-item-cards).
+- **Finding cards** on Overview after the stake chart (carousel, not actions). **Action cards** on the Recommendations tab: 2×3 CSS grid, no carousel, 1-6 cards. Glow default on. See [component-recipes.md](component-recipes.md).
 - Chart ticks and datalabels **14px / 600**. Hide collisions; do not shrink to 11px.
 - Chart.js **animation off** on population / theme / tab / filter (`Chart.defaults.animation = false`, `update('none')`). CSS page enter stays.
 

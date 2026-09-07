@@ -1,12 +1,12 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.7.0
+version: 0.8.0
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-**Skill version 0.7.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
+**Skill version 0.8.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
 
 Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
@@ -25,7 +25,7 @@ This file plus `references/` and `assets/` is the full pack.
 | Funnel | CSS columns ([funnel-graph.md](references/funnel-graph.md)), not Chart.js funnel |
 | Hero KPI color | Valence token; bad-when-up is never trust-blue |
 | Null sentinel | `-` |
-| Tab arc | Overview → drill-down(s) → Sampling → Methodology |
+| Tab arc | Overview → drill-down(s) → **Recommendations** → Sampling → Methodology |
 | Sampling IDs | Session sampler: uuid cell = UM link; conversation id cell = conversation URL. Never a second URL column. [Sampling table](#sampling-table-ids-are-the-links) |
 | Type | Two families; four DM Sans weights; no Axiforma `<link>` |
 | Doughnut | **2-4** slices; 5+ or one slice >80% → horizontal bar |
@@ -55,7 +55,7 @@ Maps only if the question is geo.
 
 **Scaffold:** copy `assets/analytics-starter.html` or `assets/app-shell-starter.html` **from disk**. Do **not** Read the full HTML into context.
 
-**If-needed:** [analytics-storytelling.md](references/analytics-storytelling.md) (analytics), [funnel-graph.md](references/funnel-graph.md) (3-stage conversion), [app-shell-patterns.md](references/app-shell-patterns.md) (shell), [chartjs-configs.md](references/chartjs-configs.md) (drawing Chart.js -- **read Chart hover** when any Chart.js tooltip exists), [overflow-rules.md](references/overflow-rules.md) (a chart exists), [hero-geometric.md](references/hero-geometric.md) (not copying the starter), [component-recipes.md](references/component-recipes.md) (KPI / action cards).
+**If-needed:** [analytics-storytelling.md](references/analytics-storytelling.md) (analytics), [funnel-graph.md](references/funnel-graph.md) (3-stage conversion), [app-shell-patterns.md](references/app-shell-patterns.md) (shell), [chartjs-configs.md](references/chartjs-configs.md) (drawing Chart.js -- **read Chart hover** when any Chart.js tooltip exists), [overflow-rules.md](references/overflow-rules.md) (a chart exists), [hero-geometric.md](references/hero-geometric.md) (not copying the starter), [component-recipes.md](references/component-recipes.md) (KPI / finding cards / Recommendations grid).
 
 Recipes stay in references. Copy CSS from assets on disk.
 
@@ -98,8 +98,9 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] Overview **is** the hero tab. Title + subtitle (same on every tab) cover: what this is, why read it, what you get, what we aim to achieve. No extra briefing card
 - [ ] **Every capped surface is inside [Copy budget](#copy-budget-hard-caps).** Subtitle ≤35 words / ≤2 sentences; hero chips ≤3 × ≤4 words; card + row body ≤20 words / 1 sentence; insight bullet ≤18 words; KPI caption ≤8 words
 - [ ] Hero chips carry **population / window / n / freshness in plain words**. No pipeline, tool, connector, table, commit hash, run ID, or second-level timestamp
-- [ ] After the stake chart: ranked **action-item cards** (operative title + research reason with 1-2 numbers). Skip only if there is no recommended move
-- [ ] Tabs: Overview → drill-down(s) → Sampling → Methodology. Sampling may be a **filter recap** (inclusion / exclusion / n remaining) -- still its own tab. Not a required session sampler. If a **session sampler table** exists: uuid is the User Manager link; conversation id is the conversation URL; no extra URL columns. [Sampling table](#sampling-table-ids-are-the-links)
+- [ ] After the stake chart: ranked **finding cards** in a carousel (stake / what to look at next). Finding in stakeholder English, **not** a verb-first action. [Overview finding cards](#overview-finding-cards-carousel)
+- [ ] **Recommendations** tab before Sampling: action items only, 1-6 cards, **2×3 CSS grid**, no carousel. Skip the tab if there is no recommended move -- do not show it empty. [Recommendations](#recommendations-tab-action-grid)
+- [ ] Tabs: Overview → drill-down(s) → Recommendations → Sampling → Methodology. Do not put actions on Overview. Sampling may be a **filter recap** (inclusion / exclusion / n remaining) -- still its own tab. Not a required session sampler. If a **session sampler table** exists: uuid is the User Manager link; conversation id is the conversation URL; no extra URL columns. [Sampling table](#sampling-table-ids-are-the-links)
 - [ ] One primary visual per question; chart type from the [chooser](#chart-chooser); title = finding in stakeholder English
 - [ ] At most 3 insight bullets under the chart (outcome, not method). One short under-chart caveat only if skipping it would misread the number
 - [ ] Extra method / definitions / grain live in **hover info**, `*`, collapse, or Methodology. Every domain term, internal name, or metric definition on screen has an info hover
@@ -152,7 +153,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] If the user did **not** already forbid sharing, say local-only, or give a Stash URL: publish the HTML with Stash MCP `stash__publish_artifact` (`slug` kebab-case, `files` with `index.html` UTF-8). Return `https://bo.wix.com/stash/<slug>/`. Do not set `anonymous`. Do not set `overwrite` unless they confirmed replace
 - [ ] Skip this step if they already said not to upload / keep it local / already published
 
-**Shell-only skip:** section 2 except hyphen/fonts; no forced Sampling tab; no forced funnel; no action-item strip.
+**Shell-only skip:** section 2 except hyphen/fonts; no forced Sampling / Recommendations tabs; no forced funnel; no finding carousel or action grid.
 
 ---
 
@@ -218,15 +219,31 @@ Max **3 chips**, **≤4 words each**. A chip earns its place only if it changes 
 
 ---
 
-## Action-item cards (analytics)
+## Overview finding cards (carousel)
 
-Required on Overview **after** the stake chart when there is a recommended move. Not for app-shell. Do not invent cards if there is no move. Show the strip **once** -- do not duplicate as "Recommended next actions".
+Required on Overview **after** the stake chart. Not for app-shell. These set the ground and point at the drill-downs. They are **not** action items.
 
-**Title:** verb-first operative action (`Stop repeating a failed step`). Not a theme label (`UI grounding`).
+**Title:** finding in stakeholder English (`Premium is 41% of TOR`). Not a verb (`Stop routing Premium`). Not a theme label (`UI grounding`).
 
-**Reason:** why the research points here. **≤20 words, 1 sentence** ([Copy budget](#copy-budget-hard-caps)). One number, two only if the pair is the point. Stakeholder English. Not SQL, not classifier names, not the evidence chain -- `held to 4 because 54 fix commits sit against 55 feat commits across 118 merged PRs` is hover content, and `.row-reason` in a scored comparison list obeys the same cap.
+**Reason:** one sentence, **≤20 words** ([Copy budget](#copy-budget-hard-caps)), 1-2 numbers. What to look at next, not what to build.
 
-Layout: horizontal ranked strip, swipe + arrows, `scroll-snap`, rank `01`…, title `--text-h3`, reason `--text-sm` / `--ink-soft`. Optional Phosphor icon, owner / effort chips, one highlighted stat. **Pointer-follow glow default ON**; `prefers-reduced-motion` disables it. 3-7 cards. Sort = recommended build order, not theme volume.
+Layout: existing `.action-strip` carousel -- swipe + arrows, `scroll-snap`. 3-5 cards. Rank optional. Same card chrome and pointer glow as action cards. Recipe: [component-recipes.md](references/component-recipes.md#overview-finding-cards).
+
+Do **not** put verb-first actions here. Actions live only on [Recommendations](#recommendations-tab-action-grid).
+
+---
+
+## Recommendations tab (action grid)
+
+Label: **Recommendations**. Last analysis beat: after drill-downs, **before** Sampling and Methodology. Not for app-shell. Skip the whole tab if there is no recommended move -- do not invent cards, do not show an empty tab.
+
+**Title:** verb-first operative action (`Stop repeating a failed step`). Not a theme label (`UI grounding`). Not a finding (`Premium is 41% of TOR`).
+
+**Reason:** why the research points here. **≤20 words, 1 sentence** ([Copy budget](#copy-budget-hard-caps)). One number, two only if the pair is the point. Stakeholder English. Not SQL, not classifier names, not the evidence chain -- `held to 4 because 54 fix commits sit against 55 feat commits across 118 merged PRs` is hover content.
+
+Layout: **2 rows × 3 columns**, CSS grid, **no carousel**. 1-6 cards, recommended build order. 4 cards = 3+1, 5 = 3+2. **Do not pad** empty slots. Rank `01`…, title `--text-h3`, reason `--text-sm` / `--ink-soft`. Optional Phosphor icon, owner / effort chips, one highlighted stat. **Pointer-follow glow default ON**; `prefers-reduced-motion` disables it. Below ~768px: 1 column, no horizontal scroll.
+
+Show **once** -- actions on this tab only. Do not duplicate on Overview.
 
 ```javascript
 actions: [
@@ -236,7 +253,7 @@ actions: [
 ]
 ```
 
-Bake counts as numbers; format in render. Recipe: [component-recipes.md](references/component-recipes.md#action-item-cards).
+Bake counts as numbers; format in render. Recipe: [component-recipes.md](references/component-recipes.md#recommendations-action-grid).
 
 ---
 
@@ -498,7 +515,10 @@ Call `renderAll()` inside `setTheme()`.
 - Analyst-process in the insight (`we joined on msid`, `batch 4:1148`)
 - Three charts of the same mix; insight after secondary charts; hardcoded fractions
 - Horizontal bars without end labels; ordered scale sorted by volume
-- Sampler buried in Methodology; Methodology not last; Sampling skipped on analytics
+- Sampler buried in Methodology; Methodology not last; Sampling skipped on analytics; Recommendations after Sampling
+- Verb-first actions on the Overview carousel; finding cards on Recommendations
+- Recommendations as a carousel; empty Recommendations tab; padding dummy cards to fill a 2×3
+- `Reccomendations` (misspelling) as the tab label
 - Session sampler: uuid or conversation id as plain text with a separate URL column; Listen/Open replacing the cid
 - Em/en/`--` punctuation in **artifact UI**
 - Chart.js / Sankey for 3-stage survey funnel; one `--accent` for every funnel population
@@ -507,7 +527,7 @@ Call `renderAll()` inside `setTheme()`.
 - White type on `--sev-ok` / `--sev-lo` / `--sev-mid`; black type on `--sev-hi` / `--sev-max`
 - Shrinking chart labels to 11px; reminting series colors per population toggle
 - Chart.js grow / tween on population, theme, tab, or filter toggle (`animation` left on; `update()` without `'none'`)
-- Dual-axis for TOR vs resolution; action-item strip duplicated as a second list
+- Dual-axis for TOR vs resolution; action list duplicated on Overview and Recommendations
 - Canvas Chart.js tooltip under `afterDraw` overlays (hover "behind" y-labels); one-string tooltip mixing TOR + Res + gap; metric-toggle hover that ignores the active pill
 - Reading or depending on `eyal-visualization` v1 files
 
@@ -543,6 +563,8 @@ Call `renderAll()` inside `setTheme()`.
 | `.kpi-caption` | ≤8 words |
 | domain term / internal name in visible copy | has an info hover, `*`, collapse, or Methodology row |
 | session sampler `uuid` / conversation id | cell text is the id; `href` is UM / conversation URL; zero extra URL columns |
+| Recommendations tab | after drill-downs, before Sampling; `.action-grid` not `.action-strip`; 1-6 cards; skip if no move |
+| Overview carousel titles | findings, not verb-first actions |
 
 5. **Run the copy budget script.** `python3 scripts/copy-check.py <file>` must exit 0:
 
@@ -562,7 +584,7 @@ Fix before showing. Note what was fixed.
 |------|------|
 | [v2-delta.md](references/v2-delta.md) | Soft UI surface, motion, chrome |
 | [layout-archetypes.md](references/layout-archetypes.md) | Analytics vs shell |
-| [component-recipes.md](references/component-recipes.md) | KPI, snaps, action cards |
+| [component-recipes.md](references/component-recipes.md) | KPI, snaps, finding carousel, Recommendations grid |
 | [funnel-graph.md](references/funnel-graph.md) | CSS survey funnel |
 | [analytics-storytelling.md](references/analytics-storytelling.md) | Tab arc, overlap, copy-scan |
 | [dashboard-patterns.md](references/dashboard-patterns.md) | Analytics layout |

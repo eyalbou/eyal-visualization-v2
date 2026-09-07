@@ -148,15 +148,39 @@ Full layout, tokens, copy, CSS, and JS: [funnel-graph.md](funnel-graph.md). Self
 
 ---
 
-## Action-item cards
+## Overview finding cards
 
-Required on Overview **after** the stake chart when there is a recommended move. Not for app-shell. Skip if there is no move. Show the strip **once**.
+Required on Overview **after** the stake chart. Not for app-shell. Stake + what to look at on the next tabs. **Not** actions.
 
-**Title:** verb-first action (`Stop repeating a failed step`). Not a theme (`UI grounding`).
+**Title:** finding (`Premium is 41% of TOR`). Not a verb (`Stop routing Premium`).
 
-**Reason:** why the research points here. **≤20 words, 1 sentence** ([Copy budget](../SKILL.md#copy-budget-hard-caps)), 1-2 numbers via `fmtNum` / `fmtInt` / `fmtPct`. Not SQL, not the evidence chain -- that goes in hover. A scored comparison row uses `.row-reason` under the same cap.
+**Reason:** **≤20 words, 1 sentence** ([Copy budget](../SKILL.md#copy-budget-hard-caps)), 1-2 numbers.
 
-Layout: horizontal ranked strip, swipe + arrow buttons, `scroll-snap`. Rank `01`. Title `--text-h3`, reason `--text-sm` / `--ink-soft`. Optional Phosphor icon, owner / effort chips, one highlighted stat. **Pointer-follow glow default ON.** Off under `prefers-reduced-motion`. Static only if the user kills glow. 3-7 cards. Sort = recommended build order.
+Layout: `.action-strip` carousel -- swipe + arrows, `scroll-snap`. 3-5 cards. Same `.action-card` chrome and pointer glow. Full rules: [SKILL.md](../SKILL.md#overview-finding-cards-carousel).
+
+```css
+.action-strip {
+  display: flex; gap: 16px; overflow-x: auto;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+  padding: 8px 4px 20px;
+}
+.action-strip .action-card {
+  flex: 0 0 min(360px, 82vw); min-height: 280px;
+  scroll-snap-align: start;
+}
+```
+
+---
+
+## Recommendations action grid
+
+Home of **action items**. Tab label **Recommendations**. After drill-downs, before Sampling. Skip the tab if there is no move. Do not invent cards. Do not duplicate on Overview.
+
+**Title:** verb-first (`Stop repeating a failed step`). Not a finding, not a theme.
+
+**Reason:** **≤20 words, 1 sentence** ([Copy budget](../SKILL.md#copy-budget-hard-caps)), 1-2 numbers via `fmtNum` / `fmtInt` / `fmtPct`. Not SQL, not the evidence chain. A scored comparison row uses `.row-reason` under the same cap.
+
+Layout: `.action-grid` -- **3 columns**, 16px gap, **no carousel**. 1-6 cards, recommended build order. 4 = 3+1, 5 = 3+2. **Do not pad** empty cells. Rank `01`. Title `--text-h3`, reason `--text-sm` / `--ink-soft`. Optional Phosphor icon, owner / effort chips, one highlighted stat. **Pointer-follow glow default ON.** Off under `prefers-reduced-motion`. Below ~768px: 1 column, no horizontal scroll.
 
 ```javascript
 actions: [
@@ -166,15 +190,8 @@ actions: [
 ```
 
 ```css
-.action-strip {
-  display: flex; gap: 16px; overflow-x: auto;
-  scroll-snap-type: x mandatory; scrollbar-width: none;
-  padding: 8px 4px 20px;
-}
 .action-card {
   --glow-x: 50%; --glow-y: 50%;
-  flex: 0 0 min(360px, 82vw); min-height: 280px;
-  scroll-snap-align: start;
   position: relative; display: flex; flex-direction: column; gap: 12px;
   padding: 20px; border-radius: 16px;
   background: var(--surface);
@@ -196,13 +213,23 @@ actions: [
 }
 .action-card h3 { margin: 0; font-size: var(--text-h3); letter-spacing: -0.03em; }
 .action-reason { margin: 0; font-size: var(--text-sm); color: var(--ink-soft); line-height: 1.55; flex: 1; }
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.action-grid .action-card { min-height: 220px; }
+@media (max-width: 768px) {
+  .action-grid { grid-template-columns: 1fr; }
+}
 @media (prefers-reduced-motion: reduce) {
   .action-card::after { display: none; }
 }
 ```
 
 ```javascript
-strip.querySelectorAll(".action-card").forEach((card) => {
+document.querySelectorAll(".action-card").forEach((card) => {
   card.addEventListener("pointermove", (e) => {
     const r = card.getBoundingClientRect();
     card.style.setProperty("--glow-x", (e.clientX - r.left) + "px");

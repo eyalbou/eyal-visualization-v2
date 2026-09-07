@@ -49,14 +49,15 @@ Tabs are a **story sequence**, not a gallery of leftover charts. Walk the reader
 
 | Order | Story beat | What to show | What not to show |
 |-------|------------|--------------|------------------|
-| **1 Overview** | Introduce the story. How big is this, or what are we trying to find? Often **volume / funnel**. Pick graphs that set the stake. After the stake chart: ranked **action-item cards** (skip only if there is no recommended move). | 3 KPIs, one primary chart, 3-bullet read, action strip | Driver taxonomy, SQL, sampler, a second briefing card |
+| **1 Overview** | Introduce the story. How big is this, or what are we trying to find? Often **volume / funnel**. Pick graphs that set the stake. After the stake chart: ranked **finding cards** in a carousel (not actions). | 3 KPIs, one primary chart, 3-bullet read, finding carousel | Driver taxonomy, SQL, sampler, verb-first actions, a second briefing card |
 | **2-n Drill-down** | Each tab answers one question the previous tab set up. Build toward the interesting finding -- do not dump it first. | One primary visual + insight; collapse tables | Repeating Tab 1 KPIs; three views of the same mix |
-| **Sampling** | Always last-but-one. Full filter recap (inclusion / exclusion / n remaining). A session sampler is optional -- the recap is enough. If a sampler **table** exists: uuid cell = User Manager link; conversation id cell = conversation URL. Never a second URL column. [SKILL.md Sampling table](../SKILL.md#sampling-table-ids-are-the-links) | Filter recap and/or working tool + id hyperlinks | Analysis charts; extra `user_manager_url` / `conversation_url` columns |
+| **Recommendations** | Last analysis beat. What to do, from the analysis. Label is **Recommendations**. Skip the tab if there is no recommended move. | 1-6 action cards in a 2×3 CSS grid, no carousel | Finding cards; a carousel; dummy cards to fill the grid; actions already shown on Overview |
+| **Sampling** | Always last-but-one after Recommendations (or after drill-downs if Recommendations was skipped). Full filter recap (inclusion / exclusion / n remaining). A session sampler is optional -- the recap is enough. If a sampler **table** exists: uuid cell = User Manager link; conversation id cell = conversation URL. Never a second URL column. [SKILL.md Sampling table](../SKILL.md#sampling-table-ids-are-the-links) | Filter recap and/or working tool + id hyperlinks | Analysis charts; extra `user_manager_url` / `conversation_url` columns |
 | **Methodology** | Always last. How we know + **project documentation** (scope, grain, joins, caveats, SQL, definitions). | Collapsed SQL, scope vs stage-2 split | Repeated driver charts |
 
 Hero + tab chrome persist. Title and subtitle stay the same on every tab. Optional deep link: `?tab=`.
 
-Analyst names are allowed on the middle tabs (`Volume`, `Satisfaction`, `What was wrong`) when that is clearer than Summary / Why / Where. Do not force RCA names on an exploration dashboard. Do not skip Sampling or put it inside Methodology. Sampling may be a filter recap with no session tool -- still its own tab.
+Analyst names are allowed on the middle tabs (`Volume`, `Satisfaction`, `What was wrong`) when that is clearer than Summary / Why / Where. Do not force RCA names on an exploration dashboard. Do not skip Sampling or put it inside Methodology. Sampling may be a filter recap with no session tool -- still its own tab. Do not put Recommendations after Sampling. Do not misspell the tab as Reccomendations.
 
 ### How to pick Overview graphs
 
@@ -64,7 +65,7 @@ Ask: if the reader left after Tab 1, would they know the stake? Volume of who sa
 
 ### How to chain drill-downs
 
-Each tab should make the next one inevitable. Example: Overview (who submits) → Satisfaction (how they score, where Cara wins) → What was wrong (why low scores) → Sampling (read the sessions) → Methodology (how the numbers were built).
+Each tab should make the next one inevitable. Example: Overview (who submits) → Satisfaction (how they score, where Cara wins) → What was wrong (why low scores) → Recommendations (what to do) → Sampling (read the sessions) → Methodology (how the numbers were built).
 
 If you found something surprising, do not open with it. Build the path so the finding is the payoff of the previous chart.
 
@@ -161,13 +162,20 @@ Prose reads as speech, so it takes the compact form: "25.16K events, 67.96% of t
 - Sampler inside Methodology; Methodology not last
 - Single 10-section scroll for executive presentation (use tabs)
 - Insight that retells the bars; method in the insight (`we joined on msid`)
-- A second "recommended actions" list that duplicates the Overview strip
+- A second "recommended actions" list that duplicates the Recommendations grid
+- Verb-first actions on the Overview carousel; finding cards on Recommendations
 
 ---
 
-## Action-item cards (Overview)
+## Overview finding cards
 
-After the stake chart. Verb-first title + research reason, **≤20 words, 1 sentence**, with 1-2 formatted numbers. Glow default on. Recipe: [component-recipes.md](component-recipes.md#action-item-cards). Skip only if there is no recommended move. Show once.
+After the stake chart. Finding title (not a verb) + reason, **≤20 words, 1 sentence**, 1-2 formatted numbers. Carousel. Glow default on. Recipe: [component-recipes.md](component-recipes.md#overview-finding-cards).
+
+---
+
+## Recommendations (action grid)
+
+After drill-downs, before Sampling. Verb-first title + research reason, **≤20 words, 1 sentence**, 1-2 formatted numbers. 1-6 cards, **2×3 CSS grid**, no carousel. Skip the tab if there is no recommended move. Recipe: [component-recipes.md](component-recipes.md#recommendations-action-grid). Show once -- not on Overview.
 
 ---
 
@@ -184,9 +192,10 @@ Fail if the page is a report dump, the insight retells the chart, or a caveat th
 Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Analytics extras:
 
 - [ ] Tab 1 (Overview) readable in <60s -- stake is clear if the reader stopped here
-- [ ] Action-item cards after the stake chart (or skipped with a reason)
+- [ ] Finding cards after the stake chart (carousel, not actions)
+- [ ] Recommendations tab before Sampling: 1-6 action cards in `.action-grid` (or skipped because there is no move)
 - [ ] Each later analysis tab is a drill-down of the previous, not a parallel dump
-- [ ] Sampling is last-but-one (filter recap is enough); Methodology is last
+- [ ] Sampling is last-but-one after Recommendations (filter recap is enough); Methodology is last
 - [ ] Session sampler (if present): uuid and conversation id are the hyperlinks, not extra URL columns
 - [ ] Hero subtitle ≤35 words / ≤2 sentences: why / get; identical on every tab
 - [ ] Hero chips: ≤3, ≤4 words, scope / window / n / freshness -- no pipeline or tool names
