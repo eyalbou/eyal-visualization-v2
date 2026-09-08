@@ -90,7 +90,7 @@ Centered two-line gradient title + badge pill. Theme toggle in `.page-chrome` fi
 
 `prefers-reduced-motion`: snap canvas to final state; disable float.
 
-**No motion on no-ops.** Re-clicking the already-selected pill / tab / chip, or any render that does not change the screen, skips animation and skips `renderAll()`. First-load `rise` does not replay. [SKILL.md](../SKILL.md#no-motion-on-no-ops).
+**No motion on no-ops.** Re-clicking the already-selected pill / tab / chip, or any render that does not change the screen, skips animation and skips `renderAll()`. First-load `rise` does not replay. Starters (`analytics-starter.html`, `funnel-graph.html`, `app-shell-starter.html`) early-return in setters. [SKILL.md](../SKILL.md#no-motion-on-no-ops).
 
 ---
 

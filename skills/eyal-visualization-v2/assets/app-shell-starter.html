@@ -317,11 +317,14 @@
     document.getElementById("kpiUsers").textContent = fmtNum(2400);
     document.getElementById("kpiConv").textContent = fmtPct(3.2, 1);
     document.getElementById("amtIn").textContent = "+$" + fmtNum(1200);
-    document.getElementById("themeBtn").addEventListener("click", () => {
-      const dark = !document.body.classList.contains("dark");
+    function setTheme(dark) {
+      if (document.body.classList.contains("dark") === dark) return;
       document.body.classList.toggle("dark", dark);
       document.getElementById("themeLabel").textContent = dark ? "Light" : "Dark";
       document.getElementById("themeIcon").className = dark ? "ph ph-sun" : "ph ph-moon";
+    }
+    document.getElementById("themeBtn").addEventListener("click", () => {
+      setTheme(!document.body.classList.contains("dark"));
     });
   </script>
 </body>

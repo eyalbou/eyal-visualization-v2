@@ -93,6 +93,7 @@
       border-radius: var(--radius-pill); padding: 9px 15px;
     }
     .pop-btn.active { background: var(--accent); color: #FFFFFF; font-weight: 600; }
+    .pop-btn:active:not(.active) { transform: scale(0.98); }
     .funnel-basis { display: flex; align-items: center; gap: 8px; margin: 0; }
     .card-header-actions .funnel-basis {
       padding-left: 12px; border-left: 1px solid var(--border);
@@ -298,10 +299,18 @@
         '<button type="button" class="pop-btn' + (rateBase === "step" ? " active" : "") + '" data-rate="step">previous step</button>' +
         '<button type="button" class="pop-btn' + (rateBase === "first" ? " active" : "") + '" data-rate="first">first stage</button>';
       document.querySelectorAll("[data-ch]").forEach((b) => {
-        b.addEventListener("click", () => { currentCh = b.dataset.ch; renderAll(); });
+        b.addEventListener("click", () => {
+          if (currentCh === b.dataset.ch) return;
+          currentCh = b.dataset.ch;
+          renderAll();
+        });
       });
       document.querySelectorAll("[data-rate]").forEach((b) => {
-        b.addEventListener("click", () => { rateBase = b.dataset.rate; renderAll(); });
+        b.addEventListener("click", () => {
+          if (rateBase === b.dataset.rate) return;
+          rateBase = b.dataset.rate;
+          renderAll();
+        });
       });
     }
 
@@ -357,9 +366,13 @@
     }
 
     function renderAll() { renderToggles(); renderFunnel(); }
-    document.getElementById("themeBtn").addEventListener("click", () => {
-      document.body.classList.toggle("dark");
+    function setTheme(dark) {
+      if (document.body.classList.contains("dark") === dark) return;
+      document.body.classList.toggle("dark", dark);
       renderAll();
+    }
+    document.getElementById("themeBtn").addEventListener("click", () => {
+      setTheme(!document.body.classList.contains("dark"));
     });
     renderAll();
   </script>
