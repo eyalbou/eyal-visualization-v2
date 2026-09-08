@@ -21,6 +21,8 @@ The string must match `--font` in CSS exactly. Never introduce a mono stack into
 
 **Toggles:** Chart.js animation stays **off**. Population / theme / tab / filter must not tween bars. If the chart is kept alive, call `chart.update('none')`. Destroy + recreate is fine under `Chart.defaults.animation = false`. CSS page `rise` and canvas enter on first load are separate -- do not turn those off.
 
+**No-ops:** if the pill / tab / filter / metric / theme is already that value, return before `renderAll()` or `chart.update`. Rebuilding an unchanged series is still a flash. [SKILL.md No motion on no-ops](../SKILL.md#no-motion-on-no-ops).
+
 Axis ticks and bar end labels use the canonical `fmtNum` from [SKILL.md](../SKILL.md#number-formatting) -- all digits below 1K, trimmed `K` up to 1M, `M` at two decimals:
 
 ```javascript

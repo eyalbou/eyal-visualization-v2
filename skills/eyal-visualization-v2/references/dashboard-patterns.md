@@ -99,4 +99,5 @@ Master gated list: [SKILL.md](../SKILL.md#invocation-checklist). Visual laws: [S
 - [ ] `generated_at` in footer; canonical `fmtNum` / `fmtInt` / `fmtPct`; null → `-`
 - [ ] No em dash, en dash, or `--` in UI copy; use `-`
 - [ ] `prefers-reduced-motion` respected; action-card glow off under it
+- [ ] No-op clicks (already-selected pill / tab / chip) skip `renderAll()` and skip motion
 - [ ] No decorative images; Phosphor icons (Lucide only if asked)

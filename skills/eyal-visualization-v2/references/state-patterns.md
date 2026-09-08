@@ -49,10 +49,11 @@ Tokens: [soft-ui-tokens.md](soft-ui-tokens.md)
 .pop-btn:active:not(.active) { transform: scale(0.98); }
 ```
 
-Sync duplicates:
+Sync duplicates. **No motion on no-ops:** if the clicked value is already current, return before `renderAll()`. Same for tabs, metric pills, filter chips, and theme. Full table: [SKILL.md No motion on no-ops](../SKILL.md#no-motion-on-no-ops).
 
 ```javascript
 function setPopulation(key) {
+  if (key === currentPop) return;
   currentPop = key;
   document.querySelectorAll(".pop-btn, .hist-pop-btn").forEach((btn) => {
     const active = btn.dataset.pop === key;
@@ -62,6 +63,12 @@ function setPopulation(key) {
   renderAll();
 }
 ```
+
+---
+
+## No motion on no-ops
+
+If the clicked value is already current, **return** before `renderAll()`, chart `update`, or CSS `rise`. Same for pills, tabs, chips, metric toggles, sort, and theme. Do not press-scale an already-`.active` control (`:active:not(.active)`). First-load enter does not replay. Table: [SKILL.md](../SKILL.md#no-motion-on-no-ops).
 
 ---
 
@@ -95,7 +102,7 @@ function setPopulation(key) {
 }
 ```
 
-Always include an **All** reset option for SQL-sourced filters.
+Always include an **All** reset option for SQL-sourced filters. Re-clicking the already-active chip is a no-op -- return before `renderAll()`.
 
 ---
 
@@ -196,6 +203,7 @@ Inverted metrics (error rate): flip color logic -- lower is better.
 
 ```javascript
 function setTheme(dark) {
+  if (document.body.classList.contains("dark") === dark) return;
   document.body.classList.toggle("dark", dark);
   document.getElementById("themeLabel").textContent = dark ? "Light mode" : "Dark mode";
   document.getElementById("themeIcon").className = dark ? "ph ph-sun" : "ph ph-moon";

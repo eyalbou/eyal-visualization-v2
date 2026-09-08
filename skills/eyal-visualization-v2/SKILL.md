@@ -1,12 +1,12 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.10.0
+version: 0.11.0
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-**Skill version 0.10.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
+**Skill version 0.11.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
 
 Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
@@ -32,6 +32,7 @@ This file plus `references/` and `assets/` is the full pack.
 | Copy length | Hard word caps, checked by script. [Copy budget](#copy-budget-hard-caps) |
 | Accent | `#2563EB` default; never ask. [Hard constraint 4](#hard-constraints) |
 | Recs type | Recommendations type palette: blue primary, purple add, mint go, yellow wait/look, red severe-only. Use 2-3 colors when enough. [Recommendations](#recommendations-tab-action-grid) |
+| Motion no-op | If a click does not change the screen, skip animation and skip re-render. [No motion on no-ops](#no-motion-on-no-ops) |
 
 Maps only if the question is geo.
 
@@ -45,7 +46,7 @@ Maps only if the question is geo.
 - Grasp the core idea in 5 seconds
 - Every control has default / hover / active / disabled / loading
 - Progressive disclosure: hide complexity until asked
-- Motion ~300ms enter, ~100ms hover; honor `prefers-reduced-motion`
+- Motion ~300ms enter, ~100ms hover; honor `prefers-reduced-motion`. No animation when the click did not change the screen
 - Numbers via `fmtNum` / `fmtInt` / `fmtPct` only
 
 ---
@@ -148,6 +149,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 
 - [ ] `Chart.defaults.animation = false` (set next to the font defaults). Population / theme / tab / filter updates must not tween: `chart.update('none')` or destroy + recreate under that default. Do **not** leave Chart.js duration on for toggles
 - [ ] CSS page enter stays (`rise` ~300ms, canvas on first load, hover ~100ms). Do not kill page-enter motion to satisfy this rule
+- [ ] **No motion on no-ops.** Re-clicking the already-selected pill / tab / chip returns immediately -- no `renderAll()`, no chart rebuild, no `rise` replay. Same for same-state theme, same metric, same sort. [No motion on no-ops](#no-motion-on-no-ops)
 
 ### 8. Stash (unless already covered)
 
@@ -336,6 +338,47 @@ Axiforma has **no public CDN**. Never `<link>` / `@import` it. Load all four DM 
 - Phosphor is an icon font; it does not count toward the two
 
 `--text-hero-display` only on the page hero h1. Sections stay `--text-h2`.
+
+---
+
+## No motion on no-ops
+
+Motion exists to show a **change**. If the click (or render) does not change what is on screen, there is no transition -- so there is no animation. Early-return in the setter. Do not call `renderAll()`. Do not destroy or `update` the chart. Do not replay CSS `rise` / canvas enter.
+
+```javascript
+function setPopulation(key) {
+  if (key === currentPop) return;
+  currentPop = key;
+  syncPills();
+  renderAll();
+}
+
+function setTab(id) {
+  if (id === currentTab) return;
+  currentTab = id;
+  renderAll();
+}
+
+function setTheme(dark) {
+  if (document.body.classList.contains("dark") === dark) return;
+  document.body.classList.toggle("dark", dark);
+  renderAll();
+}
+```
+
+| No-op (skip motion + skip re-render) | Why |
+|--------------------------------------|-----|
+| Re-click the already-selected pill, tab, chip, radio, or segmented value | Selection did not change |
+| Re-apply the same filter set, sort, or metric toggle (TOR already on TOR) | Query / series did not change |
+| Theme control when already on that theme | Tokens did not change |
+| `renderAll()` / chart rebuild when series, labels, and copy are unchanged | Nothing to tween |
+| First-load `rise` / canvas enter on a later render | Enter already played; first load only |
+| `:active` press-scale on a control that is already `.active` | Use `:active:not(.active)` |
+| Hash / deep-link landing on the tab already showing | Snap; no tab fade |
+
+Still animate when something **does** change: a new population, a real tab switch, theme flip, filter that changes n, "Copied!" confirm, info hover open. `prefers-reduced-motion` still kills the rest.
+
+Recipe: [state-patterns.md](references/state-patterns.md#no-motion-on-no-ops).
 
 ---
 
@@ -541,6 +584,7 @@ Call `renderAll()` inside `setTheme()`.
 - White type on `--sev-ok` / `--sev-lo` / `--sev-mid`; black type on `--sev-hi` / `--sev-max`
 - Shrinking chart labels to 11px; reminting series colors per population toggle
 - Chart.js grow / tween on population, theme, tab, or filter toggle (`animation` left on; `update()` without `'none'`)
+- Re-clicking an already-selected pill / tab / chip / filter retriggers `renderAll()`, chart destroy, or `rise`; `:active` scale on a control that is already `.active`
 - Dual-axis for TOR vs resolution; action list duplicated on Overview and Recommendations
 - Canvas Chart.js tooltip under `afterDraw` overlays (hover "behind" y-labels); one-string tooltip mixing TOR + Res + gap; metric-toggle hover that ignores the active pill
 - Reading or depending on `eyal-visualization` v1 files
@@ -563,6 +607,7 @@ Call `renderAll()` inside `setTheme()`.
 | `text-h1` on hero | zero hits -- hero uses `--text-hero-display` |
 | `Chart.defaults.font.family` | present, equal to `--font` |
 | `Chart.defaults.animation` | present, `false` |
+| `setPopulation` / `setTab` / `setMetric` / `setTheme` | early `return` when the value is already current; no `renderAll()` on that path |
 | `toFixed(1) + "K"` | zero hits |
 | `fmtNum` / `fmtInt` / `fmtPct` bodies | present; null sentinel `"-"` not `"--"` |
 | `—` `–` | zero hits |
