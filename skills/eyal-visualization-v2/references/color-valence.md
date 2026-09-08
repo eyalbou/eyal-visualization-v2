@@ -191,7 +191,7 @@ Charts keep the 5-stop `--sev-*` scale. **Recommendations type color is a separa
 | Primary | blue | `--type-blue` | `#2563EB` |
 | Add | purple | `--type-purple` | `#7371fc` |
 | Go | mint | `--type-mint` | `#2F9E90` (from `#55d6c2`) |
-| Wait / look | yellow | `--type-yellow` | `#FFCB56` |
+| Wait / look | yellow | `--type-yellow` | `#ff9500` |
 | Severe | red | `--type-red` | `#ff686b` |
 
 Rules:

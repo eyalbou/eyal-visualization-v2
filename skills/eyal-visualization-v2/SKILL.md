@@ -1,12 +1,12 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.11.1
+version: 0.11.2
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-**Skill version 0.11.1** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
+**Skill version 0.11.2** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
 
 Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
@@ -253,7 +253,7 @@ Layout: **2 rows × 3 columns**, CSS grid, **no carousel**. 1-6 cards, recommend
 | Primary | blue | `--type-blue` | `#2563EB` | Default / lead rec that is not an alarm (Hold) |
 | Add | purple | `--type-purple` | `#7371fc` | Constructive add (Premium, skills) |
 | Go | mint | `--type-mint` | `#2F9E90` | Offer / do-this. Darkened from `#55d6c2` so it holds on white. Not `#60d394` green |
-| Wait / look | yellow | `--type-yellow` | `#FFCB56` | Caution, route-don't, investigate. Type color, never a fill |
+| Wait / look | yellow | `--type-yellow` | `#ff9500` | Caution, route-don't, investigate. Type color, never a fill |
 | Severe | red | `--type-red` | `#ff686b` | Reserved. Skip it unless the card is a real alarm |
 
 **Footer** is a labeled line, not a bare number. `Cara 39% vs chatbot 56%`, not `39% / 56%`. `9.6% resolved`, not `9.6%`. `Offer 7.55K, route 3.24K`, not `7.55K vs 3.24K`.
@@ -623,7 +623,7 @@ Call `renderAll()` inside `setTheme()`.
 | domain term / internal name in visible copy | has an info hover, `*`, collapse, or Methodology row |
 | session sampler `uuid` / conversation id | cell text is the id; `href` is UM / conversation URL; zero extra URL columns |
 | Recommendations tab | after drill-downs, before Sampling; `.action-grid` not `.action-strip`; 1-6 cards; skip if no move |
-| Recommendations type | `--type-blue` `--type-purple` `--type-mint` `--type-yellow` `#FFCB56` `--type-red` severe-only; title + labeled footer; body ink; yellow is type not fill |
+| Recommendations type | `--type-blue` `--type-purple` `--type-mint` `--type-yellow` `#ff9500` `--type-red` severe-only; title + labeled footer; body ink; yellow is type not fill |
 | Overview carousel titles | findings, not verb-first actions |
 
 5. **Run the copy budget script.** `python3 scripts/copy-check.py <file>` must exit 0:

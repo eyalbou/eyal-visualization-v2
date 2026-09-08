@@ -52,8 +52,8 @@ Full validated set from `multi-site-accounts-v2.html`:
   --type-purple-soft: rgba(115, 113, 252, 0.14);
   --type-mint: #2F9E90;             /* go. Darkened from #55d6c2 for white. */
   --type-mint-soft: rgba(47, 158, 144, 0.14);
-  --type-yellow: #FFCB56;           /* wait / look. Type color, never a fill. */
-  --type-yellow-soft: rgba(255, 203, 86, 0.22);
+  --type-yellow: #ff9500;           /* wait / look. Type color, never a fill. */
+  --type-yellow-soft: rgba(255, 149, 0, 0.22);
   --type-red: #ff686b;              /* severe only */
   --type-red-soft: rgba(255, 104, 107, 0.14);
 
@@ -123,7 +123,7 @@ body.dark {
   --type-blue: #60A5FA;
   --type-purple: #8B89FF;
   --type-mint: #55d6c2;
-  --type-yellow: #FFCB56;
+  --type-yellow: #ff9500;
   --type-red: #ff686b;
   --sev-ok: #69c440;
   --sev-lo: #f1dc32;

@@ -182,7 +182,7 @@ Home of **action items**. Tab label **Recommendations**. After drill-downs, befo
 
 Layout: `.action-grid` -- **3 columns**, 16px gap, **no carousel**. 1-6 cards, recommended build order. 4 = 3+1, 5 = 3+2. **Do not pad** empty cells. Rank `01`. Title `--text-h3`, reason `--text-sm` / `--ink-soft`. Optional Phosphor icon, owner / effort chips, one highlighted stat. **Pointer-follow glow default ON.** Off under `prefers-reduced-motion`. Below ~768px: 1 column, no horizontal scroll.
 
-**Type color.** Blue primary, purple add, mint go (`#2F9E90`), yellow wait/look (`#FFCB56` as type, never a fill), red severe-only. Use 2-3 colors when enough. Title keyword + labeled footer. Body ink. Glow uses the card's type color. Full table: [SKILL.md Recommendations](../SKILL.md#recommendations-tab-action-grid).
+**Type color.** Blue primary, purple add, mint go (`#2F9E90`), yellow wait/look (`#ff9500` as type, never a fill), red severe-only. Use 2-3 colors when enough. Title keyword + labeled footer. Body ink. Glow uses the card's type color. Full table: [SKILL.md Recommendations](../SKILL.md#recommendations-tab-action-grid).
 
 ```javascript
 actions: [

@@ -175,7 +175,7 @@ After the stake chart. Finding title (not a verb) + reason, **≤20 words, 1 sen
 
 ## Recommendations (action grid)
 
-After drill-downs, before Sampling. Verb-first title + research reason, **≤20 words, 1 sentence**, 1-2 formatted numbers. 1-6 cards, **2×3 CSS grid**, no carousel. Skip the tab if there is no recommended move. Type color: blue primary, purple add, mint go, yellow `#FFCB56` wait/look (type not fill), red severe-only. 2-3 colors when enough. Labeled footer. Recipe: [component-recipes.md](component-recipes.md#recommendations-action-grid). Show once -- not on Overview.
+After drill-downs, before Sampling. Verb-first title + research reason, **≤20 words, 1 sentence**, 1-2 formatted numbers. 1-6 cards, **2×3 CSS grid**, no carousel. Skip the tab if there is no recommended move. Type color: blue primary, purple add, mint go, yellow `#ff9500` wait/look (type not fill), red severe-only. 2-3 colors when enough. Labeled footer. Recipe: [component-recipes.md](component-recipes.md#recommendations-action-grid). Show once -- not on Overview.
 
 ---
 
