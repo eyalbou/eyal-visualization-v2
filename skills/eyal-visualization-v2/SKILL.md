@@ -1,12 +1,12 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.12.0
+version: 0.13.0
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-**Skill version 0.12.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
+**Skill version 0.13.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
 
 Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
@@ -102,6 +102,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] Hero chips carry **population / window / n / freshness in plain words**. No pipeline, tool, connector, table, commit hash, run ID, or second-level timestamp
 - [ ] After the stake chart: ranked **finding cards** in a carousel (stake / what to look at next). Finding in stakeholder English, **not** a verb-first action. [Overview finding cards](#overview-finding-cards-carousel)
 - [ ] **Recommendations** tab before Sampling: action items only, 1-6 cards, **2×3 CSS grid**, no carousel. Skip the tab if there is no recommended move -- do not show it empty. Type color: blue / purple / mint / yellow / red-severe-only; 2-3 colors when enough; title keyword + labeled footer. [Recommendations](#recommendations-tab-action-grid)
+- [ ] **When a Recommendations tab exists, `python3 scripts/deslop.py <file> --view <recs-panel-id>` scores 5/5** -- every number on a card traces to the analysis. [De-slop the rec copy](#de-slop-the-rec-copy-required-when-this-tab-exists)
 - [ ] Tabs: Overview → drill-down(s) → Recommendations → Sampling → Methodology. Do not put actions on Overview. Sampling may be a **filter recap** (inclusion / exclusion / n remaining) -- still its own tab. Not a required session sampler. If a **session sampler table** exists: uuid is the User Manager link; conversation id is the conversation URL; no extra URL columns. [Sampling table](#sampling-table-ids-are-the-links)
 - [ ] One primary visual per question; chart type from the [chooser](#chart-chooser); title = finding in stakeholder English
 - [ ] At most 3 insight bullets under the chart (outcome, not method). One short under-chart caveat only if skipping it would misread the number
@@ -269,6 +270,22 @@ actions: [
 ```
 
 Bake counts as numbers; format in render. Recipe: [component-recipes.md](references/component-recipes.md#recommendations-action-grid).
+
+### De-slop the rec copy (required when this tab exists)
+
+`copy-check.py` counts words; it does not hear tone. Rec titles and reasons are the most persuasive prose in the artifact, so they are where AI phrasing shows up. Run the tone linter on this tab only -- not the whole file, which would score chart labels and KPI values.
+
+```bash
+python3 scripts/deslop.py dashboard.html --view <recommendations-panel-id>
+```
+
+If the panel has no id, pass the card text directly with `--text "<titles, reasons, and footers>"`. Scores out of 5, exits non-zero below 5. Fix every hit and re-run.
+
+- **Verb-first is not the same as slop-free.** `Unlock faster routing` and `Elevate the Premium journey` are verb-first and still fail. Use the plain verb the team says out loud: stop, offer, route, hold, add, drop.
+- **The reason line is where the rule-of-three creeps in.** Three clauses for rhythm inside a ≤20-word sentence is padding. Cut to the real count.
+- **Invented proof is a fail, not a style note.** Every number in a title, reason, or footer must trace to the analysis. If it does not exist, the card does not ship with it -- there is no `[needs number]` state on a delivered artifact.
+
+When a flagged number is real and evidenced, `--allow-proof` clears that group. Only use it after checking each figure against the data.
 
 ---
 
@@ -652,6 +669,7 @@ Fix before showing. Note what was fixed.
 | [chartjs-configs.md](references/chartjs-configs.md) | Chart.js extensions; 14px ticks; **Chart hover** (z-order + metric-toggle body) |
 | [overflow-rules.md](references/overflow-rules.md) | Clip / collision rules |
 | [scripts/copy-check.py](scripts/copy-check.py) | **Required before delivery** -- counts words per copy surface |
+| [scripts/deslop.py](scripts/deslop.py) | **Required when a Recommendations tab exists** -- lints rec card copy for AI tells and invented proof |
 | [assets/analytics-starter.html](assets/analytics-starter.html) | Analytics scaffold (copy from disk) |
 | [assets/app-shell-starter.html](assets/app-shell-starter.html) | Shell scaffold |
 | [assets/funnel-graph.html](assets/funnel-graph.html) | Funnel graph dummy bake |
