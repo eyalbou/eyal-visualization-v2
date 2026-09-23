@@ -1,12 +1,12 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.13.0
+version: 0.14.0
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-**Skill version 0.13.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
+**Skill version 0.14.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
 
 Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
@@ -74,7 +74,7 @@ Recipes stay in references. Copy CSS from assets on disk.
 7. **Every displayed count goes through `fmtNum`**. Tables/tooltips: `fmtInt`. Rates: `fmtPct`. Never `toLocaleString()`.
 8. **Artifact UI punctuation** -- in the HTML, `-` only (no em/en/`--`). This rule is **artifact UI only**. Chat / Slack drafts still use `--`. Keep `--` in CSS vars, JS, and SQL in `<pre>`.
 9. **Color valence** -- up-is-bad is never trust-blue. [color-valence.md](references/color-valence.md).
-10. **Skill self-update** -- if you change this skill, write **local and git in the same turn**. Local: `~/.cursor/skills/eyal-visualization-v2`. Git: `eyalbou/eyal-visualization-v2` and `eyalbou/eyal-personal-skills` at `skills/eyal-visualization-v2/`. Bump `VERSION` + YAML `version` + the visible stamp together, run `scripts/ship.sh`, then tell Eyal to resync From GitHub in Willow. See [Shipping an update](#shipping-an-update-required).
+10. **Skill self-update** -- if you change this skill, write **local and git in the same turn**: bump the three version stamps, run `scripts/ship.sh`, tell Eyal to resync in Willow. [MAINTAINING.md](MAINTAINING.md).
 11. **Copy budget** -- visible copy obeys the word caps in [Copy budget](#copy-budget-hard-caps); `python3 scripts/copy-check.py <file>` must exit 0 before the artifact is shown. Detail goes to info hover, not on screen.
 
 ---
@@ -102,7 +102,8 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] Hero chips carry **population / window / n / freshness in plain words**. No pipeline, tool, connector, table, commit hash, run ID, or second-level timestamp
 - [ ] After the stake chart: ranked **finding cards** in a carousel (stake / what to look at next). Finding in stakeholder English, **not** a verb-first action. [Overview finding cards](#overview-finding-cards-carousel)
 - [ ] **Recommendations** tab before Sampling: action items only, 1-6 cards, **2×3 CSS grid**, no carousel. Skip the tab if there is no recommended move -- do not show it empty. Type color: blue / purple / mint / yellow / red-severe-only; 2-3 colors when enough; title keyword + labeled footer. [Recommendations](#recommendations-tab-action-grid)
-- [ ] **When a Recommendations tab exists, `python3 scripts/deslop.py <file> --view <recs-panel-id>` scores 5/5** -- every number on a card traces to the analysis. [De-slop the rec copy](#de-slop-the-rec-copy-required-when-this-tab-exists)
+- [ ] **When a Recommendations tab exists, `python3 scripts/lint_recs.py <file>` exits 0** -- cards are static HTML in `#view-recommendations`, every number traces to the analysis. [De-slop the rec copy](#de-slop-the-rec-copy-required-when-this-tab-exists)
+- [ ] Every tab panel is `<section class="view" id="view-<tab>">` (starter pattern), so each tab can be linted on its own
 - [ ] Tabs: Overview → drill-down(s) → Recommendations → Sampling → Methodology. Do not put actions on Overview. Sampling may be a **filter recap** (inclusion / exclusion / n remaining) -- still its own tab. Not a required session sampler. If a **session sampler table** exists: uuid is the User Manager link; conversation id is the conversation URL; no extra URL columns. [Sampling table](#sampling-table-ids-are-the-links)
 - [ ] One primary visual per question; chart type from the [chooser](#chart-chooser); title = finding in stakeholder English
 - [ ] At most 3 insight bullets under the chart (outcome, not method). One short under-chart caveat only if skipping it would misread the number
@@ -114,7 +115,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] Baked `DATA`; buttons use `data-pop`; visible names from `.label`
 - [ ] Canonical `fmtNum` / `fmtInt` / `fmtPct`; null → `-` (never `--`)
 - [ ] KPIs/axes/prose → `fmtNum`; tables/tooltips → `fmtInt`; rates → `fmtPct`; movements → `pp`
-- [ ] Footer: SQL pointer + `generated_at`
+- [ ] SQL pointer on Methodology; footer shows `generated_at`
 
 ### 4. Color and charts
 
@@ -247,62 +248,35 @@ Label: **Recommendations**. Last analysis beat: after drill-downs, **before** Sa
 
 Layout: **2 rows × 3 columns**, CSS grid, **no carousel**. 1-6 cards, recommended build order. 4 cards = 3+1, 5 = 3+2. **Do not pad** empty slots. Rank `01`…, title `--text-h3`, reason `--text-sm` / `--ink-soft`. Optional Phosphor icon, owner / effort chips, one highlighted stat. **Pointer-follow glow default ON**; `prefers-reduced-motion` disables it. Below ~768px: 1 column, no horizontal scroll.
 
-**Type color (this section only).** Color the title keyword, footer, rank, and icon. Body `.action-reason` stays `--ink-soft`. No card washes. No yellow fill / row mark -- yellow is **text color**. Use **2 or 3** colors when that covers the grid; do not force 4 or 5. Red only when the move is actually severe (not Hold, not a routine investigate). Charts still use `--sev-*`; this palette is Recommendations type only.
-
-| Role | Color | Token | Hex | Use |
-|------|-------|-------|-----|-----|
-| Primary | blue | `--type-blue` | `#2563EB` | Default / lead rec that is not an alarm (Hold) |
-| Add | purple | `--type-purple` | `#7371fc` | Constructive add (Premium, skills) |
-| Go | mint | `--type-mint` | `#2F9E90` | Offer / do-this. Darkened from `#55d6c2` so it holds on white. Not `#60d394` green |
-| Wait / look | yellow | `--type-yellow` | `#ff9500` | Caution, route-don't, investigate. Type color, never a fill |
-| Severe | red | `--type-red` | `#ff686b` | Reserved. Skip it unless the card is a real alarm |
+**Type color (this section only).** Blue primary, purple add, mint go, yellow wait/look (type, never a fill), red severe-only. Color the title keyword, footer, rank, and icon; `.action-reason` stays `--ink-soft`. Use 2 or 3 colors when that covers the grid. Palette table and rules: [color-valence.md section 9](references/color-valence.md#9-recommendations-type-palette-section-lock).
 
 **Footer** is a labeled line, not a bare number. `Cara 39% vs chatbot 56%`, not `39% / 56%`. `9.6% resolved`, not `9.6%`. `Offer 7.55K, route 3.24K`, not `7.55K vs 3.24K`.
 
 Show **once** -- actions on this tab only. Do not duplicate on Overview.
 
-```javascript
-actions: [
-  { rank: 1, title: "Stop repeating a failed step",
-    n: 193, agree: 0.92,
-    reason: (a) => fmtInt(a.n) + " sessions, " + fmtPct(a.agree * 100, 0) + " agreement - cheapest P0." }
-]
-```
-
-Bake counts as numbers; format in render. Recipe: [component-recipes.md](references/component-recipes.md#recommendations-action-grid).
+**Static HTML, fixed id.** The panel is `<section class="view" id="view-recommendations">`, and every card is written as HTML inside it, not rendered from `DATA`. Rec copy does not change with the population toggle, and cards built in JS are invisible to both gates. Format each number with the `fmtNum` / `fmtPct` rules as you write it. Same for the Overview finding cards in `#view-overview`. The starter shows the pattern. Recipe: [component-recipes.md](references/component-recipes.md#recommendations-action-grid).
 
 ### De-slop the rec copy (required when this tab exists)
 
-`copy-check.py` counts words; it does not hear tone. Rec titles and reasons are the most persuasive prose in the artifact, so they are where AI phrasing shows up. Run the tone linter on this tab only -- not the whole file, which would score chart labels and KPI values.
+`copy-check.py` counts words; it does not hear tone. Rec titles and reasons are the most persuasive prose in the artifact, so they are where AI phrasing shows up. Lint this tab only -- not the whole file, which would score chart labels and KPI values.
 
 ```bash
-python3 scripts/deslop.py dashboard.html --view <recommendations-panel-id>
+python3 scripts/lint_recs.py dashboard.html
 ```
 
-If the panel has no id, pass the card text directly with `--text "<titles, reasons, and footers>"`. Scores out of 5, exits non-zero below 5. Fix every hit and re-run.
+It extracts `#view-recommendations`, skips rank badges, and scores the cards with the vendored SlopMonster linter (`deslop.py`, do not edit). It **fails** when the panel is missing or has no static `.action-card`. Em and en dashes fail too. Exit 0 = pass. Fix every hit and re-run.
 
 - **Verb-first is not the same as slop-free.** `Unlock faster routing` and `Elevate the Premium journey` are verb-first and still fail. Use the plain verb the team says out loud: stop, offer, route, hold, add, drop.
-- **The reason line is where the rule-of-three creeps in.** Three clauses for rhythm inside a ≤20-word sentence is padding. Cut to the real count.
+- **The reason line is where the rule-of-three creeps in.** Three clauses for rhythm inside a ≤20-word sentence is padding. Cut to the real count. If the three items are real named things, `--allow-three` makes the hit advisory.
 - **Invented proof is a fail, not a style note.** Every number in a title, reason, or footer must trace to the analysis. If it does not exist, the card does not ship with it -- there is no `[needs number]` state on a delivered artifact.
 
-When a flagged number is real and evidenced, `--allow-proof` clears that group. Only use it after checking each figure against the data.
+When a flagged number is real and evidenced, `--allow-proof` clears that group. Only use it after checking each figure against the data, and say so in the delivery message.
 
 ---
 
 ## Sampling table: IDs are the links
 
-Applies when Sampling is a **session sampler table**, not a filter-recap-only tab. The id **is** the link. A second URL column is a fail.
-
-| Column | Cell text | `href` | Ban |
-|--------|-----------|--------|-----|
-| uuid | the uuid | User Manager. Wix default: `https://bo.wix.com/um/users/{uuid}/accounts/{uuid}` | A `user_manager_url` column; uuid as plain text next to a UM button |
-| Conversation id | the conversation / session id | the conversation URL. Wix Cara: `https://bo.wix.com/_serverless/cara-conversation-page/sessions/{cid}`. Wix Chatbot: `https://bo.wix.com/chatbot-builder/conversations/{cid}` | A `conversation_url` column; `Listen` / `Open` replacing the id |
-
-Details / Listen chrome may sit **beside** the id. It does not replace it. Truncate long ids with ellipsis + `title` of the full id; do not hide the id behind an icon-only control.
-
-CSV export keeps `uuid` and `conversation_id` as those values. Do not add URL columns. CSV cannot carry a live hyperlink.
-
-Missing id → `-`. `target="_blank"` + `rel="noopener"`. Row-click that opens a modal must not steal the id click (`data-stop-row` or equivalent).
+Applies only when Sampling is a **session sampler table**. The id **is** the link: uuid cell links to User Manager, conversation id cell links to the conversation. A second URL column is a fail. URLs, CSV, and row-click rules: [analytics-storytelling.md](references/analytics-storytelling.md#sampling-table-ids-are-the-links).
 
 ---
 
@@ -325,77 +299,13 @@ Visible layer is **load-bearing only**. If a sentence can go without changing wh
 
 ## Fonts
 
-Exactly two families. A third on screen is a bug -- almost always an unstyled `<code>`.
-
-```css
---font: "Axiforma", "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
---font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-code, pre { font-family: var(--font-mono); }
-code {
-  font-size: 0.92em;
-  padding: 1px 6px;
-  border-radius: 5px;
-  background: var(--canvas-deep);
-  color: var(--ink);
-}
-```
-
-```html
-<link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/400.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/500.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/600.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/700.css" rel="stylesheet" />
-```
-
-Axiforma has **no public CDN**. Never `<link>` / `@import` it. Load all four DM Sans weights.
-
-- Set family on `html, body`. `button, input, select, textarea { font-family: inherit; }`
-- `Chart.defaults.font.family` = the same string as `--font`
-- `Chart.defaults.animation = false` -- no tween on population / theme / tab / filter. Use `chart.update('none')` when not destroying
-- Phosphor is an icon font; it does not count toward the two
-
-`--text-hero-display` only on the page hero h1. Sections stay `--text-h2`.
+Exactly two families: `--font` (Axiforma stack, DM Sans ships) and `--font-mono` on `code` / `pre` only. A third on screen is a bug -- almost always an unstyled `<code>`. Axiforma has **no public CDN**; never `<link>` / `@import` it. Load all four DM Sans weights. `Chart.defaults.font.family` = the same string as `--font`. Phosphor is an icon font and does not count. `--text-hero-display` only on the page hero h1. Loading tags and base CSS: [soft-ui-tokens.md](references/soft-ui-tokens.md#font-loading-required-in-head).
 
 ---
 
 ## No motion on no-ops
 
-Motion exists to show a **change**. If the click (or render) does not change what is on screen, there is no transition -- so there is no animation. Early-return in the setter. Do not call `renderAll()`. Do not destroy or `update` the chart. Do not replay CSS `rise` / canvas enter.
-
-```javascript
-function setPopulation(key) {
-  if (key === currentPop) return;
-  currentPop = key;
-  syncPills();
-  renderAll();
-}
-
-function setTab(id) {
-  if (id === currentTab) return;
-  currentTab = id;
-  renderAll();
-}
-
-function setTheme(dark) {
-  if (document.body.classList.contains("dark") === dark) return;
-  document.body.classList.toggle("dark", dark);
-  renderAll();
-}
-```
-
-| No-op (skip motion + skip re-render) | Why |
-|--------------------------------------|-----|
-| Re-click the already-selected pill, tab, chip, radio, or segmented value | Selection did not change |
-| Re-apply the same filter set, sort, or metric toggle (TOR already on TOR) | Query / series did not change |
-| Theme control when already on that theme | Tokens did not change |
-| `renderAll()` / chart rebuild when series, labels, and copy are unchanged | Nothing to tween |
-| First-load `rise` / canvas enter on a later render | Enter already played; first load only |
-| `:active` press-scale on a control that is already `.active` | Use `:active:not(.active)` |
-| Hash / deep-link landing on the tab already showing | Snap; no tab fade |
-
-Still animate when something **does** change: a new population, a real tab switch, theme flip, filter that changes n, "Copied!" confirm, info hover open. `prefers-reduced-motion` still kills the rest.
-
-Recipe: [state-patterns.md](references/state-patterns.md#no-motion-on-no-ops).
+Motion exists to show a **change**. If a click does not change the screen, the setter returns first: no `renderAll()`, no chart `update`, no `rise` replay. Applies to pills, tabs, chips, metric toggles, sort, filters, and theme; `:active:not(.active)` for press-scale. Still animate a real change. Setter code and the full no-op table: [state-patterns.md](references/state-patterns.md#no-motion-on-no-ops).
 
 ---
 
@@ -455,79 +365,19 @@ Numeric table columns: `font-variant-numeric: tabular-nums`. Null → `-`, never
 
 ## Color valence (MUST)
 
-Before a fill: **if this number goes up, is that better or worse?** Full rules: [color-valence.md](references/color-valence.md).
-
-| Direction | Color |
-|-----------|--------|
-| Up is bad | `--warning` `#ff9323` → `--sev-hi` / `--danger` `#da0808` |
-| Up is good | `--success` / `--sev-ok` `#69c440`, or `--accent` |
-| Magnitude only | `--accent` / `--ink` |
-
-Never paint TOR / DSAT / dissatisfaction / rage share in trust-blue. Ordered negative states: `--sev-lo` `#f1dc32` → `--sev-mid` `#ff9323` → `--sev-hi` `#da0808` left-to-right by **rank**, never volume, never the accent ramp. Dark ink `#1D1D1F` on ok / lo / mid; white on hi / max. "Has the bad signal vs remainder" uses `--sev-flag`, not `--accent`. In-bar type `--text-h3` / `--text-sm`. Series hexes stay **locked** when a population toggle flips.
-
-Hero / active snap: top bar + wash in the **valence** color. `.kpi.hero` accent chrome is for good-when-up / magnitude only. TOR/DSAT start as `.kpi.hero.is-bad`.
+Before a fill: **if this number goes up, is that better or worse?** Up is bad → `--warning` → `--sev-hi` / `--danger`. Up is good → `--success` or `--accent`. Magnitude only → `--accent` / `--ink`. TOR / DSAT / rage are never trust-blue; their hero starts as `.kpi.hero.is-bad`. Ordered negative states go left-to-right by **rank**. Series hexes stay locked across population toggles. Full rules (loaded every call): [color-valence.md](references/color-valence.md).
 
 ---
 
 ## Optional brand palette
 
-Use **only when the user asks** for this palette by name. It does **not** replace valence: TOR / DSAT / rage stay `--sev-*`. Do not mix this with a separate user `--accent` unless they say to. Never offer it as a question.
-
-Merged from the two source swatches. Dropped near-duplicates: `#FF9100` (same orange family as `#FB8500`) and `#00B7CD` (same teal family as `#219EBC`).
-
-| Token | Hex | Role |
-|-------|-----|------|
-| `--palette-cream` | `#FFF1D1` | Warm paper / canvas wash |
-| `--palette-ice` | `#8ECAE6` | Light sky, secondary cool |
-| `--palette-teal` | `#219EBC` | **Accent** (primary) |
-| `--palette-navy` | `#023047` | Ink / dark chrome |
-| `--palette-gold` | `#FFB703` | Highlight / magnitude callout -- not bad-when-up |
-| `--palette-orange` | `#FB8500` | Warm secondary -- not TOR hero |
-| `--palette-red` | `#DF301C` | Brand fail (may alias `--danger` if they want brand-aligned errors) |
-
-```css
-:root {
-  --accent: #219EBC;
-  --accent-2: #8ECAE6;
-  --accent-glow: rgba(33, 158, 188, 0.12);
-  --ink: #023047;
-  --canvas: #FFF1D1;
-  --highlight: #FFB703;
-  --warm: #FB8500;
-}
-```
-
-Wire `--page-bg` / hero mesh off `--accent` + `--palette-ice`. Gold and orange are **not** severity fills.
+Use **only when the user asks** for it by name; never offer it. It does not replace valence. Tokens and roles: [soft-ui-tokens.md](references/soft-ui-tokens.md#optional-brand-palette).
 
 ---
 
 ## Chart chooser
 
-Pick by the **question**. Implementations live in [chartjs-configs.md](references/chartjs-configs.md), [overflow-rules.md](references/overflow-rules.md), [funnel-graph.md](references/funnel-graph.md).
-
-| Question | Chart |
-|----------|--------|
-| Rank / compare categories / drivers | Horizontal bar, volume sort, end labels. Y-axis is `Name (n)` two-tone (name in `--ink`, parens in `--ink-soft`, count in the **subject color** via `fmtNum` -- Cara n is always Cara teal, never winner fill). Long names → horizontal, not vertical. [chartjs-configs.md](references/chartjs-configs.md#horizontal-bar-category-labels-name--n) |
-| Few discrete periods (quarters, 4-8 weeks) | Vertical bar |
-| Trend over continuous time | Smooth line `tension: 0.4`. Two series → dual-line + crosshair. 5+ series → small multiples |
-| Widget footer trend | Sparkline **only if dated**. Never under a histogram bucket |
-| Distribution / buckets / histogram | Vertical bar, `borderRadius: 12` |
-| Part-to-whole, 2-4 slices | Doughnut, total in center. **5+ slices or one slice >80%** → horizontal bar |
-| Mix + a second metric (mean, rate) | Stacked / 100% stacked bar with overlay tick. Not a fourth KPI. Not three charts of the same mix |
-| Ordered negative scale (mild → rage, TOR bands) | Stacked HTML bar, **rank** order, `--sev-*` |
-| Sequential conversion (eligible → viewed → submitted) | CSS column funnel. Not Chart.js, not Sankey |
-| Cross-population compare | KPI + trend chips + snap grid (not a grouped bar of 12 pops) |
-| Density over calendar time | CSS heatmap. Accent ramp if magnitude-only; `--sev-*` if the cell is a bad-when-up rate |
-| Exact values / audit / many columns | Table (`fmtInt`). Collapse if long |
-| Volume + rate together over few categories | Combo (bars + line), dual axis. Disable datalabels on one series |
-| Relationship / correlation | Scatter (rare). Do not connect unordered categories with a line |
-| Single status number | KPI card. Not a one-bar chart. Not a gauge |
-
-**Never:** pie (use doughnut or bar); Chart.js funnel / Sankey for 3-stage survey drop; radar; word cloud unless asked; photos as charts.
-
-3-4 sequential conversion stages → funnel recipe. Mix/share → bar/doughnut. **Not every dashboard needs a funnel.**
-
-CSS funnel rule: one hue family per population, 400/500/600, 4-8% sheen, no neon orange. Cara All / sky / violet / apricot is a **worked example**, not global law. Do not paint Chatbot apricot onto an unrelated dashboard.
+Pick by the **question**, not by habit. **Never:** pie, radar, Chart.js funnel / Sankey for a 3-stage survey drop, gauges, word clouds unless asked. Doughnut only at 2-4 slices. TOR vs resolution is a toggle, never dual-axis. Not every dashboard needs a funnel. Full question-to-chart table: [chartjs-configs.md](references/chartjs-configs.md#chart-chooser).
 
 ---
 
@@ -552,9 +402,9 @@ const DATA = {
 };
 ```
 
-Pre-aggregate before embedding. `data-pop="segment_a"`; visible text uses `.label`. `renderAll()` updates KPIs, chart, snaps, insight together. Footer: `SQL: ... · Generated {fmtDate(DATA.generated_at)}`.
+Pre-aggregate before embedding. `data-pop="segment_a"`; visible text uses `.label`. `renderAll()` updates KPIs, chart, and snaps together; finding and rec cards are static HTML. SQL pointer lives on the Methodology tab; footer: `Generated {fmtDate(DATA.generated_at)}`.
 
-Optional live dashboard (may not exist in this workspace): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`. In-skill proofs: `assets/analytics-starter.html`, `assets/funnel-graph.html`.
+In-skill proofs: `assets/analytics-starter.html` (full tab arc), `assets/funnel-graph.html`.
 
 ---
 
@@ -669,8 +519,10 @@ Fix before showing. Note what was fixed.
 | [chartjs-configs.md](references/chartjs-configs.md) | Chart.js extensions; 14px ticks; **Chart hover** (z-order + metric-toggle body) |
 | [overflow-rules.md](references/overflow-rules.md) | Clip / collision rules |
 | [scripts/copy-check.py](scripts/copy-check.py) | **Required before delivery** -- counts words per copy surface |
-| [scripts/deslop.py](scripts/deslop.py) | **Required when a Recommendations tab exists** -- lints rec card copy for AI tells and invented proof |
-| [assets/analytics-starter.html](assets/analytics-starter.html) | Analytics scaffold (copy from disk) |
+| [scripts/lint_recs.py](scripts/lint_recs.py) | **Required when a Recommendations tab exists** -- lints `#view-recommendations` for AI tells and invented proof |
+| [scripts/deslop.py](scripts/deslop.py) | Vendored SlopMonster linter used by `lint_recs.py`. Do not edit |
+| [assets/analytics-starter.html](assets/analytics-starter.html) | Analytics scaffold with the full tab arc, finding carousel, and static Recommendations grid (copy from disk) |
+| [MAINTAINING.md](MAINTAINING.md) | Editing and shipping this skill only |
 | [assets/app-shell-starter.html](assets/app-shell-starter.html) | Shell scaffold |
 | [assets/funnel-graph.html](assets/funnel-graph.html) | Funnel graph dummy bake |
 
@@ -680,22 +532,4 @@ This skill is **standalone**. Do not Read `../eyal-visualization/` or any v1 pat
 
 ## Shipping an update (required)
 
-Willow counts `references/*.md` as references and `assets/*` as assets. HTML starters **must** live in `assets/` (not `examples/`) or Willow shows 0 assets. Agents Read markdown when this file links it. Copy HTML starters from disk; do not Read them into context.
-
-After **any** edit to this skill:
-
-1. Keep `~/.cursor/skills/eyal-visualization-v2` as the working copy.
-2. **Bump the version in three places, always together:** [`VERSION`](VERSION), the YAML `version`, and the visible stamp under the h1. A behavior change (new rule, new default, new gate) is a minor bump; wording only is a patch.
-3. Push the same tree to git: `eyalbou/eyal-visualization-v2` (public, Willow import) and `eyalbou/eyal-personal-skills` (private kit).
-4. Run [`scripts/ship.sh`](scripts/ship.sh) so local and both remotes match.
-5. In Willow: Add Skill / the skill card → **resync From GitHub**. Push does not auto-update Willow.
-
-**"Am I on the latest?"** Compare local `VERSION` against the public repo:
-
-```bash
-cat ~/.cursor/skills/eyal-visualization-v2/VERSION
-gh api repos/eyalbou/eyal-visualization-v2/contents/skills/eyal-visualization-v2/VERSION \
-  --jq '.content' | base64 -d
-```
-
-Different values mean the local copy is stale: `git pull` the repo, or resync From GitHub in Willow.
+Only when editing this skill: bump `VERSION` + YAML `version` + the stamp together, then run `bash scripts/ship.sh`. Full steps and the "am I on the latest" check: [MAINTAINING.md](MAINTAINING.md).

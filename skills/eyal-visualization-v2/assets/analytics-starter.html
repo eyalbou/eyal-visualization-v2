@@ -72,6 +72,18 @@
       --sev-hi-soft: rgba(218, 8, 8, 0.14);
       --sev-max-soft: rgba(149, 4, 4, 0.16);
 
+      /* Recommendations type palette (this tab only) */
+      --type-blue: #2563EB;
+      --type-blue-soft: rgba(37, 99, 235, 0.12);
+      --type-purple: #7371fc;
+      --type-purple-soft: rgba(115, 113, 252, 0.14);
+      --type-mint: #2F9E90;
+      --type-mint-soft: rgba(47, 158, 144, 0.14);
+      --type-yellow: #ff9500;
+      --type-yellow-soft: rgba(255, 149, 0, 0.22);
+      --type-red: #ff686b;
+      --type-red-soft: rgba(255, 104, 107, 0.14);
+
       --border: rgba(0, 0, 0, 0.06);
       --border-strong: rgba(0, 0, 0, 0.1);
 
@@ -125,6 +137,12 @@
       --sev-hi: #f04444;
       --sev-max: #da0808;
       --sev-flag: var(--sev-hi);
+
+      --type-blue: #60A5FA;
+      --type-purple: #8B89FF;
+      --type-mint: #55d6c2;
+      --type-yellow: #ff9500;
+      --type-red: #ff686b;
 
       --border: rgba(255, 255, 255, 0.08);
       --border-strong: rgba(255, 255, 255, 0.12);
@@ -856,6 +874,142 @@
       animation: rise 300ms 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
+    /* -- Tabs: Overview -> drill-down -> Recommendations -> Sampling -> Methodology -- */
+    .tab-bar { margin: 0 0 32px; }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* -- Finding carousel (Overview) + Recommendations grid -- */
+    .strip-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 16px;
+    }
+    .strip-arrows { display: inline-flex; gap: 8px; }
+    .strip-arrow {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background 100ms ease;
+    }
+    .strip-arrow:hover { background: var(--canvas-deep); }
+    .strip-arrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .action-strip {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding: 8px 4px 20px;
+      margin-bottom: 20px;
+    }
+    .action-strip::-webkit-scrollbar { display: none; }
+    .action-strip .action-card {
+      flex: 0 0 min(360px, 82vw);
+      min-height: 200px;
+      scroll-snap-align: start;
+    }
+
+    .action-card {
+      --glow-x: 50%;
+      --glow-y: 50%;
+      --c-topic: var(--type-blue);
+      --c-topic-soft: var(--type-blue-soft);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px;
+      border-radius: 16px;
+      background: var(--surface);
+      box-shadow: var(--shadow-md);
+    }
+    .action-card::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      border: 2px solid transparent;
+      background: radial-gradient(180px 180px at var(--glow-x) var(--glow-y),
+        color-mix(in srgb, var(--c-topic) 55%, transparent), transparent 70%) border-box;
+      mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+    }
+    .action-rank {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: var(--text-sm);
+      background: var(--c-topic-soft);
+      color: var(--c-topic);
+    }
+    .action-card h3 {
+      margin: 0;
+      font-size: var(--text-h3);
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+    .action-card .topic { color: var(--c-topic); }
+    .action-reason {
+      margin: 0;
+      font-size: var(--text-sm);
+      color: var(--ink-soft);
+      line-height: 1.55;
+      flex: 1;
+    }
+    .action-foot {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--c-topic);
+    }
+    .action-card.is-blue { --c-topic: var(--type-blue); --c-topic-soft: var(--type-blue-soft); }
+    .action-card.is-purple { --c-topic: var(--type-purple); --c-topic-soft: var(--type-purple-soft); }
+    .action-card.is-mint { --c-topic: var(--type-mint); --c-topic-soft: var(--type-mint-soft); }
+    .action-card.is-yellow { --c-topic: var(--type-yellow); --c-topic-soft: var(--type-yellow-soft); }
+    .action-card.is-red { --c-topic: var(--type-red); --c-topic-soft: var(--type-red-soft); }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .action-grid .action-card { min-height: 220px; }
+    @media (max-width: 768px) { .action-grid { grid-template-columns: 1fr; } }
+
+    /* -- Sampling recap + Methodology -- */
+    .recap-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+    }
+    .recap-list li {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 16px;
+      font-size: var(--text-base);
+      line-height: 1.55;
+    }
+    .recap-key { font-weight: 600; color: var(--ink-soft); }
+    @media (max-width: 560px) { .recap-list li { grid-template-columns: 1fr; gap: 4px; } }
+    code { font-family: var(--font-mono); font-size: 0.92em; }
+
     @keyframes rise {
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
@@ -876,6 +1030,7 @@
         opacity: 0.75;
         animation: none;
       }
+      .action-card::after { display: none; }
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
@@ -930,41 +1085,120 @@
       </div>
     </header>
 
-    <div class="pop-card">
-      <div class="pop-card-header">
-        <div>
-          <h2 class="section-label">Population</h2>
-          <p class="pop-subtitle" id="popSubtitle"></p>
+    <!-- Tab arc is fixed: Overview -> drill-down(s) -> Recommendations -> Sampling -> Methodology.
+         Every panel id starts with view- so deslop.py --view stops at the next panel. -->
+    <nav class="pop-toggle tab-bar" id="tabBar" role="tablist" aria-label="Sections">
+      <button class="pop-btn active" type="button" role="tab" data-tab="overview" aria-selected="true">Overview</button>
+      <button class="pop-btn" type="button" role="tab" data-tab="populations" aria-selected="false">Populations</button>
+      <button class="pop-btn" type="button" role="tab" data-tab="recommendations" aria-selected="false">Recommendations</button>
+      <button class="pop-btn" type="button" role="tab" data-tab="sampling" aria-selected="false">Sampling</button>
+      <button class="pop-btn" type="button" role="tab" data-tab="methodology" aria-selected="false">Methodology</button>
+    </nav>
+
+    <section class="view active" id="view-overview" role="tabpanel" aria-label="Overview">
+      <div class="pop-card">
+        <div class="pop-card-header">
+          <div>
+            <h2 class="section-label">Population</h2>
+            <p class="pop-subtitle" id="popSubtitle"></p>
+          </div>
+          <div class="pop-toggle" id="popToggleTop" role="tablist" aria-label="Population selector"></div>
         </div>
-        <div class="pop-toggle" id="popToggleTop" role="tablist" aria-label="Population selector"></div>
       </div>
-    </div>
 
-    <div class="kpi-grid" id="kpiGrid"></div>
+      <div class="kpi-grid" id="kpiGrid"></div>
 
-    <div class="card">
-      <div class="card-header-row">
-        <h2 class="card-title" style="margin:0">Sites per account</h2>
-        <div class="pop-toggle" id="popToggleHist" role="tablist" aria-label="Histogram population"></div>
+      <div class="card">
+        <div class="card-header-row">
+          <h2 class="card-title" style="margin:0">Sites per account</h2>
+          <div class="pop-toggle" id="popToggleHist" role="tablist" aria-label="Histogram population"></div>
+        </div>
+        <div id="chartHoverDetail" class="chart-hover-detail muted">Hover a bar to see account count and share of population</div>
+        <div class="chart-wrap">
+          <canvas id="histChart"></canvas>
+        </div>
+        <p class="chart-caption" id="chartCaption"></p>
       </div>
-      <div id="chartHoverDetail" class="chart-hover-detail muted">Hover a bar to see account count and share of population</div>
-      <div class="chart-wrap">
-        <canvas id="histChart"></canvas>
+
+      <!-- Finding cards: a finding, not a verb. Static HTML so copy-check.py can read .action-reason. -->
+      <div class="strip-head">
+        <h2 class="section-label">What stands out</h2>
+        <div class="strip-arrows">
+          <button class="strip-arrow" type="button" data-strip="-1" aria-label="Previous finding"><i class="ph ph-caret-left" aria-hidden="true"></i></button>
+          <button class="strip-arrow" type="button" data-strip="1" aria-label="Next finding"><i class="ph ph-caret-right" aria-hidden="true"></i></button>
+        </div>
       </div>
-      <p class="chart-caption" id="chartCaption"></p>
-    </div>
+      <div class="action-strip" id="findingStrip">
+        <article class="action-card is-blue">
+          <div class="action-rank">01</div>
+          <h3>The test group is the <span class="topic">most multi-site</span></h3>
+          <p class="action-reason">Multi-site accounts are 7.71% of the exposed cohort and 0.27% of Priority + Studio.</p>
+          <div class="action-foot">Exposed 7.71% vs baseline 0.27%</div>
+        </article>
+        <article class="action-card is-blue">
+          <div class="action-rank">02</div>
+          <h3>Chatbot users skew <span class="topic">multi-site</span></h3>
+          <p class="action-reason">Adding the chatbot filter lifts the multi-site share from 0.27% to 2.40%.</p>
+          <div class="action-foot">Active v3 + chatbot 2.40%</div>
+        </article>
+        <article class="action-card is-blue">
+          <div class="action-rank">03</div>
+          <h3>The top bucket is <span class="topic">small but heavy</span></h3>
+          <p class="action-reason">Only 28 exposed accounts sit in the 500+ bucket, yet each one outweighs a typical account.</p>
+          <div class="action-foot">500+ bucket: 28 accounts</div>
+        </article>
+      </div>
+    </section>
 
-    <div class="insight">
-      <div class="insight-label">Key finding</div>
-      <div id="insightBox"></div>
-    </div>
+    <section class="view" id="view-populations" role="tabpanel" aria-label="Populations">
+      <h2 class="snap-section-label">All populations at a glance</h2>
+      <div class="snap-grid" id="snapGrid"></div>
+    </section>
 
-    <h2 class="snap-section-label">All populations at a glance</h2>
-    <div class="snap-grid" id="snapGrid"></div>
+    <!-- Recommendations: verb-first actions, 1-6 cards, 3-column grid, no padding cards.
+         Static HTML so both gates can read it:
+         python3 scripts/deslop.py <file> --view view-recommendations -->
+    <section class="view" id="view-recommendations" role="tabpanel" aria-label="Recommendations">
+      <div class="action-grid" id="actionGrid">
+        <article class="action-card is-blue">
+          <div class="action-rank">01</div>
+          <h3><span class="topic">Report</span> the test per account</h3>
+          <p class="action-reason">The exposed cohort is far more multi-site than the baseline, so per-site rates would overweight a few accounts.</p>
+          <div class="action-foot">Exposed 7.71% vs baseline 0.27%</div>
+        </article>
+        <article class="action-card is-mint">
+          <div class="action-rank">02</div>
+          <h3><span class="topic">Cap</span> site-level metrics per account</h3>
+          <p class="action-reason">The 500+ bucket holds 28 exposed accounts, enough to swing a per-site average.</p>
+          <div class="action-foot">500+ bucket: 28 accounts</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="view" id="view-sampling" role="tabpanel" aria-label="Sampling">
+      <div class="card">
+        <h2 class="card-title">Who is in the numbers</h2>
+        <ul class="recap-list">
+          <li><span class="recap-key">Included</span><span>Accounts in each population, counted once, with their site count at snapshot time</span></li>
+          <li><span class="recap-key">Excluded</span><span>Deleted accounts and internal test accounts</span></li>
+          <li><span class="recap-key">Remaining</span><span>6.45M baseline accounts · 3.4K exposed accounts</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="view" id="view-methodology" role="tabpanel" aria-label="Methodology">
+      <div class="card">
+        <h2 class="card-title">How this was built</h2>
+        <ul class="recap-list">
+          <li><span class="recap-key">Populations</span><span>Priority + Studio is the Petri Active Groups union; the chatbot cut joins all-time started AI chats; Exposed is the experiment's exposed users</span></li>
+          <li><span class="recap-key">Multi-site</span><span>An account with 100 or more sites</span></li>
+          <li><span class="recap-key">SQL</span><span><code>Q14</code> · <code>Q14b</code> · <code>Q14d</code> · <code>Q14g</code>-<code>Q14k</code></span></li>
+        </ul>
+      </div>
+    </section>
 
     <p class="footer">
-      SQL: Q14 · Q14b · Q14d · Q14g-Q14k
-      · Generated <span id="generatedAt"></span>
+      Generated <span id="generatedAt"></span>
     </p>
   </div>
 
@@ -1123,7 +1357,7 @@
       }
       document.getElementById("popToggleTop").innerHTML = buttons("");
       document.getElementById("popToggleHist").innerHTML = buttons("hist-pop-btn");
-      document.querySelectorAll(".pop-btn, .hist-pop-btn").forEach((btn) => {
+      document.querySelectorAll(".pop-btn[data-pop]").forEach((btn) => {
         btn.addEventListener("click", () => setPopulation(btn.dataset.pop));
       });
     }
@@ -1135,7 +1369,7 @@
     function setPopulation(key) {
       if (key === currentPop) return;
       currentPop = key;
-      document.querySelectorAll(".pop-btn, .hist-pop-btn").forEach((btn) => {
+      document.querySelectorAll(".pop-btn[data-pop]").forEach((btn) => {
         const active = btn.dataset.pop === key;
         btn.classList.toggle("active", active);
         btn.setAttribute("aria-selected", String(active));
@@ -1315,15 +1549,6 @@
       const pop = getPop();
       document.getElementById("popSubtitle").textContent = pop.subtitle;
 
-      const p = DATA.populations;
-      // Insight block: <=54 words (or <=18 per bullet). State the finding, do not
-      // dump every population row - that is what the snap grid below is for.
-      document.getElementById("insightBox").textContent =
-        "Multi-site accounts concentrate as the population narrows: " +
-        fmtPct(p.active_groups_v3.total.pct, 2) + " of " + p.active_groups_v3.label.toLowerCase() +
-        " against " + fmtPct(p.exposed.total.pct, 2) + " of the exposed cohort. " +
-        "The test group is the most multi-site-heavy of the four.";
-
       document.getElementById("snapGrid").innerHTML = POP_ORDER.map((key) => {
         const snap = DATA.populations[key];
         const isActive = key === currentPop;
@@ -1373,6 +1598,41 @@
 
     document.getElementById("themeBtn").addEventListener("click", () => {
       setTheme(!document.body.classList.contains("dark"));
+    });
+
+    let currentTab = "overview";
+    function setTab(id) {
+      if (id === currentTab) return;
+      currentTab = id;
+      document.querySelectorAll("#tabBar .pop-btn").forEach((btn) => {
+        const on = btn.dataset.tab === id;
+        btn.classList.toggle("active", on);
+        btn.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      document.querySelectorAll(".view").forEach((view) => {
+        view.classList.toggle("active", view.id === "view-" + id);
+      });
+      if (id === "overview" && histChart) histChart.resize();
+    }
+    document.querySelectorAll("#tabBar .pop-btn").forEach((btn) => {
+      btn.addEventListener("click", () => setTab(btn.dataset.tab));
+    });
+
+    document.querySelectorAll(".strip-arrow").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const strip = document.getElementById("findingStrip");
+        const card = strip.querySelector(".action-card");
+        const step = card ? card.getBoundingClientRect().width + 16 : 360;
+        strip.scrollBy({ left: step * Number(btn.dataset.strip), behavior: "smooth" });
+      });
+    });
+
+    document.querySelectorAll(".action-card").forEach((card) => {
+      card.addEventListener("pointermove", (e) => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty("--glow-x", (e.clientX - r.left) + "px");
+        card.style.setProperty("--glow-y", (e.clientY - r.top) + "px");
+      });
     });
 
     renderPopToggles();

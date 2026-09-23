@@ -49,13 +49,13 @@ Tokens: [soft-ui-tokens.md](soft-ui-tokens.md)
 .pop-btn:active:not(.active) { transform: scale(0.98); }
 ```
 
-Sync duplicates. **No motion on no-ops:** if the clicked value is already current, return before `renderAll()`. Same for tabs, metric pills, filter chips, and theme. Full table: [SKILL.md No motion on no-ops](../SKILL.md#no-motion-on-no-ops).
+Sync duplicates. **No motion on no-ops:** if the clicked value is already current, return before `renderAll()`. Same for tabs, metric pills, filter chips, and theme. Full table: [No motion on no-ops](#no-motion-on-no-ops).
 
 ```javascript
 function setPopulation(key) {
   if (key === currentPop) return;
   currentPop = key;
-  document.querySelectorAll(".pop-btn, .hist-pop-btn").forEach((btn) => {
+  document.querySelectorAll(".pop-btn[data-pop]").forEach((btn) => { // not the section tabs, which reuse .pop-btn
     const active = btn.dataset.pop === key;
     btn.classList.toggle("active", active);
     btn.setAttribute("aria-selected", String(active));
@@ -68,7 +68,36 @@ function setPopulation(key) {
 
 ## No motion on no-ops
 
-If the clicked value is already current, **return** before `renderAll()`, chart `update`, or CSS `rise`. Same for pills, tabs, chips, metric toggles, sort, and theme. Do not press-scale an already-`.active` control (`:active:not(.active)`). First-load enter does not replay. Table: [SKILL.md](../SKILL.md#no-motion-on-no-ops).
+Motion exists to show a **change**. If the click (or render) does not change what is on screen, there is no transition -- so there is no animation. Early-return in the setter. Do not call `renderAll()`. Do not destroy or `update` the chart. Do not replay CSS `rise` / canvas enter.
+
+```javascript
+function setTab(id) {
+  if (id === currentTab) return;
+  currentTab = id;
+  // toggle .active on tab buttons and on the matching #view-<id> panel
+  if (id === "overview" && histChart) histChart.resize();
+}
+
+function setTheme(dark) {
+  if (document.body.classList.contains("dark") === dark) return;
+  document.body.classList.toggle("dark", dark);
+  renderAll();
+}
+```
+
+A tab switch shows and hides panels; it does not need `renderAll()`. Resize a chart that was hidden when its tab comes back.
+
+| No-op (skip motion + skip re-render) | Why |
+|--------------------------------------|-----|
+| Re-click the already-selected pill, tab, chip, radio, or segmented value | Selection did not change |
+| Re-apply the same filter set, sort, or metric toggle (TOR already on TOR) | Query / series did not change |
+| Theme control when already on that theme | Tokens did not change |
+| `renderAll()` / chart rebuild when series, labels, and copy are unchanged | Nothing to tween |
+| First-load `rise` / canvas enter on a later render | Enter already played; first load only |
+| `:active` press-scale on a control that is already `.active` | Use `:active:not(.active)` |
+| Hash / deep-link landing on the tab already showing | Snap; no tab fade |
+
+Still animate when something **does** change: a new population, a real tab switch, theme flip, filter that changes n, "Copied!" confirm, info hover open. `prefers-reduced-motion` still kills the rest.
 
 ---
 

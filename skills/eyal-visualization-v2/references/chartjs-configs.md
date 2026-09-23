@@ -6,6 +6,36 @@ Bar datalabels, combo, threshold colors, plus v2 defaults: `tension: 0.4`, `bord
 
 ---
 
+## Chart chooser
+
+Pick by the **question**. Implementations live here, in [overflow-rules.md](overflow-rules.md), and [funnel-graph.md](funnel-graph.md).
+
+| Question | Chart |
+|----------|--------|
+| Rank / compare categories / drivers | Horizontal bar, volume sort, end labels. Y-axis is `Name (n)` two-tone (name in `--ink`, parens in `--ink-soft`, count in the **subject color** via `fmtNum` -- Cara n is always Cara teal, never winner fill). Long names → horizontal, not vertical. [Name (n) labels](#horizontal-bar-category-labels-name--n) |
+| Few discrete periods (quarters, 4-8 weeks) | Vertical bar |
+| Trend over continuous time | Smooth line `tension: 0.4`. Two series → dual-line + crosshair. 5+ series → small multiples |
+| Widget footer trend | Sparkline **only if dated**. Never under a histogram bucket |
+| Distribution / buckets / histogram | Vertical bar, `borderRadius: 12` |
+| Part-to-whole, 2-4 slices | Doughnut, total in center. **5+ slices or one slice >80%** → horizontal bar |
+| Mix + a second metric (mean, rate) | Stacked / 100% stacked bar with overlay tick. Not a fourth KPI. Not three charts of the same mix |
+| Ordered negative scale (mild → rage, TOR bands) | Stacked HTML bar, **rank** order, `--sev-*` |
+| Sequential conversion (eligible → viewed → submitted) | CSS column funnel. Not Chart.js, not Sankey |
+| Cross-population compare | KPI + trend chips + snap grid (not a grouped bar of 12 pops) |
+| Density over calendar time | CSS heatmap. Accent ramp if magnitude-only; `--sev-*` if the cell is a bad-when-up rate |
+| Exact values / audit / many columns | Table (`fmtInt`). Collapse if long |
+| Volume + rate together over few categories | Combo (bars + line), dual axis. Disable datalabels on one series |
+| Relationship / correlation | Scatter (rare). Do not connect unordered categories with a line |
+| Single status number | KPI card. Not a one-bar chart. Not a gauge |
+
+**Never:** pie (use doughnut or bar); Chart.js funnel / Sankey for 3-stage survey drop; radar; word cloud unless asked; photos as charts.
+
+3-4 sequential conversion stages → funnel recipe. Mix/share → bar/doughnut. **Not every dashboard needs a funnel.**
+
+CSS funnel rule: one hue family per population, 400/500/600, 4-8% sheen, no neon orange. Cara All / sky / violet / apricot is a **worked example**, not global law. Do not paint Chatbot apricot onto an unrelated dashboard.
+
+---
+
 ## Font + number setup (do this first)
 
 Chart.js does **not** inherit font from CSS. Declare the stack once and reuse the constant in every axis, tooltip and datalabel config:
@@ -21,9 +51,9 @@ The string must match `--font` in CSS exactly. Never introduce a mono stack into
 
 **Toggles:** Chart.js animation stays **off**. Population / theme / tab / filter must not tween bars. If the chart is kept alive, call `chart.update('none')`. Destroy + recreate is fine under `Chart.defaults.animation = false`. CSS page `rise` and canvas enter on first load are separate -- do not turn those off.
 
-**No-ops:** if the pill / tab / filter / metric / theme is already that value, return before `renderAll()` or `chart.update`. Rebuilding an unchanged series is still a flash. [SKILL.md No motion on no-ops](../SKILL.md#no-motion-on-no-ops).
+**No-ops:** if the pill / tab / filter / metric / theme is already that value, return before `renderAll()` or `chart.update`. Rebuilding an unchanged series is still a flash. [No motion on no-ops](state-patterns.md#no-motion-on-no-ops).
 
-Axis ticks and bar end labels use the canonical `fmtNum` from [SKILL.md](../SKILL.md#number-formatting) -- all digits below 1K, trimmed `K` up to 1M, `M` at two decimals:
+Axis ticks and bar end labels use the canonical `fmtNum` from [SKILL.md](../SKILL.md#number-formatting) -- all digits below 1K, `K` at one decimal minimum up to 1M (`1.0K`, `26.0K`, `25.16K`, never `26K`), `M` at two decimals:
 
 ```javascript
 ticks: { callback: (v) => fmtNum(v), font: { family: FONT_FAMILY, size: 14, weight: "600" } }

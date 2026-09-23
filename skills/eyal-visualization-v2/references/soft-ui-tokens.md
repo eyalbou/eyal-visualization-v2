@@ -4,7 +4,7 @@
 
 Default chart colors come from this file, not from a new palette: `--accent` and `--accent-2` for magnitude and category series, `--sev-*` for severity and bad-when-up rates, `--success` / `--danger` for trend chips. See [color-valence.md](color-valence.md).
 
-Full validated set from `multi-site-accounts-v2.html`:
+Full validated set (live copy: `assets/analytics-starter.html`):
 
 ```css
 :root {
@@ -178,7 +178,19 @@ See [hero-geometric.md](hero-geometric.md) for canvas structure and first-load a
 
 ## Optional brand palette
 
-When the user picks this palette (see SKILL.md). Dropped `#FF9100` (dup orange) and `#00B7CD` (dup teal).
+Use **only when the user asks** for this palette by name. It does **not** replace valence: TOR / DSAT / rage stay `--sev-*`. Do not mix it with a separate user `--accent` unless they say to. Never offer it as a question. Dropped `#FF9100` (dup orange) and `#00B7CD` (dup teal).
+
+| Token | Hex | Role |
+|-------|-----|------|
+| `--palette-cream` | `#FFF1D1` | Warm paper / canvas wash |
+| `--palette-ice` | `#8ECAE6` | Light sky, secondary cool |
+| `--palette-teal` | `#219EBC` | **Accent** (primary) |
+| `--palette-navy` | `#023047` | Ink / dark chrome |
+| `--palette-gold` | `#FFB703` | Highlight / magnitude callout -- not bad-when-up |
+| `--palette-orange` | `#FB8500` | Warm secondary -- not TOR hero |
+| `--palette-red` | `#DF301C` | Brand fail (may alias `--danger` if they want brand-aligned errors) |
+
+Wire `--page-bg` / hero mesh off `--accent` + `--palette-ice`.
 
 ```css
 :root.palette-ocean-sun {

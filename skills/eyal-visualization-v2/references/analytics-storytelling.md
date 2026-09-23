@@ -52,7 +52,7 @@ Tabs are a **story sequence**, not a gallery of leftover charts. Walk the reader
 | **1 Overview** | Introduce the story. How big is this, or what are we trying to find? Often **volume / funnel**. Pick graphs that set the stake. After the stake chart: ranked **finding cards** in a carousel (not actions). | 3 KPIs, one primary chart, 3-bullet read, finding carousel | Driver taxonomy, SQL, sampler, verb-first actions, a second briefing card |
 | **2-n Drill-down** | Each tab answers one question the previous tab set up. Build toward the interesting finding -- do not dump it first. | One primary visual + insight; collapse tables | Repeating Tab 1 KPIs; three views of the same mix |
 | **Recommendations** | Last analysis beat. What to do, from the analysis. Label is **Recommendations**. Skip the tab if there is no recommended move. | 1-6 action cards in a 2×3 CSS grid, no carousel | Finding cards; a carousel; dummy cards to fill the grid; actions already shown on Overview |
-| **Sampling** | Always last-but-one after Recommendations (or after drill-downs if Recommendations was skipped). Full filter recap (inclusion / exclusion / n remaining). A session sampler is optional -- the recap is enough. If a sampler **table** exists: uuid cell = User Manager link; conversation id cell = conversation URL. Never a second URL column. [SKILL.md Sampling table](../SKILL.md#sampling-table-ids-are-the-links) | Filter recap and/or working tool + id hyperlinks | Analysis charts; extra `user_manager_url` / `conversation_url` columns |
+| **Sampling** | Always last-but-one after Recommendations (or after drill-downs if Recommendations was skipped). Full filter recap (inclusion / exclusion / n remaining). A session sampler is optional -- the recap is enough. If a sampler **table** exists: uuid cell = User Manager link; conversation id cell = conversation URL. Never a second URL column. [Sampling table](#sampling-table-ids-are-the-links) | Filter recap and/or working tool + id hyperlinks | Analysis charts; extra `user_manager_url` / `conversation_url` columns |
 | **Methodology** | Always last. How we know + **project documentation** (scope, grain, joins, caveats, SQL, definitions). | Collapsed SQL, scope vs stage-2 split | Repeated driver charts |
 
 Hero + tab chrome persist. Title and subtitle stay the same on every tab. Optional deep link: `?tab=`.
@@ -70,6 +70,21 @@ Each tab should make the next one inevitable. Example: Overview (who submits) �
 If you found something surprising, do not open with it. Build the path so the finding is the payoff of the previous chart.
 
 ---
+
+## Sampling table: IDs are the links
+
+Applies when Sampling is a **session sampler table**, not a filter-recap-only tab. The id **is** the link. A second URL column is a fail.
+
+| Column | Cell text | `href` | Ban |
+|--------|-----------|--------|-----|
+| uuid | the uuid | User Manager. Wix default: `https://bo.wix.com/um/users/{uuid}/accounts/{uuid}` | A `user_manager_url` column; uuid as plain text next to a UM button |
+| Conversation id | the conversation / session id | the conversation URL. Wix Cara: `https://bo.wix.com/_serverless/cara-conversation-page/sessions/{cid}`. Wix Chatbot: `https://bo.wix.com/chatbot-builder/conversations/{cid}` | A `conversation_url` column; `Listen` / `Open` replacing the id |
+
+Details / Listen chrome may sit **beside** the id. It does not replace it. Truncate long ids with ellipsis + `title` of the full id; do not hide the id behind an icon-only control.
+
+CSV export keeps `uuid` and `conversation_id` as those values. Do not add URL columns. CSV cannot carry a live hyperlink.
+
+Missing id → `-`. `target="_blank"` + `rel="noopener"`. Row-click that opens a modal must not steal the id click (`data-stop-row` or equivalent).
 
 ## Overlap (one visual per question)
 
