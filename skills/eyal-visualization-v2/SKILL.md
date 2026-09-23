@@ -1,12 +1,12 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.14.0
+version: 0.14.1
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-**Skill version 0.14.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `master` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
+**Skill version 0.14.1** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `main` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
 
 Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
@@ -300,6 +300,8 @@ Visible layer is **load-bearing only**. If a sentence can go without changing wh
 ## Fonts
 
 Exactly two families: `--font` (Axiforma stack, DM Sans ships) and `--font-mono` on `code` / `pre` only. A third on screen is a bug -- almost always an unstyled `<code>`. Axiforma has **no public CDN**; never `<link>` / `@import` it. Load all four DM Sans weights. `Chart.defaults.font.family` = the same string as `--font`. Phosphor is an icon font and does not count. `--text-hero-display` only on the page hero h1. Loading tags and base CSS: [soft-ui-tokens.md](references/soft-ui-tokens.md#font-loading-required-in-head).
+
+Expressive display type (slides, posters, marketing heroes) is the only exception: `eyal-fonts` supplies one loud face and the house font stays the quiet face. Never on dashboards, KPIs, charts or tables.
 
 ---
 
