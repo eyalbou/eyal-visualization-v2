@@ -8,7 +8,7 @@ Bar datalabels, combo, threshold colors, plus v2 defaults: `tension: 0.4`, `bord
 
 ## Chart chooser
 
-Pick by the **question**. Implementations live here, in [overflow-rules.md](overflow-rules.md), and [funnel-graph.md](funnel-graph.md).
+Pick by the **question**. Implementations live here, in [overflow-rules.md](overflow-rules.md), [funnel-graph.md](funnel-graph.md), and [flow-graph.md](flow-graph.md).
 
 | Question | Chart |
 |----------|--------|
@@ -21,6 +21,7 @@ Pick by the **question**. Implementations live here, in [overflow-rules.md](over
 | Mix + a second metric (mean, rate) | Stacked / 100% stacked bar with overlay tick. Not a fourth KPI. Not three charts of the same mix |
 | Ordered negative scale (mild → rage, TOR bands) | Stacked HTML bar, **rank** order, `--sev-*` |
 | Sequential conversion (eligible → viewed → submitted) | CSS column funnel. Not Chart.js, not Sankey |
+| Where units go: one whole splits into destinations, 2+ levels (sets, routes, outcomes) | SVG flow graph ([flow-graph.md](flow-graph.md)). Not Chart.js, no plugin. Tree only, children sum to parent |
 | Cross-population compare | KPI + trend chips + snap grid (not a grouped bar of 12 pops) |
 | Density over calendar time | CSS heatmap. Accent ramp if magnitude-only; `--sev-*` if the cell is a bad-when-up rate |
 | Exact values / audit / many columns | Table (`fmtInt`). Collapse if long |
@@ -28,7 +29,7 @@ Pick by the **question**. Implementations live here, in [overflow-rules.md](over
 | Relationship / correlation | Scatter (rare). Do not connect unordered categories with a line |
 | Single status number | KPI card. Not a one-bar chart. Not a gauge |
 
-**Never:** pie (use doughnut or bar); Chart.js funnel / Sankey for 3-stage survey drop; radar; word cloud unless asked; photos as charts.
+**Never:** pie (use doughnut or bar); Chart.js funnel / Sankey for 3-stage survey drop (a multi-level split uses the SVG flow graph instead); radar; word cloud unless asked; photos as charts.
 
 3-4 sequential conversion stages → funnel recipe. Mix/share → bar/doughnut. **Not every dashboard needs a funnel.**
 

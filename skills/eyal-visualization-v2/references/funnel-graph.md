@@ -20,6 +20,7 @@ Stash (`https://bo.wix.com/stash/cara-satisfaction/`) is a preview only. If it i
 |----------|--------|
 | Eligible → viewed → submitted (or any 3-stage drop) | This CSS funnel |
 | Share of a mix (sat scores, reasons) | Stacked bar / doughnut |
+| One whole splits into destinations, 2+ levels (where did they go) | SVG flow graph ([flow-graph.md](flow-graph.md)) |
 | Distribution of a continuous metric | Vertical bar |
 
 Never use Chart.js bars, a Sankey, or a full-width stretched funnel for this story. The read is **how many remain**, with **% conversion** between columns.

@@ -47,7 +47,7 @@ shell
   footer
 ```
 
-Volume / survey conversion uses the CSS funnel in [funnel-graph.md](funnel-graph.md), not a Chart.js card. Standalone: `assets/funnel-graph.html`.
+Volume / survey conversion uses the CSS funnel in [funnel-graph.md](funnel-graph.md), not a Chart.js card. Standalone: `assets/funnel-graph.html`. A whole that splits into destinations 2+ levels deep uses the SVG flow graph in [flow-graph.md](flow-graph.md). Standalone: `assets/flow-graph.html`.
 
 In-skill proofs: `assets/analytics-starter.html`, `assets/funnel-graph.html`. Optional live (may not exist here): `ab-tests/priority-general-agent/dashboards/multi-site-accounts-v2.html`.
 

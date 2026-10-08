@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flow graph - where units go</title>
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/400.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/500.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/600.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans/700.css" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    :root {
+      /* Axiforma has no public CDN -- it is picked up only if locally installed,
+         DM Sans is what actually ships. Never <link> Axiforma. */
+      --font: "Axiforma", "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --text-xs: 12px;
+      --text-sm: 13px;
+      --text-base: 14px;
+      --text-body: 16px;
+      --text-h2: 20px;
+      --canvas: #F5F5F7;
+      --canvas-deep: #EBEBEF;
+      --ink: #1D1D1F;
+      --ink-soft: #6E6E73;
+      --surface: #FFFFFF;
+      --surface-raised: #FFFFFF;
+      --accent: #2563EB;
+      --accent-2: #6366F1;
+      --success: #69c440;
+      --warning: #ff9323;
+      --warning-ink: #B85E00;
+      --warning-soft: rgba(255, 147, 35, 0.14);
+      --danger: #da0808;
+      /* Flow tones. One tone per destination meaning, never per node. */
+      --flow-neutral: #98989D;
+      --flow-accent: var(--accent);
+      --flow-accent-2: var(--accent-2);
+      --flow-teal: #2F9E90;
+      --flow-violet: #8B5CF6;
+      --flow-good: var(--success);
+      --flow-warning: var(--warning);
+      --flow-danger: var(--danger);
+      --border: rgba(0, 0, 0, 0.07);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.06);
+      --radius: 16px;
+      --radius-lg: 24px;
+      --radius-pill: 9999px;
+    }
+    body.dark {
+      --canvas: #0F1117;
+      --canvas-deep: #161922;
+      --ink: #F5F5F7;
+      --ink-soft: #98989D;
+      --surface: #1C1F28;
+      --surface-raised: #252932;
+      --accent: #3B82F6;
+      --accent-2: #818CF8;
+      --warning-ink: #FFB066;
+      --danger: #f04444;
+      --flow-neutral: #6B6F7A;
+      --flow-teal: #4FC1B2;
+      --flow-violet: #A78BFA;
+      --border: rgba(255, 255, 255, 0.08);
+      --shadow-md: 0 4px 32px rgba(0, 0, 0, 0.4);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: var(--font); }
+    body { font-size: var(--text-body); background: var(--canvas); color: var(--ink); min-height: 100vh; }
+    button, input, select, textarea { font-family: inherit; }
+    code, pre { font-family: var(--font-mono); }
+    code { font-size: 0.92em; padding: 1px 6px; border-radius: 5px; background: var(--canvas-deep); }
+    svg text { font-family: var(--font); }
+
+    .page-canvas {
+      position: fixed; inset: 0; overflow: hidden; pointer-events: none;
+      background:
+        radial-gradient(ellipse 54% 42% at 12% 8%, rgba(37, 99, 235, 0.11), transparent 64%),
+        radial-gradient(ellipse 48% 40% at 88% 94%, rgba(99, 102, 241, 0.1), transparent 62%),
+        var(--canvas);
+      animation: canvasEaseIn 500ms ease both;
+    }
+    body.dark .page-canvas { background: #030303; }
+    .shell { position: relative; z-index: 1; width: min(1360px, calc(100% - 48px)); margin: 0 auto; padding: 28px 0 32px; }
+    .page-chrome { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+    .theme-button {
+      min-height: 40px; padding: 0 14px; border: 0; border-radius: var(--radius-pill);
+      background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-sm); font-weight: 600;
+      transition: transform 100ms ease, background 100ms ease;
+    }
+    .theme-button:hover { background: var(--surface-raised); }
+    .theme-button:active { transform: scale(0.98); }
+
+    .card { padding: 24px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-md); animation: rise 300ms ease both; }
+    .card-header-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
+    .card-header-row h2 { font-size: var(--text-h2); letter-spacing: -0.02em; line-height: 1.2; }
+    .card-sub { margin-top: 4px; color: var(--ink-soft); font-size: var(--text-base); }
+    .flow-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .flow-legend span { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); font-weight: 600; color: var(--ink-soft); }
+    .flow-legend i.sw { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+    .example-chip { padding: 4px 10px; border-radius: var(--radius-pill); background: var(--warning-soft); color: var(--warning-ink) !important; font-weight: 700 !important; }
+
+    .flow-scroll { overflow-x: auto; padding-bottom: 4px; }
+    .flow-host { min-width: 900px; }
+    .flow-svg { width: 100%; height: auto; display: block; }
+    .flow-ribbon { opacity: 0.24; transition: opacity 100ms ease; }
+    .flow-ribbon:hover { opacity: 0.45; }
+    .flow-node { rx: 3; }
+    .flow-col-head { font-size: 12px; font-weight: 700; fill: var(--ink-soft); letter-spacing: 0.04em; text-transform: uppercase; }
+    .flow-label { font-size: 14px; font-weight: 600; fill: var(--ink); }
+    .flow-value { font-weight: 700; }
+    .flow-note { font-size: 12px; font-weight: 500; fill: var(--ink-soft); }
+
+    .tone-neutral { fill: var(--flow-neutral); background: var(--flow-neutral); }
+    .tone-accent { fill: var(--flow-accent); background: var(--flow-accent); }
+    .tone-accent-2 { fill: var(--flow-accent-2); background: var(--flow-accent-2); }
+    .tone-teal { fill: var(--flow-teal); background: var(--flow-teal); }
+    .tone-violet { fill: var(--flow-violet); background: var(--flow-violet); }
+    .tone-good { fill: var(--flow-good); background: var(--flow-good); }
+    .tone-warning { fill: var(--flow-warning); background: var(--flow-warning); }
+    .tone-danger { fill: var(--flow-danger); background: var(--flow-danger); }
+
+    .insight { list-style: none; margin-top: 16px; padding: 14px 16px; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-sm); display: grid; gap: 6px; }
+    .insight li { font-size: var(--text-base); color: var(--ink-soft); line-height: 1.4; display: flex; gap: 8px; }
+    .insight li i { margin-top: 2px; color: var(--accent); }
+    .footer { margin-top: 20px; font-size: var(--text-xs); color: var(--ink-soft); }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes canvasEaseIn { from { opacity: 0; } to { opacity: 1; } }
+    @media (max-width: 720px) {
+      .shell { width: calc(100% - 24px); }
+      .card { padding: 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-canvas" aria-hidden="true"></div>
+  <main class="shell">
+    <div class="page-chrome">
+      <button class="theme-button" id="themeBtn" type="button" aria-label="Switch to dark theme">
+        <i class="ph ph-moon" id="themeIcon"></i>
+        <span id="themeLabel">Dark</span>
+      </button>
+    </div>
+
+    <section class="card">
+      <div class="card-header-row">
+        <div>
+          <h2 id="flowTitle"></h2>
+          <p class="card-sub" id="flowSub"></p>
+        </div>
+        <div class="flow-legend" id="flowLegend"></div>
+      </div>
+      <div class="flow-scroll">
+        <div class="flow-host" id="flowHost"></div>
+      </div>
+      <ul class="insight">
+        <li><i class="ph ph-check"></i><span>Proof rows never reach scale, so accuracy comes from rows the spec never saw.</span></li>
+        <li><i class="ph ph-check"></i><span>Coverage is the share Jev keeps; the fallback vote labels the rest.</span></li>
+      </ul>
+    </section>
+    <div class="footer" id="footer"></div>
+  </main>
+
+  <script>
+    function fmtNum(val) {
+      if (val == null || isNaN(val)) return "-";
+      const n = Number(val);
+      const sign = n < 0 ? "-" : "";
+      const abs = Math.abs(n);
+      if (Math.round(abs) < 1000) return sign + String(Math.round(abs));
+      const k = abs / 1e3;
+      const two = k.toFixed(2);
+      if (parseFloat(two) < 1000) return sign + (two.endsWith("0") ? k.toFixed(1) : two) + "K";
+      return sign + (abs / 1e6).toFixed(2) + "M";
+    }
+    function fmtInt(val) {
+      if (val == null || isNaN(val)) return "-";
+      const s = String(Math.round(Math.abs(val)));
+      let out = "";
+      for (let i = 0; i < s.length; i++) {
+        if (i > 0 && (s.length - i) % 3 === 0) out += ",";
+        out += s[i];
+      }
+      return (val < 0 ? "-" : "") + out;
+    }
+    function fmtPct(val, decimals) {
+      if (val == null || isNaN(val)) return "-";
+      const d = decimals == null ? 1 : decimals;
+      return Number(val).toFixed(d) + "%";
+    }
+    function fmtDate(iso) {
+      const d = new Date(iso);
+      if (isNaN(d)) return "-";
+      const m = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.getUTCMonth()];
+      return m + " " + d.getUTCDate() + ", " + d.getUTCFullYear();
+    }
+
+    // Worked example: jev-classify "Where rows go" (Oct 2026). Set sizes are real skill
+    // defaults; the scale split is illustrative, so `example: true` shows the chip.
+    const FLOW = {
+      generated_at: "2026-10-08T08:00:00Z",
+      title: "Where rows go",
+      subtitle: "Which rows prove quality, and which ones get labeled.",
+      example: true,
+      columns: ["All rows", "Disjoint sets", "Scale routing", "Fallback result"],
+      legend: [
+        { tone: "accent-2", label: "Label discovery" },
+        { tone: "teal", label: "Proof rows" },
+        { tone: "accent", label: "Jev" },
+        { tone: "violet", label: "Fallback vote" },
+        { tone: "warning", label: "Unresolved" }
+      ],
+      nodes: [
+        { key: "all", col: 0, label: "All rows", tone: "neutral" },
+        { key: "taxonomy", col: 1, parent: "all", label: "Taxonomy sample", note: "Strong LLM drafts labels, you approve", value: 1000, tone: "accent-2" },
+        { key: "smoke", col: 1, parent: "all", label: "Smoke", note: "Checks the spec and the cost", value: 5, tone: "neutral" },
+        { key: "work", col: 1, parent: "all", label: "Work", note: "Improve loop, sealed comparison half", value: 400, tone: "teal" },
+        { key: "valid", col: 1, parent: "all", label: "Validation", note: "Accuracy and threshold, never tuned on", value: 1000, tone: "teal" },
+        { key: "scale", col: 1, parent: "all", label: "Scale", note: "Scored by Jev after your yes", value: 10000, tone: "accent" },
+        { key: "keep", col: 2, parent: "scale", label: "Jev keeps its label", shareNote: "coverage at the threshold", value: 7800, tone: "accent" },
+        { key: "fallback", col: 2, parent: "scale", label: "Fallback vote", shareNote: "below or without a threshold", value: 2200, tone: "violet" },
+        { key: "agree", col: 3, parent: "fallback", label: "2 of 3 agree", note: "Vote label is used", value: 1900, tone: "violet" },
+        { key: "unresolved", col: 3, parent: "fallback", label: "Unresolved", note: "Unclear or human queue", value: 300, tone: "warning" }
+      ]
+    };
+
+    const FLOW_LAYOUT = { width: 1240, top: 44, nodeW: 14, gap: 34, minH: 4, heightBudget: 496, lastColRoom: 280, left: 24 };
+    const FLOW_CAPS = { columns: 4, nodesPerCol: 6, labelWords: 4, noteWords: 8 };
+    const SVG_NS = "http://www.w3.org/2000/svg";
+
+    function words(s) { return String(s || "").trim().split(/\s+/).filter(Boolean).length; }
+
+    // Builds the tree, fills missing parent values, and warns on every rule the recipe sets.
+    function buildFlow(flow) {
+      const byKey = {};
+      flow.nodes.forEach((n, i) => { byKey[n.key] = { ...n, order: i, children: [] }; });
+      const nodes = flow.nodes.map((n) => byKey[n.key]);
+      const roots = nodes.filter((n) => !n.parent);
+      if (roots.length !== 1) console.warn("[flow] needs exactly one root, found " + roots.length);
+      nodes.forEach((n) => {
+        if (!n.parent) return;
+        const p = byKey[n.parent];
+        if (!p) { console.warn("[flow] missing parent " + n.parent + " for " + n.key); return; }
+        if (p.col !== n.col - 1) console.warn("[flow] " + n.key + " must sit one column right of its parent");
+        p.children.push(n);
+      });
+      const fill = (n) => {
+        n.children.forEach(fill);
+        const sum = n.children.reduce((s, c) => s + c.value, 0);
+        if (n.value == null) n.value = sum;
+        else if (n.children.length && Math.abs(sum - n.value) > 0.5) console.warn("[flow] children of " + n.key + " sum to " + sum + ", not " + n.value + " - add an Other node");
+      };
+      roots.forEach(fill);
+      const cols = [];
+      nodes.forEach((n) => { (cols[n.col] = cols[n.col] || []).push(n); });
+      if (cols.length > FLOW_CAPS.columns) console.warn("[flow] more than " + FLOW_CAPS.columns + " columns");
+      cols.forEach((c, i) => { if (c.length > FLOW_CAPS.nodesPerCol) console.warn("[flow] column " + i + " has " + c.length + " nodes"); });
+      nodes.forEach((n) => {
+        if (words(n.label) > FLOW_CAPS.labelWords) console.warn("[flow] label over " + FLOW_CAPS.labelWords + " words: " + n.label);
+        if (words(n.note || n.shareNote) > FLOW_CAPS.noteWords) console.warn("[flow] note over " + FLOW_CAPS.noteWords + " words: " + n.key);
+      });
+      return { root: roots[0], cols, byKey };
+    }
+
+    function layoutFlow(tree, L) {
+      const { root, cols } = tree;
+      const sized = cols.slice(1);
+      const maxTotal = Math.max(...sized.map((c) => c.reduce((s, n) => s + n.value, 0)));
+      const maxCount = Math.max(...sized.map((c) => c.length));
+      const unit = (L.heightBudget - L.gap * (maxCount - 1)) / maxTotal;
+      const step = (L.width - L.left - L.lastColRoom) / Math.max(1, cols.length - 1);
+      cols.forEach((c, i) => c.forEach((n) => { n.x = L.left + i * step; n.h = Math.max(L.minH, n.value * unit); }));
+
+      const assignSlots = (n) => {
+        let off = n.y;
+        n.children.forEach((c) => { c.slotY = off; off += c.h; });
+      };
+      for (let i = 1; i < cols.length; i++) {
+        let prevBottom = -Infinity;
+        cols[i].forEach((n) => {
+          const desired = i === 1 ? L.top : n.slotY;
+          n.y = Math.max(desired, prevBottom + L.gap);
+          prevBottom = n.y + n.h;
+        });
+        if (i === 1) {
+          const first = cols[1][0], last = cols[1][cols[1].length - 1];
+          root.h = cols[1].reduce((s, n) => s + n.h, 0);
+          root.y = (first.y + last.y + last.h) / 2 - root.h / 2;
+          assignSlots(root);
+        }
+        cols[i].forEach(assignSlots);
+      }
+      let bottom = 0;
+      cols.forEach((c) => c.forEach((n) => { bottom = Math.max(bottom, n.y + n.h, n.y + n.h / 2 + 20); }));
+      return { height: Math.ceil(bottom + 28) };
+    }
+
+    function svgEl(tag, attrs, text) {
+      const el = document.createElementNS(SVG_NS, tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      if (text != null) el.textContent = text;
+      return el;
+    }
+    function ribbonPath(x0, y0, x1, y1, h) {
+      const mx = (x0 + x1) / 2;
+      return `M${x0},${y0} C${mx},${y0} ${mx},${y1} ${x1},${y1} L${x1},${y1 + h} C${mx},${y1 + h} ${mx},${y0 + h} ${x0},${y0 + h} Z`;
+    }
+
+    function renderFlow(flow, host) {
+      const L = FLOW_LAYOUT;
+      const tree = buildFlow(flow);
+      const { height } = layoutFlow(tree, L);
+      const svg = svgEl("svg", { class: "flow-svg", viewBox: `0 0 ${L.width} ${height}`, role: "img", "aria-label": flow.title + ": " + flow.subtitle });
+      flow.columns.forEach((h, i) => svg.appendChild(svgEl("text", { x: tree.cols[i][0].x, y: 18, class: "flow-col-head" }, h)));
+      const ribbons = svgEl("g", {});
+      const nodesG = svgEl("g", {});
+      const labels = svgEl("g", {});
+      svg.append(ribbons, nodesG, labels);
+
+      tree.cols.forEach((col) => col.forEach((n) => {
+        const parent = n.parent ? tree.byKey[n.parent] : null;
+        const share = parent ? (n.value / parent.value) * 100 : null;
+        if (parent) {
+          const r = svgEl("path", { d: ribbonPath(parent.x + L.nodeW, n.slotY, n.x, n.y, n.h), class: "flow-ribbon tone-" + n.tone });
+          r.appendChild(svgEl("title", {}, `${n.label}: ${fmtInt(n.value)} (${fmtPct(share)} of ${parent.label})`));
+          ribbons.appendChild(r);
+        }
+        nodesG.appendChild(svgEl("rect", { x: n.x, y: n.y, width: L.nodeW, height: n.h, class: "flow-node tone-" + n.tone }));
+        const note = n.shareNote ? fmtPct(share) + " " + n.shareNote : n.note;
+        const lx = n.x + L.nodeW + 10;
+        const cy = parent ? n.y + n.h / 2 : n.y - 18;
+        const t = svgEl("text", { x: lx, y: note ? cy - 3 : cy + 5, class: "flow-label" });
+        t.append(svgEl("tspan", {}, n.label + " "), svgEl("tspan", { class: "flow-value" }, fmtNum(n.value)));
+        labels.appendChild(t);
+        if (note) labels.appendChild(svgEl("text", { x: lx, y: cy + 14, class: "flow-note" }, note));
+      }));
+      host.replaceChildren(svg);
+    }
+
+    function renderChrome(flow) {
+      document.getElementById("flowTitle").textContent = flow.title;
+      document.getElementById("flowSub").textContent = flow.subtitle;
+      const legend = document.getElementById("flowLegend");
+      legend.replaceChildren();
+      if (flow.example) {
+        const chip = document.createElement("span");
+        chip.className = "example-chip";
+        chip.innerHTML = '<i class="ph ph-info"></i> Example split';
+        legend.appendChild(chip);
+      }
+      flow.legend.forEach((item) => {
+        const s = document.createElement("span");
+        s.innerHTML = `<i class="sw tone-${item.tone}"></i>`;
+        s.append(item.label);
+        legend.appendChild(s);
+      });
+      document.getElementById("footer").textContent = "Generated " + fmtDate(flow.generated_at);
+    }
+
+    function setTheme(dark) {
+      if (document.body.classList.contains("dark") === dark) return;
+      document.body.classList.toggle("dark", dark);
+      document.getElementById("themeLabel").textContent = dark ? "Light" : "Dark";
+      document.getElementById("themeIcon").className = dark ? "ph ph-sun" : "ph ph-moon";
+      document.getElementById("themeBtn").setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+    }
+    document.getElementById("themeBtn").addEventListener("click", () => setTheme(!document.body.classList.contains("dark")));
+
+    renderChrome(FLOW);
+    renderFlow(FLOW, document.getElementById("flowHost"));
+  </script>
+</body>
+</html>

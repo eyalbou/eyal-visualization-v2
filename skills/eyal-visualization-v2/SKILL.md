@@ -1,12 +1,12 @@
 ---
 name: eyal-visualization-v2
 description: Use when the user asks to "eyal visualize v2", "/eyal-visualize-v2", "soft UI dashboard", "build dashboard v2", "app shell dashboard", or wants the Soft UI system (full-page geometric hero, rounded cards, pill nav, trend chips). Self-contained -- do not read eyal-visualization v1. No decorative images. Defer to studio-data-visualization only for Wix branding.
-version: 0.14.1
+version: 0.15.0
 ---
 
 # Eyal Visualization v2 (Soft UI)
 
-**Skill version 0.14.1** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `main` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
+**Skill version 0.15.0** -- same value as [VERSION](VERSION) and the YAML `version` above. To check you are current, compare your `VERSION` file against `VERSION` on `main` in `eyalbou/eyal-visualization-v2`. Older copy: pull the repo, or in Willow resync From GitHub.
 
 Standalone skill. Geometric hero, ice canvas, white cards, pills, trend chips, optional app shell. Do **not** open `eyal-visualization` v1 files. Defer to `studio-data-visualization` only when the user asks for Wix branding.
 
@@ -23,6 +23,7 @@ This file plus `references/` and `assets/` is the full pack.
 | Fonts | `--font` everywhere; `--font-mono` only on `code` / `pre` |
 | Images | No decorative images; Phosphor icons |
 | Funnel | CSS columns ([funnel-graph.md](references/funnel-graph.md)), not Chart.js funnel |
+| Flow / split | SVG tree flow ([flow-graph.md](references/flow-graph.md)) when one whole splits into destinations 2+ levels deep. Funnel answers "how many remain"; flow answers "where did they go" |
 | Hero KPI color | Valence token; bad-when-up is never trust-blue |
 | Null sentinel | `-` |
 | Tab arc | Overview → drill-down(s) → **Recommendations** → Sampling → Methodology |
@@ -57,7 +58,7 @@ Maps only if the question is geo.
 
 **Scaffold:** copy `assets/analytics-starter.html` or `assets/app-shell-starter.html` **from disk**. Do **not** Read the full HTML into context.
 
-**If-needed:** [analytics-storytelling.md](references/analytics-storytelling.md) (analytics), [funnel-graph.md](references/funnel-graph.md) (3-stage conversion), [app-shell-patterns.md](references/app-shell-patterns.md) (shell), [chartjs-configs.md](references/chartjs-configs.md) (drawing Chart.js -- **read Chart hover** when any Chart.js tooltip exists), [overflow-rules.md](references/overflow-rules.md) (a chart exists), [hero-geometric.md](references/hero-geometric.md) (not copying the starter), [component-recipes.md](references/component-recipes.md) (KPI / finding cards / Recommendations grid).
+**If-needed:** [analytics-storytelling.md](references/analytics-storytelling.md) (analytics), [funnel-graph.md](references/funnel-graph.md) (3-stage conversion), [flow-graph.md](references/flow-graph.md) (units split into destinations, 2+ levels), [app-shell-patterns.md](references/app-shell-patterns.md) (shell), [chartjs-configs.md](references/chartjs-configs.md) (drawing Chart.js -- **read Chart hover** when any Chart.js tooltip exists), [overflow-rules.md](references/overflow-rules.md) (a chart exists), [hero-geometric.md](references/hero-geometric.md) (not copying the starter), [component-recipes.md](references/component-recipes.md) (KPI / finding cards / Recommendations grid).
 
 Recipes stay in references. Copy CSS from assets on disk.
 
@@ -123,6 +124,7 @@ Run **when the skill is called**, before showing the file. Analytics vs shell is
 - [ ] Ordered scales (mild → rage, TOR bands): rank order + `--sev-*`; driver bars: volume order + end labels
 - [ ] Nested subset: arrow + caption between parent and child
 - [ ] 3-stage conversion: CSS funnel (hue family **per population**; Cara table is an **example**)
+- [ ] Split into destinations (sets, routes, outcomes, 2+ levels): SVG flow graph from `assets/flow-graph.html`. Tree only, children sum to parent, tone by meaning, bad leftover `warning` / `danger`, zero `[flow]` console warnings, `Example split` chip when numbers are illustrative. [flow-graph.md](references/flow-graph.md)
 - [ ] Chart ticks and datalabels **14px / 600**. Hide collisions; do not shrink to 11px. Funnel conversion chip stays the loudest number
 - [ ] Series colors **locked** across population toggles (same hex for SSA / SR / NS, or Cara vs Chatbot)
 - [ ] Click a bar → filter the sibling chart that shares the grain. Two metrics with different baselines (TOR vs resolution) = **toggle**, never dual-axis. Hover follows the **active pill** (TOR hover = TOR; Res hover = Res; Score / mixed = both, each with its own gap). `label` returns a string array -- never one `TOR · Res · gap` line.
@@ -379,7 +381,7 @@ Use **only when the user asks** for it by name; never offer it. It does not repl
 
 ## Chart chooser
 
-Pick by the **question**, not by habit. **Never:** pie, radar, Chart.js funnel / Sankey for a 3-stage survey drop, gauges, word clouds unless asked. Doughnut only at 2-4 slices. TOR vs resolution is a toggle, never dual-axis. Not every dashboard needs a funnel. Full question-to-chart table: [chartjs-configs.md](references/chartjs-configs.md#chart-chooser).
+Pick by the **question**, not by habit. **Never:** pie, radar, Chart.js funnel / Sankey for a 3-stage survey drop, gauges, word clouds unless asked. A whole that splits into destinations 2+ levels deep ("where did the rows go") uses the SVG [flow graph](references/flow-graph.md) -- the one place a Sankey shape is allowed. Doughnut only at 2-4 slices. TOR vs resolution is a toggle, never dual-axis. Not every dashboard needs a funnel. Full question-to-chart table: [chartjs-configs.md](references/chartjs-configs.md#chart-chooser).
 
 ---
 
@@ -406,7 +408,7 @@ const DATA = {
 
 Pre-aggregate before embedding. `data-pop="segment_a"`; visible text uses `.label`. `renderAll()` updates KPIs, chart, and snaps together; finding and rec cards are static HTML. SQL pointer lives on the Methodology tab; footer: `Generated {fmtDate(DATA.generated_at)}`.
 
-In-skill proofs: `assets/analytics-starter.html` (full tab arc), `assets/funnel-graph.html`.
+In-skill proofs: `assets/analytics-starter.html` (full tab arc), `assets/funnel-graph.html`, `assets/flow-graph.html`.
 
 ---
 
@@ -448,6 +450,7 @@ Call `renderAll()` inside `setTheme()`.
 - Session sampler: uuid or conversation id as plain text with a separate URL column; Listen/Open replacing the cid
 - Em/en/`--` punctuation in **artifact UI**
 - Chart.js / Sankey for 3-stage survey funnel; one `--accent` for every funnel population
+- Flow graph with merges or loops, children that do not sum to the parent, one tone per node, a bad leftover in blue, a fixed height that clips the last split, or invented splits without the `Example split` chip
 - Neon chatbot orange next to Cara blues; ice-300 funnel fills; two-tone funnel bars
 - Bad-when-up hero in `--accent` blue; two blues for mild vs frustrated; green for mild-bad
 - White type on `--sev-ok` / `--sev-lo` / `--sev-mid`; black type on `--sev-hi` / `--sev-max`
@@ -494,6 +497,7 @@ Call `renderAll()` inside `setTheme()`.
 | Recommendations tab | after drill-downs, before Sampling; `.action-grid` not `.action-strip`; 1-6 cards; skip if no move |
 | Recommendations type | `--type-blue` `--type-purple` `--type-mint` `--type-yellow` `#ff9500` `--type-red` severe-only; title + labeled footer; body ink; yellow is type not fill |
 | Overview carousel titles | findings, not verb-first actions |
+| `renderFlow` / `.flow-svg` present | zero `[flow]` console warnings; `.flow-host` inside `.flow-scroll`; viewBox height auto; `example: true` when the split is illustrative. [flow-graph.md](references/flow-graph.md#review-checklist) |
 
 5. **Run the copy budget script.** `python3 scripts/copy-check.py <file>` must exit 0:
 
@@ -515,6 +519,7 @@ Fix before showing. Note what was fixed.
 | [layout-archetypes.md](references/layout-archetypes.md) | Analytics vs shell |
 | [component-recipes.md](references/component-recipes.md) | KPI, snaps, finding carousel, Recommendations grid |
 | [funnel-graph.md](references/funnel-graph.md) | CSS survey funnel |
+| [flow-graph.md](references/flow-graph.md) | SVG tree flow: where units go (sets, routes, outcomes); data shape, tones, writing rules |
 | [analytics-storytelling.md](references/analytics-storytelling.md) | Tab arc, overlap, copy-scan |
 | [dashboard-patterns.md](references/dashboard-patterns.md) | Analytics layout |
 | [state-patterns.md](references/state-patterns.md) | Pills, hover info, linked charts |
@@ -527,6 +532,7 @@ Fix before showing. Note what was fixed.
 | [MAINTAINING.md](MAINTAINING.md) | Editing and shipping this skill only |
 | [assets/app-shell-starter.html](assets/app-shell-starter.html) | Shell scaffold |
 | [assets/funnel-graph.html](assets/funnel-graph.html) | Funnel graph dummy bake |
+| [assets/flow-graph.html](assets/flow-graph.html) | Flow graph engine + jev-classify worked example (copy from disk) |
 
 This skill is **standalone**. Do not Read `../eyal-visualization/` or any v1 path.
 
