@@ -1,6 +1,8 @@
 # Flow graph (v2)
 
-SVG tree flow (Sankey-style) for **where units go**: one whole splits into destinations, and some destinations split again. Hand-drawn SVG, **not Chart.js**, no plugin. Validated Oct 2026 on the jev-classify "Where rows go" view.
+SVG tree flow (Sankey-style) for **where units go**: one whole splits into destinations, and some destinations split again. Hand-drawn SVG, **not Chart.js**, no plugin. Validated Oct 2026 on the jev-classify "Where rows go" view. Focus mode and rate labels approved Oct 2026 on the agent-first-turn SR dashboard.
+
+**Two defaults ship with the engine:** [focus mode](#focus-mode-default) (click a branch to see only it) and [rate labels](#labels-rates-by-default) (labels are shares, counts live in hover).
 
 **Durable copies (do not depend on Stash):**
 
@@ -38,15 +40,17 @@ If only the first split matters (one parent, 2-4 children, no second level), a b
 ```
 .card
   .card-header-row
-    left:  h2 (finding or "Where X go") + .card-sub (one line)
+    left:  h2 (finding or "Where X go") + .card-sub (one line + info-i: label base)
     right: .flow-legend  [Example split chip]  swatch + meaning, one per tone
+  .flow-focus (hidden unless focused)  "Showing X only - double-click ..." + Show all
   .flow-scroll                       overflow-x: auto
     .flow-host (min-width 900px)
-      svg.flow-svg (viewBox 1240 x auto)
+      svg.flow-svg (viewBox 1240 x auto, user-select: none)
         column heads (uppercase, top row)
         g ribbons   -> parent slot to child node, child tone, 0.24 opacity
-        g nodes     -> 14px bars, node tone
-        g labels    -> "Label value" + note, right of each node
+        g nodes     -> one g.flow-node-g per node, ABOVE ribbons:
+                       [level 1: .flow-hit rects] 14px bar + "Label rate" + note
+  .flow-status (aria-live)           click hint / focused branch / pinned node
   ul.insight (max 3 bullets)
 ```
 
@@ -62,6 +66,8 @@ const FLOW = {
   title: "Where rows go",
   subtitle: "Which rows prove quality, and which ones get labeled.",
   example: true,                     // true = numbers are illustrative -> shows the chip
+  unit: "rows",                      // plural noun for the status line ("10,000 rows")
+  // base: "parent",                 // opt-in: label = share of parent (default: share of the whole)
   columns: ["All rows", "Disjoint sets", "Scale routing", "Fallback result"],
   legend: [{ tone: "teal", label: "Proof rows" }],
   nodes: [
@@ -77,7 +83,7 @@ const FLOW = {
 | `col` | Child is always `parent.col + 1` |
 | `value` | Raw count. Root may omit it -- the engine sums the children |
 | `note` | Static line under the label, **≤8 words** |
-| `shareNote` | Engine prefixes `fmtPct(share of parent)`: `78.0% coverage at the threshold`. Use it instead of hand-typing a percent |
+| `shareNote` | Engine prefixes `fmtPct(share of parent)`: `78.0% coverage at the threshold`. Use it instead of hand-typing a percent. The prefix is dropped when the label already shows the share of that parent (focused on it, or level 1 of the root) |
 | `tone` | One of the tones below. Picked by **meaning**, not position |
 | Node order | Array order = top-to-bottom order inside the column |
 
@@ -135,25 +141,110 @@ Rules:
 1. **Title is the finding** when the numbers are real (`78% of scale rows keep Jev's label`). Use `Where X go` only for a teaching or example view.
 2. **Put the node that splits again last in its column.** Its children can then sit level with it and the ribbons never cross. Terminal nodes go above it.
 3. **Put the bad leftover last** in its column (`Unresolved` under `2 of 3 agree`). The eye ends on the problem.
-4. **Label = name + value.** Name ≤4 words in stakeholder English (`Fallback vote`, not `vote.py --ids-file`). Value via `fmtNum`.
+4. **Label = name + rate.** Name ≤4 words in stakeholder English (`Fallback vote`, not `vote.py --ids-file`). Rate via `fmtPct` ([Labels: rates by default](#labels-rates-by-default)); the root keeps its total via `fmtNum`.
 5. **Note says why the node exists or its share.** Purpose for sets (`Accuracy and threshold, never tuned on`), share for outcomes (`shareNote`). ≤8 words. No method, no tool names.
 6. **Column heads name the step**, not the data type (`Scale routing`, not `Rows`).
 7. **Do not hide tiny nodes.** `minH` keeps them on screen; do not inflate their value or drop them. If a node is plumbing nobody acts on, it may be cut -- then its parent's total must still add up via `Other`.
 8. **Illustrative numbers carry the chip.** `example: true` shows `Example split` in the legend, and one insight bullet says which numbers are examples. A delivered analysis never ships invented splits without it.
-9. **Hover is the exact layer.** Each ribbon `<title>` is `Label: fmtInt(value) (fmtPct(share) of Parent)`. Exact counts and shares live there, not in more on-screen text.
+9. **Hover is the exact layer.** Each node and ribbon `<title>` is `Label: fmtInt(value) (fmtPct(rate) of Base, fmtPct(share) of Parent)`. Exact counts and shares live there, not in more on-screen text.
 10. **Max 3 insight bullets** under the card (≤18 words, outcome not method). Do not retell the bands (`Scale is the biggest`).
 11. **Domain terms get a hover** like anywhere else -- an info icon in `.card-sub` or a Methodology row.
 
 ---
 
+## Labels: rates by default
+
+The reader asks "what share went where". A wall of raw totals makes them do the division.
+
+| Node | On-screen value | Base |
+|------|-----------------|------|
+| Root, unfocused | Total via `fmtNum` (the one count that stays visible: the size of 100%) | -- |
+| Any other node, unfocused | `fmtPct` | Share of the root (level 2 `Jev keeps 62.9%` = of all rows) |
+| Root, focused | `fmtPct` of the whole, note `in <Branch>` | Branch share of the root |
+| Any other node, focused | `fmtPct` | Share of the focused branch (its children sum to 100%) |
+
+- `base: "parent"` switches every label to share of its parent. Use it only when "of the parent" is the question for every column.
+- A non-zero share under 0.1% renders `<0.1%`, never `0.0%` (`fmtRate`).
+- Counts go in hover via `fmtInt`, on both the node and the ribbon `<title>`. If a count must stay visible, use `fmtNum`.
+- **Name the base in the info hover** next to `.card-sub`: `Labels show the share of all rows. Hover a node or band for counts.` Update it when focused (`share of Scale; the first column shows its share of all rows`).
+
+---
+
+## Focus mode (default)
+
+Click a level-1 **branch** (a level-1 node with children; its bar, its label, or any band in its subtree) and the graph shows only that branch. The root re-sums to the branch, so the branch fills the full height and the next level reads as a full-size distribution of it. Downstream levels follow. Level-1 leaves have nothing to expand: their click pins.
+
+| Rule | Behavior |
+|------|----------|
+| Labels | Shares of the focused branch; root shows the branch's share of the whole |
+| Title / status | Title prefixed `Branch: `; `.flow-status` says `Showing Scale only: 10,000 rows. Press Esc to show all.` |
+| Restore | Double-click anywhere on the chart, Esc, or the `Show all` button in `.flow-focus` (visible only while focused, short hint) |
+| Esc order | First Esc clears a pin, second restores |
+| While focused | Click a node or band pins its path (ancestors + descendants); hover unchanged. Click empty chart clears the pin |
+| No-op | Re-clicking the focused branch returns early: no redraw ([No motion on no-ops](../SKILL.md#no-motion-on-no-ops)) |
+| Data swap | Focus and pin survive a filter / population swap while their keys still exist |
+| Keyboard | Every node is `tabindex=0 role=button`; Enter / Space acts like click; focus returns to the branch node on restore |
+| Columns | x positions come from the full flow, so focusing never slides columns sideways |
+| Other controls | A control that has no meaning while focused is `disabled` with a `title`, not hidden |
+| Opt out | `renderFlow(FLOW, host, { focus: false })` -- branch clicks pin instead |
+
+**Hit-testing (the part that breaks):**
+
+- Node groups are drawn **after** ribbons, so a node or label is never under a band.
+- Each level-1 node gets two invisible `.flow-hit` rects (`fill: transparent; pointer-events: all`): the bar plus 4px each side, and the label block sized from `getComputedTextLength()` after insert. A 4px node stays clickable and a band under the label never eats the click. Do not use one big rect across the label width: it covers the band and blocks pins.
+- `click` ignores `ev.detail > 1`, and `dblclick` ignores anything within 500ms of focusing, so a double-click on a branch focuses once and does not flicker back.
+- `svg.flow-svg { user-select: none }` so a double-click never selects text.
+
+```javascript
+// State per host; the engine owns it.
+const S = { focus: null, pin: null, focusAt: 0 };
+
+function setFocus(host, key, fromKey) {
+  if (S.focus === key) return;                       // no-op: no redraw
+  const prev = S.focus;
+  S.focus = key; S.pin = null; S.focusAt = performance.now();
+  renderFlow(S.flow, host);
+  if (fromKey) host.querySelector(`.flow-node-g[data-key="${CSS.escape(key || prev)}"]`)?.focus();
+}
+
+// In renderFlow: filter to the branch BEFORE layout, so it gets the full height.
+const full = buildFlow(flow);
+const tree = S.focus ? buildFlow(focusFlow(flow, full, S.focus), true) : full;
+layoutFlow(tree, L, full.cols.length);
+
+svg.addEventListener("click", (ev) => {
+  if (ev.detail > 1) return;
+  const key = ev.target.closest("[data-key]")?.getAttribute("data-key");
+  if (!key) return S.pin && setPin(host, null);
+  const n = tree.byKey[key];
+  if (!S.focus && n.branch) return setFocus(host, n.branch, false);
+  if (key !== S.focus) setPin(host, S.pin === key ? null : key);
+});
+svg.addEventListener("dblclick", (ev) => {
+  if (!S.focus || performance.now() - S.focusAt < 500) return;
+  ev.preventDefault();
+  setFocus(host, null, false);
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (S.pin) setPin(host, null);
+  else if (S.focus) setFocus(host, null, host.contains(document.activeElement));
+});
+showAllBtn.addEventListener("click", (ev) => setFocus(host, null, ev.detail === 0));
+```
+
+The asset wires title, chip, status, and info text through `renderFlow(FLOW, host, { onChange })`, which fires after every draw and pin change with `{ focus, pin, base, enabled }`.
+
+---
+
 ## State and motion
 
-- Draw with `renderFlow(FLOW, host)`. It replaces the SVG; no tween, no Chart.js.
+- Draw with `renderFlow(FLOW, host, { focus: true, onChange })`. It replaces the SVG; no tween, no Chart.js. Focus and pin redraw the same way.
 - **Theme toggle does not redraw.** Tones are CSS classes on `var(--flow-*)`, so `body.dark` recolors in place.
 - **Resize does not redraw.** The viewBox scales.
 - Hidden tabs are fine: the layout is computed from data, not from DOM measurement.
 - Population toggle: swap `FLOW` and call `renderFlow` once. The setter returns early when the population is already current ([No motion on no-ops](../SKILL.md#no-motion-on-no-ops)).
-- Card `rise` ~300ms on first load; ribbon hover 100ms; `prefers-reduced-motion` turns both off.
+- Card `rise` ~300ms on first load; ribbon hover and pin dim 100ms; `prefers-reduced-motion` turns them off. Focus and restore are an instant redraw, never a tween.
 
 ---
 
@@ -161,7 +252,12 @@ Rules:
 
 - [ ] Fit test passes (tree, sums add up, "where did they go")
 - [ ] Console shows **zero** `[flow]` warnings
-- [ ] Labels ≤4 words, notes ≤8 words, all counts via `fmtNum`, shares via `fmtPct`, hover via `fmtInt`
+- [ ] Labels ≤4 words, notes ≤8 words; label values are shares via `fmtPct` (root total via `fmtNum`), counts in hover via `fmtInt`
+- [ ] Info hover names the label base, and changes when focused
+- [ ] Real click on a level-1 branch bar, its label, and one of its bands each focuses; the branch fills the full height and its children sum to 100%
+- [ ] Double-click, Esc, and `Show all` each restore; Esc clears a pin first; a double-click on a branch does not flicker back
+- [ ] Re-clicking the focused branch does not redraw; no text selected on double-click
+- [ ] Enter on a node focuses; keyboard focus returns to the branch node on restore
 - [ ] Same meaning → same tone; bad leftover is `warning` / `danger`; ≤5 tones + neutral
 - [ ] Splitting node and bad leftover are last in their columns; no crossing ribbons
 - [ ] Height is auto -- the last split and its labels are fully visible
@@ -183,3 +279,6 @@ Rules:
 - Invented split shown without the `Example split` chip
 - Chart.js / d3-sankey plugin for this (the asset engine is the implementation)
 - Redrawing on theme toggle or replaying `rise` on a same-population click
+- A flow graph without focus mode, or focus that keeps the other branches at their old size
+- Flow labels as raw totals (`Scale 10.0K`) with the share only in hover
+- Nodes drawn under ribbons, or a branch hit area that a band can swallow
