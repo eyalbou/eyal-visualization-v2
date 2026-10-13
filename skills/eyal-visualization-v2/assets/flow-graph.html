@@ -117,6 +117,7 @@
     .chip-reset:active { transform: scale(0.98); }
     .chip-reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .chip-reset:disabled { color: var(--ink-soft); opacity: 0.6; cursor: not-allowed; }
+    .chip-reset[hidden] { display: none; }
     .flow-status { min-height: 20px; margin-top: 8px; font-size: var(--text-sm); color: var(--ink-soft); }
 
     .flow-scroll { overflow-x: auto; padding-bottom: 4px; }
@@ -181,7 +182,7 @@
         </div>
         <div class="flow-legend" id="flowLegend"></div>
       </div>
-      <div class="flow-focus" id="flowFocus" hidden><span id="flowFocusText"></span><button class="chip-reset" id="flowShowAll" type="button">Show all</button></div>
+      <div class="flow-focus" id="flowFocus" hidden><span id="flowFocusText"></span><button class="chip-reset" id="flowBack" type="button" hidden>Back</button><button class="chip-reset" id="flowShowAll" type="button">Show all</button></div>
       <div class="flow-scroll">
         <div class="flow-host" id="flowHost"></div>
       </div>
@@ -264,7 +265,7 @@
 
     function words(s) { return String(s || "").trim().split(/\s+/).filter(Boolean).length; }
 
-    // Builds the tree, fills missing parent values, tags each node with its level-1 branch,
+    // Builds the tree, fills missing parent values, marks every focusable node,
     // and warns on every rule the recipe sets (`quiet` for the focused copy of a checked flow).
     function buildFlow(flow, quiet) {
       const warn = quiet ? () => {} : (m) => console.warn("[flow] " + m);
@@ -287,9 +288,8 @@
         else if (n.children.length && Math.abs(sum - n.value) > 0.5) warn("children of " + n.key + " sum to " + sum + ", not " + n.value + " - add an Other node");
       };
       roots.forEach(fill);
-      // A branch is a level-1 node with children; it and everything under it share its key.
-      const tag = (n, b) => { n.branch = b; n.children.forEach((c) => tag(c, b)); };
-      roots.forEach((r) => r.children.forEach((c) => tag(c, c.children.length ? c.key : null)));
+      // Any non-root node with children can take focus, at every level.
+      nodes.forEach((n) => { n.focusable = !!n.parent && n.children.length > 0; });
       const cols = [];
       nodes.forEach((n) => { (cols[n.col] = cols[n.col] || []).push(n); });
       if (cols.length > FLOW_CAPS.columns) warn("more than " + FLOW_CAPS.columns + " columns");
@@ -301,13 +301,22 @@
       return { root: roots[0], cols, byKey };
     }
 
-    // Focused copy: the root plus one branch subtree. The root re-sums to the branch, so the
-    // branch fills the full height and its children read as a full-size distribution.
+    // Focused copy: the chain from the root down to the focused node, plus its subtree. The root
+    // and every ancestor re-sum to the focused node, so it fills the full height and the stage
+    // after it reads as a full-size distribution, at any depth.
     function focusFlow(flow, full, key) {
       const keep = new Set();
+      const chain = new Set();
       const walk = (n) => { keep.add(n.key); n.children.forEach(walk); };
       walk(full.byKey[key]);
-      return { ...flow, nodes: flow.nodes.filter((n) => !n.parent || keep.has(n.key)).map((n) => (n.parent ? n : { ...n, value: undefined })) };
+      for (let p = full.byKey[full.byKey[key].parent]; p; p = full.byKey[p.parent]) chain.add(p.key);
+      return { ...flow, nodes: flow.nodes.filter((n) => keep.has(n.key) || chain.has(n.key)).map((n) => (chain.has(n.key) ? { ...n, value: undefined } : n)) };
+    }
+    // Level-1 down to the focused node, for titles and the focus chip.
+    function focusPath(full, key) {
+      const out = [];
+      for (let n = full.byKey[key]; n && n.parent; n = full.byKey[n.parent]) out.unshift(n);
+      return out;
     }
 
     function layoutFlow(tree, L, colCount) {
@@ -366,28 +375,28 @@
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape" || !host.getClientRects().length) return;
         if (S.pin) setPin(host, null);
-        else if (S.focus) setFocus(host, null, host.contains(document.activeElement));
+        else if (S.focus) focusBack(host, host.contains(document.activeElement));
       });
       return S;
     }
 
-    // Default: label = share of the current whole (root, or the focused branch); the root
-    // shows its total, or the focused branch's share of the whole. `base: "parent"` = share of parent.
+    // Default: label = share of the current whole (root, or the focused node); the root
+    // shows its total, or the focused node's share of the whole. `base: "parent"` = share of parent.
     function renderFlow(flow, host, opts) {
       const L = FLOW_LAYOUT;
       const S = flowState(host);
       if (opts || !S.opts) S.opts = { focus: true, onChange: null, ...opts };
       S.flow = flow;
       const full = buildFlow(flow);
-      const branch = S.opts.focus && S.focus ? full.byKey[S.focus] : null;
-      if (!branch || !branch.branch) S.focus = null;
+      const target = S.opts.focus && S.focus ? full.byKey[S.focus] : null;
+      if (!target || !target.focusable) S.focus = null;
       const tree = S.focus ? buildFlow(focusFlow(flow, full, S.focus), true) : full;
       if (S.pin && !tree.byKey[S.pin]) S.pin = null;
       const { height } = layoutFlow(tree, L, full.cols.length);
       const focusNode = S.focus ? full.byKey[S.focus] : null;
       const baseNode = focusNode ? tree.byKey[S.focus] : tree.root;
       const whole = full.root;
-      const hint = S.opts.focus ? (focusNode ? " Double-click or press Escape to show all." : " Click a branch to see only it.") : "";
+      const hint = S.opts.focus ? (focusNode ? " Click a later stage to narrow further, Escape to go back a step, double-click to show all." : " Click any stage to see only it.") : "";
       const svg = svgEl("svg", { class: "flow-svg", viewBox: `0 0 ${L.width} ${height}`, role: "group", "aria-label": flow.title + ": " + flow.subtitle + hint });
       tree.cols.forEach((c, i) => svg.appendChild(svgEl("text", { x: c[0].x, y: 18, class: "flow-col-head" }, flow.columns[i])));
       const ribbons = svgEl("g", {});
@@ -406,23 +415,25 @@
           const parts = [];
           if (b !== n) parts.push(`${fmtRate(rate)} of ${b.label}`);
           if (fp && fp.key !== b.key) parts.push(`${fmtRate(shareP)} of ${fp.label}`);
-          tip = `${n.label}: ${fmtInt(n.value)}` + (parts.length ? ` (${parts.join(", ")})` : "");
+          const fullV = full.byKey[n.key].value;
+          tip = fullV !== n.value ? `${n.label}: ${fmtInt(n.value)} in focus, of ${fmtInt(fullV)}`
+            : `${n.label}: ${fmtInt(n.value)}` + (parts.length ? ` (${parts.join(", ")})` : "");
         }
-        const canFocus = S.opts.focus && !focusNode && !!n.branch;
+        const canFocus = S.opts.focus && !!full.byKey[n.key].focusable && n.key !== S.focus;
         if (!isRoot) {
           const parent = tree.byKey[n.parent];
           const r = svgEl("path", { d: ribbonPath(parent.x + L.nodeW, n.slotY, n.x, n.y, n.h), class: "flow-ribbon tone-" + n.tone + (canFocus ? " is-branch" : ""), "data-key": n.key });
           r.appendChild(svgEl("title", {}, tip));
           ribbons.appendChild(r);
         }
-        const action = canFocus ? "Press Enter to see only this branch." : focusNode && n.key === S.focus ? "Press Escape to show all." : "Press Enter to pin.";
+        const action = canFocus ? "Press Enter to see only this stage." : focusNode && n.key === S.focus ? "Press Escape to go back a step." : "Press Enter to pin.";
         const g = svgEl("g", { class: "flow-node-g", "data-key": n.key, tabindex: 0, role: "button", "aria-label": tip + ". " + action });
         g.appendChild(svgEl("title", {}, tip));
         const shareNote = n.shareNote && (fp && b && fp.key === b.key ? n.shareNote : fmtRate(shareP) + " " + n.shareNote);
         const note = isRoot && focusNode ? "in " + focusNode.label : shareNote || n.note;
         const lx = n.x + L.nodeW + 10;
         const cy = isRoot && !focusNode ? n.y - 18 : n.y + n.h / 2;
-        if (n.col === 1) {
+        if (canFocus || n.key === S.focus) {
           g.appendChild(svgEl("rect", { class: "flow-hit", x: n.x - 4, y: n.y - 4, width: L.nodeW + 8, height: n.h + 8 }));
           g.appendChild(svgEl("rect", { class: "flow-hit flow-hit-label", x: lx - 4, y: cy - 18, width: 0, height: 38 }));
         }
@@ -436,9 +447,8 @@
 
       const keyOf = (ev) => { const el = ev.target.closest("[data-key]"); return el ? el.getAttribute("data-key") : null; };
       const act = (key, fromKey) => {
-        const n = tree.byKey[key];
-        if (S.opts.focus && !S.focus && n.branch) return setFocus(host, n.branch, fromKey);
         if (key === S.focus) return;
+        if (S.opts.focus && full.byKey[key].focusable) return setFocus(host, key, fromKey);
         setPin(host, S.pin === key ? null : key);
       };
       svg.addEventListener("click", (ev) => {
@@ -460,13 +470,13 @@
         act(key, true);
       });
       host.replaceChildren(svg);
-      // Level-1 hit rects: node + 4px each side, and the label block, so a band under either never eats the click.
+      // Hit rects on every focusable node: node + 4px each side, and the label block, so a band under either never eats the click.
       svg.querySelectorAll(".flow-hit-label").forEach((hit) => {
         let w = 0;
         hit.parentNode.querySelectorAll("text").forEach((t) => { w = Math.max(w, t.getComputedTextLength() || t.textContent.length * 7.5); });
         hit.setAttribute("width", w + 8);
       });
-      S.view = { tree, full, focus: focusNode, base: focusNode || whole };
+      S.view = { tree, full, focus: focusNode, path: focusNode ? focusPath(full, S.focus) : [], base: focusNode || whole };
       applyPin(host);
     }
 
@@ -480,6 +490,14 @@
       renderFlow(S.flow, host);
       const el = fromKey && host.querySelector(`.flow-node-g[data-key="${CSS.escape(key || prev)}"]`);
       if (el) el.focus();
+    }
+
+    // One step up the focus path: the focused node's parent, or show all from level 1.
+    function focusBack(host, fromKey) {
+      const S = flowState(host);
+      if (!S.focus) return;
+      const up = S.view.full.byKey[S.view.full.byKey[S.focus].parent];
+      setFocus(host, up && up.focusable ? up.key : null, fromKey);
     }
 
     function setPin(host, key) {
@@ -501,7 +519,7 @@
       }
       svg.classList.toggle("has-pin", !!S.pin);
       svg.querySelectorAll("[data-key]").forEach((el) => el.classList.toggle("on", on.has(el.getAttribute("data-key"))));
-      if (S.opts.onChange) S.opts.onChange({ focus: S.view.focus, pin: S.pin ? S.view.tree.byKey[S.pin] : null, base: S.view.base, enabled: S.opts.focus });
+      if (S.opts.onChange) S.opts.onChange({ focus: S.view.focus, path: S.view.path, pin: S.pin ? S.view.tree.byKey[S.pin] : null, base: S.view.base, enabled: S.opts.focus });
     }
 
     function renderChrome(flow) {
@@ -527,12 +545,14 @@
     // Title, focus chip, status line, and info hover follow the engine's view.
     function syncFlowUi(v) {
       const root = FLOW.nodes.find((n) => !n.parent).label.toLowerCase();
-      document.getElementById("flowTitle").textContent = v.focus ? v.focus.label + ": " + FLOW.title : FLOW.title;
+      const path = v.path.map((n) => n.label).join(" > ");
+      document.getElementById("flowTitle").textContent = v.focus ? path + ": " + FLOW.title : FLOW.title;
       document.getElementById("flowFocus").hidden = !v.focus;
-      if (v.focus) document.getElementById("flowFocusText").textContent = "Showing " + v.focus.label + " only - double-click the chart or press Esc to show all";
+      document.getElementById("flowBack").hidden = v.path.length < 2;
+      if (v.focus) document.getElementById("flowFocusText").textContent = "Showing " + path + ". Esc goes back a step, double-click shows all.";
       const status = v.pin ? "Pinned: " + v.pin.label + ". Press Esc to clear."
-        : v.focus ? "Showing " + v.focus.label + " only: " + fmtInt(v.focus.value) + " " + FLOW.unit + ". Press Esc to show all."
-        : v.enabled ? "Click a branch to see only it." : "";
+        : v.focus ? "Showing " + path + ": " + fmtInt(v.focus.value) + " " + FLOW.unit + ". Click a later stage to narrow further."
+        : v.enabled ? "Click any stage to see only it." : "";
       document.getElementById("flowStatus").textContent = status;
       document.getElementById("flowInfo").textContent = v.focus
         ? "Labels show the share of " + v.focus.label + "; the first column shows its share of " + root + ". Hover a node or band for counts."
@@ -550,6 +570,7 @@
 
     const flowHost = document.getElementById("flowHost");
     document.getElementById("flowShowAll").addEventListener("click", (ev) => setFocus(flowHost, null, ev.detail === 0));
+    document.getElementById("flowBack").addEventListener("click", (ev) => focusBack(flowHost, ev.detail === 0));
     renderChrome(FLOW);
     renderFlow(FLOW, flowHost, { focus: true, onChange: syncFlowUi });
   </script>
